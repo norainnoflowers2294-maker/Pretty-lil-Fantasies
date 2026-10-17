@@ -9,6 +9,7 @@ import {
   Search,
   MessageSquare,
   Edit,
+  Trash2,
 } from 'lucide-react';
 import { Character } from '../types/roleplay';
 import { parseCharacterFile, exportCharacterJson } from '../utils/pngParser';
@@ -18,6 +19,7 @@ interface CharacterModalProps {
   onClose: () => void;
   characters: Character[];
   onSaveCharacter: (char: Character) => void;
+  onDeleteCharacter?: (characterId: string) => void;
   onStartChatWithCharacter: (char: Character) => void;
   onOpenCreateCharacter?: (characterToEdit?: Character | null) => void;
   fullPage?: boolean;
@@ -28,6 +30,7 @@ export const CharacterModal: React.FC<CharacterModalProps> = ({
   onClose,
   characters,
   onSaveCharacter,
+  onDeleteCharacter,
   onStartChatWithCharacter,
   onOpenCreateCharacter,
   fullPage = false,
@@ -171,6 +174,17 @@ export const CharacterModal: React.FC<CharacterModalProps> = ({
                         >
                           <Download className="w-3.5 h-3.5" />
                         </button>
+                        {onDeleteCharacter && (
+                          <button
+                            type="button"
+                            onClick={() => onDeleteCharacter(char.id)}
+                            title={`Delete ${char.name}`}
+                            aria-label={`Delete ${char.name}`}
+                            className="min-h-9 min-w-9 rounded-lg p-2 text-rose-300 transition-colors hover:bg-rose-500/15 hover:text-rose-200"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        )}
                       </div>
                     </div>
 
