@@ -10,7 +10,8 @@ const character: Character = {
 describe('story features', () => {
   it('learns only explicit first-person likes and dislikes with evidence', () => {
     expect(extractExplicitPreferences('“I love old jazz records, but I hate crowded clubs.”')).toEqual([
-      { kind: 'like', value: 'old jazz records', evidence: 'I love old jazz records, but I hate crowded clubs' },
+      { kind: 'like', value: 'old jazz records', evidence: 'I love old jazz records' },
+      { kind: 'dislike', value: 'crowded clubs', evidence: 'I hate crowded clubs' },
     ]);
   });
 
