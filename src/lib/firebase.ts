@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, signOut } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 import { getFirestore, doc, getDocFromServer } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import firebaseConfig from '../../firebase-applet-config.json';
@@ -72,21 +72,10 @@ export async function testConnection(): Promise<boolean> {
 export async function signInWithGoogle() {
   const provider = new GoogleAuthProvider();
   provider.setCustomParameters({ prompt: 'select_account' });
-
-  // Popups are commonly blocked inside iOS Safari and installed web views.
-  const userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : '';
-  const isMobileBrowser = /iPhone|iPad|iPod|Android/i.test(userAgent);
-  if (isMobileBrowser) return signInWithRedirect(auth, provider);
-
-  try {
-    return await signInWithPopup(auth, provider);
-  } catch (error) {
-    const code = (error as { code?: string })?.code;
-    if (code === 'auth/popup-blocked' || code === 'auth/operation-not-supported-in-this-environment') {
-      return signInWithRedirect(auth, provider);
-    }
-    throw error;
-  }
+  // This app is hosted on GitHub Pages. Firebase redirect auth on non-Firebase
+  // hosts needs additional hosting/proxy setup, so use its popup flow and
+  // surface blocked-popup errors to the user instead of silently redirecting.
+  return signInWithPopup(auth, provider);
 }
 
 export async function logOutFirebase() {
