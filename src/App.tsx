@@ -245,10 +245,15 @@ export default function App() {
           }
           return [...merged.values()];
         };
+        const deletedCharacterIds = [...new Set([
+          ...(remote?.deletedCharacterIds || []),
+          ...(current.deletedCharacterIds || []),
+        ])];
         const merged: StorageData = {
           ...current,
+          deletedCharacterIds,
           appPreferences: normalizePreferences({ ...(remote?.appPreferences || {}), ...current.appPreferences }),
-          characters: mergeDefaultCharacters(mergeById(remote?.characters, current.characters)),
+          characters: mergeDefaultCharacters(mergeById(remote?.characters, current.characters), deletedCharacterIds),
           chats: mergeById(remote?.chats, current.chats),
           lorebooks: mergeById(remote?.lorebooks, current.lorebooks),
           personas: mergeById(remote?.personas, current.personas),
@@ -389,6 +394,17 @@ export default function App() {
     updateData({ ...data, characters: updated });
   };
 
+  const handleDeleteCharacter = (characterId: string) => {
+    const character = data.characters.find((item) => item.id === characterId);
+    if (!character || !window.confirm(`Delete ${character.name} from your character library? Existing chat messages will stay saved.`)) return;
+    const deletedCharacterIds = [...new Set([...(data.deletedCharacterIds || []), characterId])];
+    updateData({
+      ...data,
+      characters: data.characters.filter((item) => item.id !== characterId),
+      deletedCharacterIds,
+    });
+  };
+
   const handleSaveLorebook = (lore: Lorebook) => {
     const exists = data.lorebooks.find((l) => l.id === lore.id);
     const updated = exists
@@ -484,7 +500,10 @@ export default function App() {
       appPreferences: normalizePreferences(source.appPreferences ?? current.appPreferences),
       openRouterConfig: current.openRouterConfig,
       supabaseConfig: current.supabaseConfig,
-      characters: Array.isArray(source.characters) ? mergeDefaultCharacters(source.characters) : current.characters,
+      deletedCharacterIds: Array.isArray(source.deletedCharacterIds) ? source.deletedCharacterIds : (current.deletedCharacterIds || []),
+      characters: Array.isArray(source.characters)
+        ? mergeDefaultCharacters(source.characters, Array.isArray(source.deletedCharacterIds) ? source.deletedCharacterIds : (current.deletedCharacterIds || []))
+        : current.characters,
       chats: Array.isArray(source.chats) ? source.chats : current.chats,
       personas: Array.isArray(source.personas) ? source.personas : current.personas,
       lorebooks: Array.isArray(source.lorebooks) ? source.lorebooks : current.lorebooks,
@@ -860,6 +879,7 @@ export default function App() {
             onClose={() => setActiveTab('home')}
             characters={data.characters}
             onSaveCharacter={handleSaveCharacter}
+            onDeleteCharacter={handleDeleteCharacter}
             onStartChatWithCharacter={handleStartChatWithCharacter}
             onOpenCreateCharacter={(character) => handleOpenCreateCharacterPage(character)}
           />
