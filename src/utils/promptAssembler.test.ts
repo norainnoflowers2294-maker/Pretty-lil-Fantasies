@@ -150,7 +150,7 @@ describe('buildOpenRouterMessages', () => {
     expect(messages[0].content).toContain('The magic sword glows in the dark.');
   });
 
-  it('should include Active Plugins if matched with chat', () => {
+  it('should combine enabled plugin prompts into a compact rules block', () => {
     const params = getBaseParams();
     params.chat.pluginIds = ['p1'];
     params.plugins = [
@@ -167,8 +167,8 @@ describe('buildOpenRouterMessages', () => {
     ];
 
     const messages = buildOpenRouterMessages(params);
-    expect(messages[0].content).toContain('[ACTIVE PLUGINS (SLOTS 1-5)]');
-    expect(messages[0].content).toContain('- [Plugin: RPG System] Adds dice rolling Directives: Roll 1d20');
+    expect(messages[0].content).toContain('[ENABLED PLUGIN RULES]');
+    expect(messages[0].content).toContain('- RPG System: Roll 1d20');
   });
 
   it('should map Conversation History to user and assistant roles', () => {

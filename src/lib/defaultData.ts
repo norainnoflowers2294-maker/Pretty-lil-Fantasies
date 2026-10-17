@@ -358,6 +358,178 @@ export const INITIAL_PLUGINS: Plugin[] = [
   },
 ];
 
+// Individual opt-in roleplay rules. Disabled by default; each prompt is editable.
+const ADDITIONAL_ROLEPLAY_PLUGINS: Plugin[] = [
+  {
+    id: 'plugin_soul_spark', name: 'Soul Spark', icon: 'Puzzle', description: 'Distinct voices, habits, flaws, and motives.',
+    category: 'style', enabled: false, config: {}, customPrompt: 'Give each character a distinct voice, habits, flaws, and motives grounded in their card; avoid flattening them into one trait.',
+  },
+  {
+    id: 'plugin_living_character', name: 'Living Character', icon: 'Puzzle', description: 'Agency and character growth.',
+    category: 'style', enabled: false, config: {}, customPrompt: 'Let the selected character initiate plausible actions, make choices, and grow from established events without overriding {{user}}.',
+  },
+  {
+    id: 'plugin_second_life', name: 'Second Life', icon: 'Puzzle', description: 'NPC agendas and relationships.',
+    category: 'immersion', enabled: false, config: {}, customPrompt: 'Give relevant NPCs independent goals, friendships, and conflicts; reveal them through plausible behavior, not exposition dumps.',
+  },
+  {
+    id: 'plugin_living_npc_world', name: 'Living NPC World', icon: 'Puzzle', description: 'Believable named people in the setting.',
+    category: 'immersion', enabled: false, config: {}, customPrompt: 'When useful, add a small number of believable named NPCs with distinct roles and natural dialogue; keep focus on the scene.',
+  },
+  {
+    id: 'plugin_independent_life', name: 'Independent Life', icon: 'Puzzle', description: 'Prompt-only off-screen routine continuity.',
+    category: 'immersion', enabled: false, config: {}, customPrompt: 'Use only established schedules, locations, goals, and moods for off-screen characters. Do not claim background simulation; add lasting facts to Story Notes.',
+  },
+  {
+    id: 'plugin_inner_circle', name: 'Inner Circle', icon: 'Puzzle', description: 'Distinct loyalties within Lucious’s circle.',
+    category: 'immersion', enabled: false, config: {}, customPrompt: 'Keep Lucious’s brothers and friends distinct in loyalty, opinions, and speech; let disagreements reflect their established relationships.',
+  },
+  {
+    id: 'plugin_double_life', name: 'Double Life', icon: 'Puzzle', description: 'Separate public image from private motives.',
+    category: 'style', enabled: false, config: {}, customPrompt: 'Distinguish a character’s public behavior from private motives only when supported by their card or discovered story facts.',
+  },
+  {
+    id: 'plugin_bad_habits', name: 'Bad Habits', icon: 'Puzzle', description: 'Individual quirks and routines.',
+    category: 'style', enabled: false, config: {}, customPrompt: 'Use each character’s established quirks, tells, pet peeves, and routines sparingly and consistently.',
+  },
+  {
+    id: 'plugin_off_the_clock', name: 'Off the Clock', icon: 'Puzzle', description: 'NPC hobbies, errands, and work.',
+    category: 'immersion', enabled: false, config: {}, customPrompt: 'Give NPCs believable jobs, hobbies, and errands when relevant; do not invent persistent off-screen events as established canon.',
+  },
+  {
+    id: 'plugin_character_initiative', name: 'Character Initiative', icon: 'Puzzle', description: 'Characters initiate contact and plans.',
+    category: 'immersion', enabled: false, config: {}, customPrompt: 'Let characters initiate plausible calls, texts, visits, or plans when the scene supports it; never force {{user}} to accept or respond.',
+  },
+  {
+    id: 'plugin_unreliable_narrator', name: 'Unreliable Narrator', icon: 'Puzzle', description: 'Limited and sometimes mistaken perception.',
+    category: 'style', enabled: false, config: {}, customPrompt: 'Keep the narrator limited to the viewpoint character’s knowledge; allow uncertainty or mistaken impressions without presenting guesses as facts.',
+  },
+  {
+    id: 'plugin_parallel_lives', name: 'Parallel Lives', icon: 'Puzzle', description: 'Other plots surface naturally.',
+    category: 'immersion', enabled: false, config: {}, customPrompt: 'Let established NPC concerns progress in the background and surface only when relevant; do not claim persistent simulation beyond saved chat context.',
+  },
+  {
+    id: 'plugin_shadow_empire', name: 'Shadow Empire', icon: 'Puzzle', description: 'Crime-world alliances and stakes.',
+    category: 'analysis', enabled: false, config: {}, customPrompt: 'Use established criminal-world alliances, rivalries, and stakes as grounded context; do not invent real-world instructions for crime.',
+  },
+  {
+    id: 'plugin_heat_index', name: 'Heat Index', icon: 'Puzzle', description: 'Rival, police, and public scrutiny.',
+    category: 'analysis', enabled: false, config: {}, customPrompt: 'Track attention from rivals, law enforcement, and public scandal only from events already established; show proportional consequences.',
+  },
+  {
+    id: 'plugin_family_table', name: 'Family Table', icon: 'Puzzle', description: 'Circle disagreements and decisions.',
+    category: 'analysis', enabled: false, config: {}, customPrompt: 'When the inner circle gathers, let members disagree naturally and contribute distinct views without resolving choices for {{user}}.',
+  },
+  {
+    id: 'plugin_loose_ends', name: 'Loose Ends', icon: 'Puzzle', description: 'Unresolved debts and threats.',
+    category: 'analysis', enabled: false, config: {}, customPrompt: 'Bring back established debts, favors, and threats at plausible moments; do not create constant danger or erase resolved matters.',
+  },
+  {
+    id: 'plugin_power_reputation', name: 'Power & Reputation', icon: 'Puzzle', description: 'Reactions to earned status.',
+    category: 'analysis', enabled: false, config: {}, customPrompt: 'Let other characters react to reputation based on actions they witnessed or learned about; avoid automatic admiration or fear.',
+  },
+  {
+    id: 'plugin_domino_effect', name: 'Domino Effect', icon: 'Puzzle', description: 'Believable long-term consequences.',
+    category: 'analysis', enabled: false, config: {}, customPrompt: 'Carry forward consequences of established choices consistently; keep outcomes proportional and preserve the user’s control over future choices.',
+  },
+  {
+    id: 'plugin_pressure_point', name: 'Pressure Point', icon: 'Puzzle', description: 'Occasional organic conflict.',
+    category: 'analysis', enabled: false, config: {}, customPrompt: 'Introduce conflict only when motivated by current tensions or established goals; balance pressure with calm and ordinary moments.',
+  },
+  {
+    id: 'plugin_unvarnished_truth', name: 'Unvarnished Truth', icon: 'Puzzle', description: 'Morally complex story without forced redemption.',
+    category: 'analysis', enabled: false, config: {}, customPrompt: 'Allow morally complex, unsentimental outcomes; do not force redemption, punishment, or moral lectures.',
+  },
+  {
+    id: 'plugin_backbone', name: 'Backbone', icon: 'Puzzle', description: 'Characters disagree and hold boundaries.',
+    category: 'analysis', enabled: false, config: {}, customPrompt: 'Let characters disagree, refuse, and state boundaries in character; respect consent and never frame coercion as agreement.',
+  },
+  {
+    id: 'plugin_long_grudge', name: 'The Long Grudge', icon: 'Puzzle', description: 'Resentment and forgiveness continuity.',
+    category: 'analysis', enabled: false, config: {}, customPrompt: 'Carry established betrayal, resentment, and forgiveness forward realistically; relationship changes require believable interaction.',
+  },
+  {
+    id: 'plugin_official_couple', name: 'Official Couple Mode', icon: 'Puzzle', description: 'Shared routines and familiar affection.',
+    category: 'style', enabled: false, config: {}, customPrompt: 'For an established adult couple, use shared routines, inside jokes, affection, and occasional bickering consistent with their history.',
+  },
+  {
+    id: 'plugin_love_real_life', name: 'Love in Real Life', icon: 'Puzzle', description: 'Realistic relationship milestones.',
+    category: 'style', enabled: false, config: {}, customPrompt: 'Show realistic relationship ups and downs, milestones, and occasional surprises without rushing commitment or assuming {{user}}’s feelings.',
+  },
+  {
+    id: 'plugin_chemistry_lab', name: 'Chemistry Lab', icon: 'Puzzle', description: 'Gradual attraction and trust.',
+    category: 'style', enabled: false, config: {}, customPrompt: 'Build attraction, trust, jealousy, and closeness gradually from mutual interactions; do not assume reciprocation.',
+  },
+  {
+    id: 'plugin_unsaid', name: 'Unsaid', icon: 'Puzzle', description: 'Emotional wounds and promises.',
+    category: 'style', enabled: false, config: {}, customPrompt: 'Remember established emotional wounds, promises, and meaningful moments; do not invent {{user}}’s past or private feelings.',
+  },
+  {
+    id: 'plugin_age_gap_realism', name: 'Age Gap Realism', icon: 'Puzzle', description: 'Adult partners’ life stages.',
+    category: 'style', enabled: false, config: {}, customPrompt: 'For consenting adult partners, portray different life stages through specific circumstances, without stereotypes or power assumptions.',
+  },
+  {
+    id: 'plugin_daddys_rules', name: 'Daddy’s Rules', icon: 'Puzzle', description: 'Negotiated adult D/s dynamics.',
+    category: 'style', enabled: false, config: {}, customPrompt: 'For consenting adults only, follow explicitly negotiated D/s boundaries and playful rules; pause or adjust when consent is uncertain or withdrawn.',
+  },
+  {
+    id: 'plugin_sensory_chemistry', name: 'Sensory Chemistry', icon: 'Puzzle', description: 'Body language and vulnerability.',
+    category: 'style', enabled: false, config: {}, customPrompt: 'Use restrained body language, vulnerability, and romantic tension grounded in the scene; avoid repetitive sensual cues.',
+  },
+  {
+    id: 'plugin_after_dark', name: 'After Dark', icon: 'Puzzle', description: 'Mature adult romance within consent.',
+    category: 'style', enabled: false, config: {}, customPrompt: 'Support mature romance between adults while keeping consent explicit, ongoing, and easy to withdraw; follow applicable content limits.',
+  },
+  {
+    id: 'plugin_adult_chemistry', name: 'Adult Chemistry & Sensory Detail', icon: 'Puzzle', description: 'Non-graphic sensual details.',
+    category: 'style', enabled: false, config: {}, customPrompt: 'For adults who consent, emphasize non-graphic sensual detail and mutual dynamics; avoid explicit sexual description or presumed consent.',
+  },
+  {
+    id: 'plugin_silver_screen', name: 'Silver Screen', icon: 'Puzzle', description: 'Cinematic atmosphere and pacing.',
+    category: 'style', enabled: false, config: {}, customPrompt: 'Use cinematic framing through selective atmosphere and pacing; keep prose readable and do not add camera directions.',
+  },
+  {
+    id: 'plugin_directors_cut', name: 'Director’s Cut', icon: 'Puzzle', description: 'Adjust rhythm to the scene.',
+    category: 'style', enabled: false, config: {}, customPrompt: 'Match sentence rhythm, intensity, and dialogue to the current scene; avoid applying one fixed style everywhere.',
+  },
+  {
+    id: 'plugin_soundstage', name: 'Soundstage', icon: 'Puzzle', description: 'Grounded environmental detail.',
+    category: 'style', enabled: false, config: {}, customPrompt: 'Add a few relevant sounds, lighting, weather, and ambient details; preserve established setting and avoid sensory overload.',
+  },
+  {
+    id: 'plugin_cold_open', name: 'Cold Open', icon: 'Puzzle', description: 'Engaging opening when requested.',
+    category: 'style', enabled: false, config: {}, customPrompt: 'When a new storyline begins, open with a specific active moment and a clear response opportunity; do not write {{user}}’s entrance or actions.',
+  },
+  {
+    id: 'plugin_world_in_motion', name: 'World in Motion', icon: 'Puzzle', description: 'Active, inhabited settings.',
+    category: 'style', enabled: false, config: {}, customPrompt: 'Make the setting feel inhabited through small relevant activity; keep background details secondary to the characters.',
+  },
+  {
+    id: 'plugin_body_tells_story', name: 'Every Body Tells a Story', icon: 'Puzzle', description: 'Diverse bodies and reactions.',
+    category: 'style', enabled: false, config: {}, customPrompt: 'Describe bodies respectfully and realistically, with varied features and reactions; avoid judging or assuming a person’s health or feelings.',
+  },
+  {
+    id: 'plugin_melanin_texture', name: 'Melanin & Texture Realism', icon: 'Puzzle', description: 'Accurate Emmy skin and locs.',
+    category: 'style', enabled: false, config: {}, customPrompt: 'When Emmy is present, preserve her established Black identity, dark skin, and locs accurately; avoid light-skin clichés and do not speak or act for her.',
+  },
+  {
+    id: 'plugin_street_speak', name: 'Street Speak', icon: 'Puzzle', description: 'Natural regional voices and profanity.',
+    category: 'style', enabled: false, config: {}, customPrompt: 'Use natural profanity, slang, and regional speech only when it fits each character; avoid caricature and keep voices distinct.',
+  },
+  {
+    id: 'plugin_roleplay_optimizer', name: 'Roleplay Quality Optimizer', icon: 'Puzzle', description: 'Reduce clichés and response degradation.',
+    category: 'style', enabled: false, config: {}, customPrompt: 'Avoid “not X but Y” phrasing, echoed dialogue, clichés, repeated beats, needless jargon, and passive replies; prefer plausible character initiative and reconcile rules with consent, canon, and {{user}} agency.',
+  },
+];
+
+export function mergeDefaultPlugins(saved: Plugin[] | undefined): Plugin[] {
+  const defaults = new Map(INITIAL_PLUGINS.concat(ADDITIONAL_ROLEPLAY_PLUGINS).map((plugin) => [plugin.id, plugin]));
+  const existing = new Map((Array.isArray(saved) ? saved : []).map((plugin) => [plugin.id, plugin]));
+  const merged = [...defaults.values()].map((plugin) => ({ ...plugin, ...(existing.get(plugin.id) || {}) }));
+  for (const plugin of existing.values()) if (!defaults.has(plugin.id)) merged.push(plugin);
+  return merged;
+}
+
 export const INITIAL_CHATS: Chat[] = [
   {
     id: 'chat_lucious_main',

@@ -1,6 +1,6 @@
 import { DEFAULT_PREFERENCES, normalizePreferences, type AppPreferences } from './preferences';
 import { Character, Lorebook, Persona, Plugin, Chat, OpenRouterConfig, SupabaseConfig, StoryMemory } from '../types/roleplay';
-import { ADDITIONAL_CHARACTER_PLACEHOLDER_AVATARS, INITIAL_CHARACTERS, INITIAL_LOREBOOKS, INITIAL_PERSONAS, INITIAL_PLUGINS, INITIAL_CHATS } from './defaultData';
+import { ADDITIONAL_CHARACTER_PLACEHOLDER_AVATARS, INITIAL_CHARACTERS, INITIAL_LOREBOOKS, INITIAL_PERSONAS, INITIAL_PLUGINS, INITIAL_CHATS, mergeDefaultPlugins } from './defaultData';
 import { db, auth, storage } from './firebase';
 import { DEFAULT_WALLETS, type StoryWallet } from './wallet';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
@@ -124,7 +124,7 @@ function defaultLocalData(): StorageData {
     deletedCharacterIds: [],
     lorebooks: INITIAL_LOREBOOKS,
     personas: INITIAL_PERSONAS,
-    plugins: INITIAL_PLUGINS,
+    plugins: mergeDefaultPlugins(INITIAL_PLUGINS),
     chats: INITIAL_CHATS,
     activeChatId: INITIAL_CHATS[0]?.id,
     openRouterConfig: DEFAULT_OPENROUTER_CONFIG,
@@ -147,7 +147,7 @@ function normalizeStoredData(parsed: any): StorageData {
     characters: mergeDefaultCharacters(parsed.characters?.length ? parsed.characters : INITIAL_CHARACTERS, deletedCharacterIds),
     lorebooks: parsed.lorebooks?.length ? parsed.lorebooks : INITIAL_LOREBOOKS,
     personas: parsed.personas?.length ? parsed.personas : INITIAL_PERSONAS,
-    plugins: parsed.plugins?.length ? parsed.plugins : INITIAL_PLUGINS,
+    plugins: mergeDefaultPlugins(parsed.plugins?.length ? parsed.plugins : INITIAL_PLUGINS),
     chats: parsed.chats?.length ? parsed.chats : INITIAL_CHATS,
     activeChatId: parsed.activeChatId || (parsed.chats?.[0]?.id ?? INITIAL_CHATS[0]?.id),
     openRouterConfig: { ...DEFAULT_OPENROUTER_CONFIG, ...(parsed.openRouterConfig || {}) },

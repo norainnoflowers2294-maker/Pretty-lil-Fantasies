@@ -138,7 +138,7 @@ export const DualTrackOverlay: React.FC<DualTrackOverlayProps> = ({
   const activeChar = characters.find((c) => activeChat?.characterIds.includes(c.id)) || characters[0];
   const activePersona = personas.find((p) => p.id === activeChat?.personaId) || personas[0];
   const activeLorebooks = lorebooks.filter((l) => activeChat?.lorebookIds.includes(l.id)).slice(0, 3);
-  const activePlugins = plugins.filter((p) => activeChat?.pluginIds.includes(p.id)).slice(0, 5);
+  const activePlugins = plugins.filter((plugin) => plugin.enabled);
 
   return (
     <div
@@ -593,7 +593,7 @@ export const DualTrackOverlay: React.FC<DualTrackOverlayProps> = ({
             </div>
 
             <div className="space-y-1.5">
-              {plugins.slice(0, 5).map((plugin) => (
+              {plugins.filter((plugin) => plugin.enabled).map((plugin) => (
                 <div
                   key={plugin.id}
                   className="flex items-center justify-between p-2 rounded-xl bg-white/5 border border-white/10 hover:border-[#ff3399]/40 transition-all"

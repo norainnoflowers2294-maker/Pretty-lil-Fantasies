@@ -39,6 +39,7 @@ import { getWalletForScope, type StoryWallet } from './lib/wallet';
 import { DEFAULT_SOCIAL_WORLD, formatSocialWorldContext } from './lib/socialMedia';
 import { formatPhoneStoryContext, mergePhoneSystemData } from './lib/phoneSystem';
 import { mergeStoryMemories } from './lib/storyMemory';
+import { mergeDefaultPlugins } from './lib/defaultData';
 
 import {
   Character,
@@ -257,7 +258,7 @@ export default function App() {
           chats: mergeById(remote?.chats, current.chats),
           lorebooks: mergeById(remote?.lorebooks, current.lorebooks),
           personas: mergeById(remote?.personas, current.personas),
-          plugins: mergeById(remote?.plugins, current.plugins),
+          plugins: mergeDefaultPlugins(mergeById(remote?.plugins, current.plugins)),
           storyMemories: mergeStoryMemories(remote?.storyMemories, current.storyMemories),
           savedMessages: mergeById(remote?.savedMessages, current.savedMessages),
           wallets: mergeById(remote?.wallets, current.wallets),
@@ -462,9 +463,33 @@ export default function App() {
     }
   };
 
+  const MAX_PLUGIN_PROMPT_CHARS = 14000;
   const handleTogglePlugin = (pluginId: string) => {
-    const updated = data.plugins.map((p) => (p.id === pluginId ? { ...p, enabled: !p.enabled } : p));
-    updateData({ ...data, plugins: updated });
+    const currentData = dataRef.current;
+    const target = currentData.plugins.find((plugin) => plugin.id === pluginId);
+    if (!target) return;
+    const nextEnabled = !target.enabled;
+    const promptSize = currentData.plugins.reduce((total, plugin) => total + (plugin.id === pluginId ? (nextEnabled ? (plugin.customPrompt || '').length : 0) : plugin.enabled ? (plugin.customPrompt || '').length : 0), 0);
+    if (nextEnabled && promptSize > MAX_PLUGIN_PROMPT_CHARS) {
+      window.alert('The combined enabled plugin prompts would be too long. Turn off another plugin or shorten its prompt first.');
+      return;
+    }
+    const updated = currentData.plugins.map((plugin) => plugin.id === pluginId ? { ...plugin, enabled: nextEnabled } : plugin);
+    updateData({ ...currentData, plugins: updated });
+  };
+
+  const handleSavePlugin = (plugin: Plugin) => {
+    const currentData = dataRef.current;
+    const promptSize = currentData.plugins.reduce((total, existing) => total + (existing.id === plugin.id ? (plugin.enabled ? plugin.customPrompt?.length || 0 : 0) : existing.enabled ? (existing.customPrompt || '').length : 0), 0);
+    if (promptSize > MAX_PLUGIN_PROMPT_CHARS) {
+      window.alert('The combined enabled plugin prompts would be too long. Shorten this prompt or disable another plugin.');
+      return;
+    }
+    const exists = currentData.plugins.some((item) => item.id === plugin.id);
+    const plugins = exists
+      ? currentData.plugins.map((item) => item.id === plugin.id ? plugin : item)
+      : [...currentData.plugins, plugin];
+    updateData({ ...currentData, plugins });
   };
 
   const handleSaveOpenRouterConfig = (cfg: OpenRouterConfig) => {
@@ -513,7 +538,7 @@ export default function App() {
       chats: Array.isArray(source.chats) ? source.chats : current.chats,
       personas: Array.isArray(source.personas) ? source.personas : current.personas,
       lorebooks: Array.isArray(source.lorebooks) ? source.lorebooks : current.lorebooks,
-      plugins: Array.isArray(source.plugins) ? source.plugins : current.plugins,
+      plugins: mergeDefaultPlugins(Array.isArray(source.plugins) ? source.plugins : current.plugins),
       storyMemories: Array.isArray(source.storyMemories) ? source.storyMemories : current.storyMemories,
       wallets: Array.isArray(source.wallets) ? source.wallets : current.wallets,
       savedMessages: Array.isArray(source.savedMessages) ? source.savedMessages : current.savedMessages,
@@ -697,7 +722,7 @@ export default function App() {
           preferences={preferences}
           persona={activeWalletPersona || null}
           lorebooks={data.lorebooks.filter((book) => activeChat.lorebookIds.includes(book.id))}
-          plugins={data.plugins.filter((plugin) => activeChat.pluginIds.includes(plugin.id))}
+          plugins={data.plugins}
           storyMemories={data.storyMemories.filter((memory) => memory.chatId === activeChat.id || memory.chatId === 'global')}
           socialMediaContext={formatSocialWorldContext(data.socialWorld || DEFAULT_SOCIAL_WORLD)}
         />
@@ -732,7 +757,7 @@ export default function App() {
           onClose={() => setIsPluginModalOpen(false)}
           plugins={data.plugins}
           onTogglePlugin={handleTogglePlugin}
-          onSavePlugin={(p) => updateData({ ...data, plugins: [...data.plugins, p] })}
+          onSavePlugin={handleSavePlugin}
         />
         <OpenRouterSettingsModal
           isOpen={isSettingsOpen}
@@ -1101,7 +1126,7 @@ export default function App() {
         onClose={() => setIsPluginModalOpen(false)}
         plugins={data.plugins}
         onTogglePlugin={handleTogglePlugin}
-        onSavePlugin={(p) => updateData({ ...data, plugins: [...data.plugins, p] })}
+        onSavePlugin={handleSavePlugin}
       />
 
       <OpenRouterSettingsModal

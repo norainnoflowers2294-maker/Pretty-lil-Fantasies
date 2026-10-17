@@ -291,7 +291,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
   const activeCharacters = characters.filter((c) => chat.characterIds.includes(c.id));
   const activePersona = chat.personaId ? personas.find((p) => p.id === chat.personaId) || null : personas[0] || null;
   const activeLorebooks = lorebooks.filter((l) => chat.lorebookIds.includes(l.id)).slice(0, 3);
-  const activePlugins = plugins.filter((p) => chat.pluginIds.includes(p.id)).slice(0, 5);
+  const activePlugins = plugins.filter((plugin) => plugin.enabled);
   const slashSuggestions = getSlashCommandSuggestions(inputText);
 
   const scrollToBottom = () => {

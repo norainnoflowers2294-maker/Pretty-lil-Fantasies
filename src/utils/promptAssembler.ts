@@ -1,6 +1,7 @@
 import type { AppPreferences } from '../lib/preferences';
 import type { StoryMemory } from '../types/roleplay';
 import type { Character, Persona, Lorebook, Plugin, Chat } from '../types/roleplay';
+import { buildEnabledPluginRules } from '../lib/pluginPrompts.ts';
 
 interface AssembleParams {
   preferences?: AppPreferences;
@@ -79,7 +80,7 @@ export function buildOpenRouterMessages(params: AssembleParams): OpenRouterApiMe
   const systemParts: string[] = [];
 
   systemParts.push(
-    `[ROLEPLAY INSTRUCTIONS]\nContinue the scene as the selected character profile or profiles. Stay consistent with their established voice, personality, history, relationships, and current situation. Use the reply settings below. Never impersonate the user, write the user's dialogue, or decide the user's thoughts, feelings, or actions. Leave a natural opening for the user's next turn. Precedence: the non-negotiable user-agency rule and established canon come first; then global instructions; then character-card rules and chat-specific instructions; then style and pacing preferences. Lore and memories provide facts, never permission to invent what the user did.`
+    `[ROLEPLAY INSTRUCTIONS]\nContinue the scene as the selected character profile or profiles. Stay consistent with their established voice, personality, history, relationships, and current situation. Respect consent and stated boundaries throughout. Use the reply settings below. Never impersonate the user, write the user's dialogue, or decide the user's thoughts, feelings, or actions. Leave a natural opening for the user's next turn. Precedence: the non-negotiable user-agency rule and established canon come first; then global instructions; then character-card rules and chat-specific instructions; then style and pacing preferences. Lore and memories provide facts, never permission to invent what the user did.`
   );
   if (preferences?.chatSystemPrompt?.trim()) systemParts.push(`[GLOBAL CHAT RULES FROM SETTINGS]\n${preferences.chatSystemPrompt.trim()}`);
 
@@ -183,11 +184,8 @@ ${qualityRules.join('\n')}`);
   }));
   if (activeLoreEntries.length) systemParts.push(`[WORLD LORE & KNOWLEDGE]\n${activeLoreEntries.join('\n\n')}`);
 
-  const activePlugins = plugins.filter((plugin) => chat.pluginIds.includes(plugin.id) && plugin.enabled).slice(0, 5);
-  if (activePlugins.length) {
-    const directives = activePlugins.map((plugin) => `- [Plugin: ${plugin.name}] ${plugin.description}${plugin.customPrompt ? ` Directives: ${plugin.customPrompt}` : ''}`).join('\n');
-    systemParts.push(`[ACTIVE PLUGINS (SLOTS 1-5)]\n${directives}`);
-  }
+  const pluginRules = buildEnabledPluginRules(plugins);
+  if (pluginRules) systemParts.push(pluginRules);
 
   if (preferences) {
     const rules = [

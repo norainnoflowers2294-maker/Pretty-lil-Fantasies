@@ -29,10 +29,13 @@ export const PluginModal: React.FC<PluginModalProps> = ({
   onSavePlugin,
 }) => {
   const [isCreating, setIsCreating] = useState(false);
+  const [editingPluginId, setEditingPluginId] = useState<string | null>(null);
+  const [promptDraft, setPromptDraft] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [customPrompt, setCustomPrompt] = useState('');
-  const [category, setCategory] = useState<'mechanics' | 'immersion' | 'utility' | 'style'>('immersion');
+  const [category, setCategory] = useState<'mechanics' | 'immersion' | 'utility' | 'style' | 'analysis'>('immersion');
 
   if (!isOpen) return null;
 
@@ -46,10 +49,9 @@ export const PluginModal: React.FC<PluginModalProps> = ({
       icon: 'Puzzle',
       description: description.trim(),
       category,
-      enabled: true,
+      enabled: false,
       config: {},
       customPrompt: customPrompt.trim(),
-      badge: 'Active Plugin',
     };
 
     onSavePlugin(newPlugin);
@@ -88,7 +90,7 @@ export const PluginModal: React.FC<PluginModalProps> = ({
             <div>
               <h2 className="text-lg font-bold text-white tracking-wide">Plugin Studio &amp; Library</h2>
               <p className="text-xs text-[#ffd6eb]/70">
-                5 active plugins per roleplay session (Affinity, Inventory, Weather, Dice, Style)
+                Independent, editable prompt rules; enable only the ones you want
               </p>
             </div>
           </div>
@@ -127,6 +129,7 @@ export const PluginModal: React.FC<PluginModalProps> = ({
                 <label className="font-bold text-white">Description</label>
                 <input
                   type="text"
+                  maxLength={240}
                   placeholder="What does this plugin do in chat?"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
@@ -135,10 +138,17 @@ export const PluginModal: React.FC<PluginModalProps> = ({
               </div>
 
               <div className="space-y-1">
-                <label className="font-bold text-white">Custom System Prompt Injection</label>
+                <label className="font-bold text-white" htmlFor="new-plugin-category">Category</label>
+                <select id="new-plugin-category" value={category} onChange={(event) => setCategory(event.target.value as typeof category)} className="w-full rounded-xl border border-[#ff3399]/40 bg-[#1e0818] px-3.5 py-2 text-xs text-white">
+                  <option value="immersion">Personality &amp; immersion</option><option value="analysis">Continuity &amp; story logic</option><option value="style">Writing style</option><option value="mechanics">Mechanics</option><option value="utility">Utility</option>
+                </select>
+              </div>
+              <div className="space-y-1">
+                <label className="font-bold text-white">Custom prompt</label>
                 <textarea
                   rows={4}
-                  placeholder="Directives injected into OpenRouter system prompt for every message..."
+                  maxLength={1200}
+                  placeholder="Short rules to combine with other enabled plugins..."
                   value={customPrompt}
                   onChange={(e) => setCustomPrompt(e.target.value)}
                   className="w-full bg-[#1e0818] border border-[#ff3399]/40 rounded-xl p-3 text-xs text-white resize-none font-mono"
@@ -163,13 +173,13 @@ export const PluginModal: React.FC<PluginModalProps> = ({
             </form>
           ) : (
             <div className="space-y-3">
-              <div className="flex items-center justify-between text-[11px] text-[#ffd6eb]/70 pb-1">
-                <span>Active Plugins ({plugins.filter((p) => p.enabled).length} / 5 Selected)</span>
-                <span>Each chat uses up to 5 plugins simultaneously</span>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] text-[#ffd6eb]/70 pb-1">
+                <span>Enabled plugins: {plugins.filter((p) => p.enabled).length} · prompts are combined compactly</span>
+                <input aria-label="Search plugins" value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} placeholder="Search plugin names or descriptions" className="w-full sm:w-64 rounded-xl border border-[#ff3399]/30 bg-[#1e0818] px-3 py-2 text-xs text-white placeholder:text-white/40" />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                {plugins.map((plugin) => (
+                {plugins.filter((plugin) => `${plugin.name} ${plugin.description} ${plugin.category}`.toLowerCase().includes(searchTerm.toLowerCase())).map((plugin) => (
                   <div
                     key={plugin.id}
                     className={`p-4 rounded-2xl border transition-all flex flex-col justify-between ${
@@ -193,6 +203,9 @@ export const PluginModal: React.FC<PluginModalProps> = ({
                         </div>
 
                         <button
+                          type="button"
+                          aria-pressed={plugin.enabled}
+                          aria-label={`${plugin.enabled ? 'Disable' : 'Enable'} ${plugin.name}`}
                           onClick={() => onTogglePlugin(plugin.id)}
                           className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all ${
                             plugin.enabled
@@ -204,9 +217,20 @@ export const PluginModal: React.FC<PluginModalProps> = ({
                         </button>
                       </div>
 
-                      <p className="text-xs text-[#ffd6eb]/80 leading-relaxed">
-                        {plugin.description}
-                      </p>
+                      <p className="text-xs text-[#ffd6eb]/80 leading-relaxed">{plugin.description}</p>
+                      {editingPluginId === plugin.id ? (
+                        <div className="space-y-2 pt-2">
+                          <label className="block font-bold text-white" htmlFor={`plugin-prompt-${plugin.id}`}>Editable prompt</label>
+                          <textarea id={`plugin-prompt-${plugin.id}`} maxLength={1200} rows={4} value={promptDraft} onChange={(event) => setPromptDraft(event.target.value)} className="w-full rounded-xl border border-[#ff3399]/40 bg-black/40 p-3 text-xs leading-relaxed text-white" />
+                          <p className="text-[10px] text-white/50">{promptDraft.length}/1200 characters · saved with app settings</p>
+                          <div className="flex gap-2">
+                            <button type="button" onClick={() => { onSavePlugin({ ...plugin, customPrompt: promptDraft.trim() }); setEditingPluginId(null); }} className="rounded-lg bg-emerald-600/80 px-3 py-2 font-bold text-white">Save prompt</button>
+                            <button type="button" onClick={() => setEditingPluginId(null)} className="rounded-lg bg-white/10 px-3 py-2 font-bold text-white">Cancel</button>
+                          </div>
+                        </div>
+                      ) : (
+                        <button type="button" onClick={() => { setEditingPluginId(plugin.id); setPromptDraft(plugin.customPrompt || ''); }} className="mt-2 text-left text-[11px] font-bold text-[#8AABF4] underline underline-offset-2">Edit prompt</button>
+                      )}
                     </div>
 
                     {plugin.badge && (
