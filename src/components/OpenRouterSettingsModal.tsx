@@ -78,6 +78,8 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   useEffect(() => { tabRefs.current[activeTab]?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' }); }, [activeTab]);
   const [testing, setTesting] = useState(false);
+  const [firebaseSigningIn, setFirebaseSigningIn] = useState(false);
+  const [firebaseSignInError, setFirebaseSignInError] = useState('');
 
   const [githubToken, setGithubToken] = useState(() => { try { return localStorage.getItem('plf_github_backup_token') || ''; } catch { return ''; } });
   const [rememberGitToken, setRememberGitToken] = useState(() => { try { return localStorage.getItem('plf_github_backup_token_remember') === 'true'; } catch { return false; } });
@@ -126,6 +128,28 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
   const handleTest = async () => {
     setTesting(true);
     try { await onTestConnection(apiKey.trim()); } finally { setTesting(false); }
+  };
+
+  const handleFirebaseSignIn = async () => {
+    if (firebaseSigningIn) return;
+    setFirebaseSigningIn(true);
+    setFirebaseSignInError('');
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      const code = (error as { code?: string })?.code || '';
+      if (code === 'auth/unauthorized-domain') {
+        setFirebaseSignInError('Firebase is not allowing this website to sign in yet. Add norainnoflowers2294-maker.github.io under Firebase Console → Authentication → Settings → Authorized domains.');
+      } else if (code === 'auth/operation-not-allowed') {
+        setFirebaseSignInError('Google sign-in is turned off in Firebase. Enable Google under Authentication → Sign-in method.');
+      } else if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
+        setFirebaseSignInError('The Google sign-in window was closed before sign-in finished. Try again.');
+      } else {
+        setFirebaseSignInError(error instanceof Error ? error.message : 'Google sign-in could not start. Check your connection and try again.');
+      }
+    } finally {
+      setFirebaseSigningIn(false);
+    }
   };
   const refreshModels = async () => {
     setModelsLoading(true);
@@ -557,11 +581,16 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
                       Sign in with Google to automatically back up all your roleplays, characters, lorebooks, and memories to your private Firebase cloud.
                     </p>
                     <button
-                      onClick={() => signInWithGoogle()}
-                      className="w-full py-2.5 bg-white text-black hover:bg-white/90 rounded-xl font-bold flex items-center justify-center space-x-2 shadow-lg"
+                      type="button"
+                      onClick={() => void handleFirebaseSignIn()}
+                      disabled={firebaseSigningIn}
+                      aria-busy={firebaseSigningIn}
+                      className="w-full py-2.5 bg-white text-black hover:bg-white/90 disabled:opacity-60 disabled:cursor-wait rounded-xl font-bold flex items-center justify-center space-x-2 shadow-lg"
                     >
-                      <span>Sign in with Google</span>
+                      {firebaseSigningIn && <Loader2 className="w-4 h-4 animate-spin" />}
+                      <span>{firebaseSigningIn ? 'Opening Google sign-in…' : 'Sign in with Google'}</span>
                     </button>
+                    {firebaseSignInError && <p role="alert" className="rounded-lg border border-rose-400/30 bg-rose-500/10 px-3 py-2 text-[11px] leading-relaxed text-rose-200">{firebaseSignInError}</p>}
                   </div>
                 )}
                 {firebaseSyncMessage && <p role="status" className="mt-3 rounded-lg bg-white/5 px-3 py-2 text-[11px] text-[#ffd6eb]/80">{firebaseSyncMessage}</p>}
