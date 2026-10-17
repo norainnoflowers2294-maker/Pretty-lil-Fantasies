@@ -84,12 +84,9 @@ export default function App() {
   }, [preferences.theme, preferences.accent, preferences.fontSize, preferences.headerFont, preferences.reducedMotion]);
   const [activeTab, setActiveTab] = useState<NavTab>('home');
   const [homeImage, setHomeImage] = useState<string>(() => {
+    if (data.appPreferences.homeImage) return data.appPreferences.homeImage;
     try { return localStorage.getItem('colorpop_home_picture_v1') || '/colorpop_hero.jpg'; } catch { return '/colorpop_hero.jpg'; }
   });
-  const handleSetHomeImage = (image: string) => {
-    setHomeImage(image);
-    try { localStorage.setItem('colorpop_home_picture_v1', image); } catch { window.alert('Could not save the home picture in this browser.'); }
-  };
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>('all');
   const [inChatMode, setInChatMode] = useState(false);
   const [activeChat, setActiveChat] = useState<Chat | null>(null);
@@ -190,6 +187,16 @@ export default function App() {
     });
   };
 
+  const handleSetHomeImage = (image: string) => {
+    setHomeImage(image);
+    const current = dataRef.current;
+    updateData({
+      ...current,
+      appPreferences: normalizePreferences({ ...current.appPreferences, homeImage: image }),
+    });
+    try { localStorage.setItem('colorpop_home_picture_v1', image); } catch { /* IndexedDB and Firebase now persist the selected image. */ }
+  };
+
   // Test OpenRouter Connection
   const testOpenRouter = async (customKey?: string) => {
     const key = customKey ?? data.openRouterConfig.apiKey;
@@ -253,7 +260,7 @@ export default function App() {
         const merged: StorageData = {
           ...current,
           deletedCharacterIds,
-          appPreferences: normalizePreferences({ ...(remote?.appPreferences || {}), ...current.appPreferences }),
+          appPreferences: normalizePreferences({ ...(remote?.appPreferences || {}), ...current.appPreferences, homeImage: current.appPreferences.homeImage || remote?.appPreferences?.homeImage || homeImage }),
           characters: mergeDefaultCharacters(mergeById(remote?.characters, current.characters), deletedCharacterIds),
           chats: mergeById(remote?.chats, current.chats),
           lorebooks: mergeById(remote?.lorebooks, current.lorebooks),
@@ -274,6 +281,7 @@ export default function App() {
         };
         dataRef.current = merged;
         setData(merged);
+        if (merged.appPreferences.homeImage) setHomeImage(merged.appPreferences.homeImage);
         const selected = merged.chats.find((item) => item.id === merged.activeChatId);
         if (selected) setActiveChat(selected);
         await saveLocalData(merged);
