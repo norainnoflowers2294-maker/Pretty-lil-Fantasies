@@ -6,6 +6,7 @@ import {defineConfig} from 'vite';
 export default defineConfig(() => {
   return {
     plugins: [react(), tailwindcss()],
+    build: { target: 'safari15' },
     // GitHub Pages serves this project under its current repository name.
     // Keep root paths for local development and other hosting providers.
     base: process.env.GITHUB_PAGES === 'true' ? '/Pretty-lil-Fantasies/' : '/',
