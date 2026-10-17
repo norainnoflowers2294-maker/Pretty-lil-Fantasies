@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Edit2, Upload, Save, RefreshCw, Trash2, File as FileIcon, Type, Palette, FileText, Image as ImageIcon } from 'lucide-react';
+import { Edit2, Upload, Save, RefreshCw, Trash2, File as FileIcon, Type, Palette, FileText } from 'lucide-react';
 import { auth, db, storage } from '../lib/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
@@ -114,11 +114,11 @@ export const ScratchpadView: React.FC<ScratchpadViewProps> = ({ onBack }) => {
     setData((prev) => ({ ...prev, palettes: prev.palettes.filter((p) => p.id !== id) }));
   };
 
-  const uploadFile = async (file: File, type: 'attachment' | 'font' | 'image'): Promise<{ url: string, name: string, type: string }> => {
+  const uploadFile = async (file: File): Promise<{ url: string, name: string, type: string }> => {
     const user = auth.currentUser;
     if (!user) throw new Error("You must be logged in to upload files.");
-    const id = `att_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-    const storageRef = ref(storage, `scratchpads/${user.uid}/${id}_${file.name}`);
+    const randomId = crypto.randomUUID();
+    const storageRef = ref(storage, `scratchpads/${user.uid}/${randomId}_${file.name}`);
     await uploadBytes(storageRef, file);
     const url = await getDownloadURL(storageRef);
     return { url, name: file.name, type: file.type || 'application/octet-stream' };
@@ -129,11 +129,12 @@ export const ScratchpadView: React.FC<ScratchpadViewProps> = ({ onBack }) => {
     if (!files.length) return;
     setIsUploading(true); setError(null);
     try {
-      const newAttachments: ScratchpadAttachment[] = [];
-      for (const file of files) {
-        const { url, name, type } = await uploadFile(file, 'attachment');
-        newAttachments.push({ id: `att_${Date.now()}`, url, name, type });
-      }
+      const newAttachments = await Promise.all(
+        files.map(async (file) => {
+          const result = await uploadFile(file);
+          return { id: `att_${crypto.randomUUID()}`, url: result.url, name: result.name, type: result.type };
+        })
+      );
       setData((prev) => ({ ...prev, attachments: [...prev.attachments, ...newAttachments] }));
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Upload failed.');
@@ -148,11 +149,12 @@ export const ScratchpadView: React.FC<ScratchpadViewProps> = ({ onBack }) => {
     if (!files.length) return;
     setIsUploading(true); setError(null);
     try {
-      const newFonts: ScratchpadFont[] = [];
-      for (const file of files) {
-        const { url, name } = await uploadFile(file, 'font');
-        newFonts.push({ id: `font_${Date.now()}`, url, name });
-      }
+      const newFonts = await Promise.all(
+        files.map(async (file) => {
+          const result = await uploadFile(file);
+          return { id: `font_${crypto.randomUUID()}`, url: result.url, name: result.name };
+        })
+      );
       setData((prev) => ({ ...prev, fonts: [...prev.fonts, ...newFonts] }));
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Font upload failed.');
@@ -167,7 +169,7 @@ export const ScratchpadView: React.FC<ScratchpadViewProps> = ({ onBack }) => {
     if (!files.length) return;
     setIsUploading(true); setError(null);
     try {
-      const { url } = await uploadFile(files[0], 'image');
+      const { url } = await uploadFile(files[0]);
       const newPalette: ScratchpadColorPalette = {
         id: `palette_${Date.now()}`,
         name: files[0].name,
@@ -350,15 +352,23 @@ export const ScratchpadView: React.FC<ScratchpadViewProps> = ({ onBack }) => {
                         <div className="flex-1">
                            <div className="flex flex-wrap gap-2 mb-2">
                              {palette.colors.map((color, idx) => (
-                               <div key={idx} className="flex flex-col items-center">
+                               <div key={`color-${palette.id}-${idx}`} className="flex flex-col items-center">
                                  <div className="w-8 h-8 rounded border border-white/20" style={{ backgroundColor: color }} />
                                  <input
                                    type="text"
                                    value={color}
                                    onChange={(e) => {
-                                     const newColors = [...palette.colors];
-                                     newColors[idx] = e.target.value;
-                                     setData((prev) => ({ ...prev, palettes: prev.palettes.map((p) => p.id === palette.id ? { ...p, colors: newColors } : p) }));
+                                     setData((prev) => {
+                                       const newPalettes = prev.palettes.map((p) => {
+                                         if (p.id === palette.id) {
+                                           const newColors = [...p.colors];
+                                           newColors[idx] = e.target.value;
+                                           return { ...p, colors: newColors };
+                                         }
+                                         return p;
+                                       });
+                                       return { ...prev, palettes: newPalettes };
+                                     });
                                    }}
                                    className="mt-1 w-16 bg-black/40 text-white text-[10px] text-center border-none rounded p-0.5 focus:outline-none"
                                  />
