@@ -103,7 +103,7 @@ export function PreferencesPanel({ value, onSave, onClose, onExportData, onImpor
   };
   return <div className="cp-preferences" role="dialog" aria-modal="true" aria-label="App settings">
     <div className="cp-preferences-card">
-      <header><div><small>PRETTY LITTLE FANTASIES</small><h2>Make it yours</h2></div><button type="button" onClick={requestClose} aria-label="Close app settings">×</button></header>
+      <header><button type="button" onClick={requestClose} aria-label="Back to settings">← Back</button><div><small>PRETTY LITTLE FANTASIES</small><h2>Make it yours</h2></div><button type="button" onClick={requestClose} aria-label="Close app settings">×</button></header>
       <nav aria-label="Settings sections">{groups.map(([title], i) => <button key={title} ref={(node) => { tabsRef.current[i] = node; }} type="button" aria-pressed={tab === i} onClick={() => setTab(i)}>{title}</button>)}</nav>
       <main tabIndex={0}><h3>{groups[tab][0]}</h3>
         {groups[tab][1].map((field) => {
