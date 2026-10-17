@@ -80,7 +80,7 @@ export const ColorPopHeader: React.FC<ColorPopHeaderProps> = ({
           <h1
             className="text-xl sm:text-2xl md:text-4xl font-black italic tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-[#ffffff] via-[#ff99cc] to-[#ff1a8c] drop-shadow-[0_0_25px_rgba(255,51,153,0.85)] filter"
             style={{
-              fontFamily: "'Playfair Display', cursive, serif",
+              fontFamily: "'Cooper Black', 'Cooper Std Black', 'Arial Rounded MT Bold', Georgia, serif",
               textShadow: '0 0 20px rgba(255, 77, 148, 0.7), 0 0 40px rgba(255, 0, 128, 0.4)',
             }}
           >
