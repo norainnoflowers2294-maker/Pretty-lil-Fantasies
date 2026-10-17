@@ -11,6 +11,7 @@ import { DEFAULT_PHONE_SYSTEM, type PhoneSystemState } from './phoneSystem';
 export interface StorageData {
   appPreferences: AppPreferences;
   characters: Character[];
+  deletedCharacterIds?: string[];
   lorebooks: Lorebook[];
   personas: Persona[];
   plugins: Plugin[];
@@ -82,8 +83,9 @@ export const DEFAULT_SAVED_MSGS = [
   },
 ];
 
-export function mergeDefaultCharacters(characters: Character[] | undefined): Character[] {
-  const saved = Array.isArray(characters) ? characters : [];
+export function mergeDefaultCharacters(characters: Character[] | undefined, deletedCharacterIds: string[] = []): Character[] {
+  const deletedIds = new Set(deletedCharacterIds);
+  const saved = (Array.isArray(characters) ? characters : []).filter((character) => !deletedIds.has(character.id));
   const savedIds = new Set(saved.map((character) => character.id));
   const savedNames = new Set(saved.map((character) => character.name.trim().toLocaleLowerCase()));
   const defaultsById = new Map(INITIAL_CHARACTERS.map((character) => [character.id, character]));
@@ -96,7 +98,9 @@ export function mergeDefaultCharacters(characters: Character[] | undefined): Cha
     return character;
   });
   const missingDefaults = INITIAL_CHARACTERS.filter((character) =>
-    !savedIds.has(character.id) && !savedNames.has(character.name.trim().toLocaleLowerCase())
+    !deletedIds.has(character.id) &&
+    !savedIds.has(character.id) &&
+    !savedNames.has(character.name.trim().toLocaleLowerCase())
   );
   return [...refreshedSaved, ...missingDefaults];
 }
@@ -117,6 +121,7 @@ function defaultLocalData(): StorageData {
   return {
     appPreferences: { ...DEFAULT_PREFERENCES },
     characters: INITIAL_CHARACTERS,
+    deletedCharacterIds: [],
     lorebooks: INITIAL_LOREBOOKS,
     personas: INITIAL_PERSONAS,
     plugins: INITIAL_PLUGINS,
@@ -133,9 +138,13 @@ function defaultLocalData(): StorageData {
 }
 
 function normalizeStoredData(parsed: any): StorageData {
+  const deletedCharacterIds = Array.isArray(parsed.deletedCharacterIds)
+    ? parsed.deletedCharacterIds.filter((id: unknown): id is string => typeof id === 'string')
+    : [];
   return {
     appPreferences: normalizePreferences(parsed.appPreferences),
-    characters: mergeDefaultCharacters(parsed.characters?.length ? parsed.characters : INITIAL_CHARACTERS),
+    deletedCharacterIds,
+    characters: mergeDefaultCharacters(parsed.characters?.length ? parsed.characters : INITIAL_CHARACTERS, deletedCharacterIds),
     lorebooks: parsed.lorebooks?.length ? parsed.lorebooks : INITIAL_LOREBOOKS,
     personas: parsed.personas?.length ? parsed.personas : INITIAL_PERSONAS,
     plugins: parsed.plugins?.length ? parsed.plugins : INITIAL_PLUGINS,
