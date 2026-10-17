@@ -278,7 +278,7 @@ export const PersonaCreatorView: React.FC<PersonaCreatorViewProps> = ({
           {/* Import JSON or embedded PNG card */}
           <label className="px-3 py-2 bg-white/10 hover:bg-white/20 text-[#ffd6eb] hover:text-white rounded-xl text-xs font-bold cursor-pointer transition-all flex items-center space-x-1.5 border border-white/10">
             <Upload className="w-3.5 h-3.5 text-cyan-400" />
-            <span>Import Card</span>
+            <span>Import PNG / JSON</span>
             <input
               type="file"
               accept=".json,.png"
