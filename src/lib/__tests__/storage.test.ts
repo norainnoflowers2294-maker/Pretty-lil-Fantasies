@@ -20,6 +20,13 @@ import { loadFromFirebase, loadLocalData, mergeDefaultCharacters, DEFAULT_OPENRO
 import { ADDITIONAL_CHARACTER_PLACEHOLDER_AVATARS, INITIAL_CHARACTERS, INITIAL_LOREBOOKS, INITIAL_PERSONAS, INITIAL_PLUGINS, INITIAL_CHATS } from '../defaultData';
 
 describe('mergeDefaultCharacters', () => {
+  it('keeps deleted default characters removed across normalization merges', () => {
+    const deleted = 'char_ryker_alexander_wilhelm';
+    const result = mergeDefaultCharacters([], [deleted]);
+    expect(result.some((character) => character.id === deleted)).toBe(false);
+    expect(result.some((character) => character.id === 'char_lucious')).toBe(true);
+  });
+
   it('replaces only the old generated placeholder avatar with the bundled portrait', () => {
     const ryker = INITIAL_CHARACTERS.find((character) => character.id === 'char_ryker_alexander_wilhelm')!;
     const previousPlaceholder = ADDITIONAL_CHARACTER_PLACEHOLDER_AVATARS[ryker.id];
