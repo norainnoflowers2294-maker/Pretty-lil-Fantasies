@@ -17,6 +17,7 @@ import {
   Check,
 } from 'lucide-react';
 import { Persona } from '../types/roleplay';
+import { parsePersonaFile } from '../utils/pngParser';
 
 interface PersonaLibraryViewProps {
   personas: Persona[];
@@ -126,6 +127,37 @@ export const PersonaLibraryView: React.FC<PersonaLibraryViewProps> = ({
     showToast(`Exported all ${personas.length} personas!`);
   };
 
+  const handleImportPNG = async (file: File) => {
+    if (!file) return;
+    try {
+      const card = await parsePersonaFile(file);
+      const now = new Date().toISOString();
+      const existing = card.id ? personas.find((persona) => persona.id === card.id) : undefined;
+      const fallbackName = file.name.replace(/\\.[^/.]+$/, '').replace(/[-_]/g, ' ').trim() || 'Imported Persona';
+      const imported: Persona = {
+        id: existing?.id || card.id || `persona_import_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+        name: String(card.name || fallbackName),
+        display_name: String(card.display_name || card.name || fallbackName),
+        nicknames: String(card.nicknames || ''),
+        occupation: String(card.occupation || ''),
+        avatar: String(card.avatar || '/colorpop_hero.jpg'),
+        description: String(card.description || ''),
+        appearance: String(card.appearance || ''),
+        backstory: String(card.backstory || ''),
+        speaking_style: String(card.speaking_style || ''),
+        traits: Array.isArray(card.traits) ? card.traits : [],
+        is_default: existing?.is_default || false,
+        favorite: existing?.favorite || false,
+        createdAt: existing?.createdAt || now,
+        updatedAt: now,
+      };
+      onSavePersona(imported);
+      showToast('Imported PNG persona card and saved it to your library.');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Could not read this persona PNG.');
+    }
+  };
+
   const handleImportJSON = (file: File) => {
     if (!file) return;
     const reader = new FileReader();
@@ -138,7 +170,9 @@ export const PersonaLibraryView: React.FC<PersonaLibraryViewProps> = ({
         importedArray.forEach((item: any) => {
           if (item && (item.name || item.full_name || item.display_name)) {
             const newP: Persona = {
-              id: item.id || `persona_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+              id: item.id && !personas.some((persona) => persona.id === item.id)
+                ? item.id
+                : `persona_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
               name: item.name || item.full_name || 'Imported Persona',
               display_name: item.display_name || item.name || item.full_name,
               nicknames: item.nicknames || '',
@@ -160,11 +194,16 @@ export const PersonaLibraryView: React.FC<PersonaLibraryViewProps> = ({
         });
 
         showToast(`Successfully imported ${count} persona(s)!`);
-      } catch (err) {
+      } catch {
         showToast('Invalid JSON file.');
       }
     };
     reader.readAsText(file);
+  };
+
+  const handleImportFile = (file: File) => {
+    if (file.name.toLowerCase().endsWith('.png')) void handleImportPNG(file);
+    else handleImportJSON(file);
   };
 
   return (
@@ -205,15 +244,19 @@ export const PersonaLibraryView: React.FC<PersonaLibraryViewProps> = ({
             <span>＋ Create Persona</span>
           </button>
 
-          {/* Import JSON */}
+          {/* Import persona PNG card or JSON profile */}
           <label className="px-3.5 py-2.5 bg-white/10 hover:bg-white/20 text-[#ffd6eb] hover:text-white rounded-xl text-xs font-bold cursor-pointer transition-all flex items-center space-x-1.5 border border-white/10">
             <Upload className="w-4 h-4 text-cyan-400" />
-            <span>Import JSON</span>
+            <span>Import PNG / JSON</span>
             <input
               type="file"
-              accept=".json"
+              accept=".png,.json,application/json,image/png"
               className="hidden"
-              onChange={(e) => e.target.files?.[0] && handleImportJSON(e.target.files[0])}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleImportFile(file);
+                e.target.value = '';
+              }}
             />
           </label>
 
