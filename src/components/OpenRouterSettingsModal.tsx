@@ -142,8 +142,12 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
         setFirebaseSignInError('Firebase is not allowing this website to sign in yet. Add norainnoflowers2294-maker.github.io under Firebase Console → Authentication → Settings → Authorized domains.');
       } else if (code === 'auth/operation-not-allowed') {
         setFirebaseSignInError('Google sign-in is turned off in Firebase. Enable Google under Authentication → Sign-in method.');
+      } else if (code === 'auth/popup-blocked') {
+        setFirebaseSignInError('Your browser blocked the Google sign-in window. Open Pretty Little Fantasies directly in Safari or Chrome, allow pop-ups for this site, and try again.');
       } else if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
         setFirebaseSignInError('The Google sign-in window was closed before sign-in finished. Try again.');
+      } else if (code === 'auth/network-request-failed') {
+        setFirebaseSignInError('Google sign-in could not reach Firebase. Check your internet connection and try again.');
       } else {
         setFirebaseSignInError(error instanceof Error ? error.message : 'Google sign-in could not start. Check your connection and try again.');
       }
