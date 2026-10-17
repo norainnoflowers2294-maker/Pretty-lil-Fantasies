@@ -27,11 +27,11 @@ describe('mergeDefaultCharacters', () => {
     expect(result.some((character) => character.id === 'char_lucious')).toBe(true);
   });
 
-  it('replaces only the old generated placeholder avatar with the bundled portrait', () => {
+  it('replaces only the old bundled portrait with the photoreal default', () => {
     const ryker = INITIAL_CHARACTERS.find((character) => character.id === 'char_ryker_alexander_wilhelm')!;
     const previousPlaceholder = ADDITIONAL_CHARACTER_PLACEHOLDER_AVATARS[ryker.id];
     const migrated = mergeDefaultCharacters([{ ...ryker, avatar: previousPlaceholder }]);
-    expect(migrated.find((character) => character.id === ryker.id)?.avatar).toBe('/characters/ryker.svg');
+    expect(migrated.find((character) => character.id === ryker.id)?.avatar).toBe(ryker.avatar);
 
     const customized = mergeDefaultCharacters([{ ...ryker, avatar: 'https://example.com/custom-ryker.png' }]);
     expect(customized.find((character) => character.id === ryker.id)?.avatar).toBe('https://example.com/custom-ryker.png');
