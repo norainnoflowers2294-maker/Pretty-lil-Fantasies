@@ -80,7 +80,7 @@ export default function App() {
     root.dataset.cpMotion = preferences.reducedMotion ? 'reduce' : 'normal';
     root.style.setProperty('--cp-accent', preferences.accent);
     root.style.setProperty('--cp-chat-size', `${preferences.fontSize}px`);
-    root.style.setProperty('--cp-heading-font', preferences.headerFont === 'serif' ? 'Georgia, serif' : preferences.headerFont === 'mono' ? 'ui-monospace, monospace' : 'system-ui, sans-serif');
+    root.style.setProperty('--cp-heading-font', preferences.headerFont === 'cooper' ? "'Cooper Black', 'Cooper Std Black', 'Arial Rounded MT Bold', Georgia, serif" : preferences.headerFont === 'serif' ? 'Georgia, serif' : preferences.headerFont === 'mono' ? 'ui-monospace, monospace' : 'system-ui, sans-serif');
   }, [preferences.theme, preferences.accent, preferences.fontSize, preferences.headerFont, preferences.reducedMotion]);
   const [activeTab, setActiveTab] = useState<NavTab>('home');
   const [homeImage, setHomeImage] = useState<string>(() => {
