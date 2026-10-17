@@ -170,9 +170,7 @@ export const PersonaLibraryView: React.FC<PersonaLibraryViewProps> = ({
         importedArray.forEach((item: any) => {
           if (item && (item.name || item.full_name || item.display_name)) {
             const newP: Persona = {
-              id: item.id && !personas.some((persona) => persona.id === item.id)
-                ? item.id
-                : `persona_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+              id: item.id || `persona_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
               name: item.name || item.full_name || 'Imported Persona',
               display_name: item.display_name || item.name || item.full_name,
               nicknames: item.nicknames || '',
