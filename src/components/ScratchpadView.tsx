@@ -33,13 +33,15 @@ export interface ScratchpadData {
   palettes: ScratchpadColorPalette[];
 }
 
+const defaultData: ScratchpadData = { text: '', attachments: [], fonts: [], palettes: [] };
+
 interface ScratchpadViewProps {
   onBack?: () => void;
 }
 
 type SubTab = 'notes' | 'fonts' | 'colors';
 
-export const ScratchpadView: React.FC<ScratchpadViewProps> = ({ onBack }) => {
+export const ScratchpadView: React.FC<ScratchpadViewProps> = () => {
   const [activeTab, setActiveTab] = useState<SubTab>('notes');
   const [data, setData] = useState<ScratchpadData>({
     text: '',
@@ -60,7 +62,8 @@ export const ScratchpadView: React.FC<ScratchpadViewProps> = ({ onBack }) => {
     try {
       const localData = localStorage.getItem('colorpop_scratchpad');
       if (localData) {
-        setData(JSON.parse(localData));
+        const parsed = JSON.parse(localData);
+        setData({ ...defaultData, ...parsed });
       }
     } catch (e) {
       console.error('Failed to parse local scratchpad data', e);
@@ -73,8 +76,9 @@ export const ScratchpadView: React.FC<ScratchpadViewProps> = ({ onBack }) => {
           const docSnap = await getDoc(docRef);
           if (docSnap.exists() && docSnap.data().scratchpadData) {
             const remoteData = docSnap.data().scratchpadData as ScratchpadData;
-            setData(remoteData);
-            localStorage.setItem('colorpop_scratchpad', JSON.stringify(remoteData));
+            const mergedData = { ...defaultData, ...remoteData };
+            setData(mergedData);
+            localStorage.setItem('colorpop_scratchpad', JSON.stringify(mergedData));
           }
         } catch (e: unknown) {
           console.error('Failed to fetch remote scratchpad data', e);
