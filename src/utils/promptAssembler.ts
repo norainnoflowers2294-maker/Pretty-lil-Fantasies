@@ -57,6 +57,8 @@ function formatCharacter(character: Character, index: number): string {
     character.tattoos?.length ? `Tattoos: ${character.tattoos.map(mark => [mark.location, mark.description].filter(Boolean).join(' — ')).join('; ')}` : '',
     character.description ? `Physical appearance: ${clean(character.description)}` : '',
     character.personality ? `Personality: ${clean(character.personality)}` : '',
+    character.learnedPreferences?.likes?.length ? `Confirmed likes (explicitly stated in dialogue): ${list(character.learnedPreferences.likes)}` : '',
+    character.learnedPreferences?.dislikes?.length ? `Confirmed dislikes (explicitly stated in dialogue): ${list(character.learnedPreferences.dislikes)}` : '',
     character.backstory ? `History and background: ${clean(character.backstory)}` : '',
     character.voiceDescription ? `Voice: ${clean(character.voiceDescription)}` : '',
     character.voiceTags?.length ? `Voice qualities: ${list(character.voiceTags)}` : '',
@@ -82,6 +84,11 @@ export function buildOpenRouterMessages(params: AssembleParams): OpenRouterApiMe
   if (preferences?.chatSystemPrompt?.trim()) systemParts.push(`[GLOBAL CHAT RULES FROM SETTINGS]\n${preferences.chatSystemPrompt.trim()}`);
 
   if (phoneContext.trim()) systemParts.push(phoneContext);
+  systemParts.push(`[SECRETS, RUMORS & KNOWLEDGE]\nCharacters may keep secrets and spread rumors through believable in-story channels. Track who witnessed or was told each fact. A rumor is not confirmed truth. Characters must not know private thoughts, whispered speech, hidden messages, or events they have not discovered. Never give Emmy/user undisclosed information unless their character learned it in the scene.`);
+  if (chat.whisperMode) {
+    const audience = (chat.whisperAudience || []).filter(Boolean);
+    systemParts.push(`[WHISPER MODE — PRIVATE AUDIENCE]\nThis exchange is whispered and only audible to: ${audience.length ? audience.join(', ') : 'the selected character(s) and {{user}}'}. Other characters cannot hear, react to, repeat, or learn the words unless they plausibly discover the whisper later. Do not describe {{user}} whispering or acting; leave their actions to the user.`);
+  }
 
   if (chat.socialMediaEnabled && socialMediaContext.trim()) {
     systemParts.push(socialMediaContext);

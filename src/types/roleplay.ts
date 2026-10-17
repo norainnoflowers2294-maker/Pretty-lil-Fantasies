@@ -48,6 +48,7 @@ export interface Character {
 
   // Personality & History
   personality: string; // Personality traits, temperament, habits, mannerisms, likes, dislikes (required)
+  learnedPreferences?: { likes: string[]; dislikes: string[]; evidence: string[] };
   backstory?: string;
 
   // Relationships & Family
@@ -178,6 +179,11 @@ export interface Chat {
   replyPointOfView?: 'character' | 'first_person' | 'third_person';
   replyMood?: 'story' | 'playful' | 'romantic' | 'dramatic' | 'cozy' | 'suspenseful' | 'comedic';
   creativity?: number;
+  whisperAudience?: string[];
+  whisperMode?: boolean;
+  unsentMessages?: Array<{ id: string; sender: string; content: string; createdAt: string }>;
+  flashbacks?: Array<{ id: string; content: string; createdAt: string }>;
+  continuityReports?: Array<{ id: string; content: string; createdAt: string }>;
   createdAt: string;
   updatedAt: string;
 }

@@ -387,15 +387,16 @@ export default function App() {
   };
 
   const handleSaveCharacter = (char: Character) => {
-    const exists = data.characters.find((c) => c.id === char.id);
+    const currentData = dataRef.current;
+    const exists = currentData.characters.find((c) => c.id === char.id);
     const updated = exists
-      ? data.characters.map((c) => (c.id === char.id ? char : c))
-      : [char, ...data.characters];
+      ? currentData.characters.map((c) => (c.id === char.id ? char : c))
+      : [char, ...currentData.characters];
     updateData({
-      ...data,
+      ...currentData,
       characters: updated,
       // Explicitly importing or saving a profile restores it after a prior deletion.
-      deletedCharacterIds: (data.deletedCharacterIds || []).filter((id) => id !== char.id),
+      deletedCharacterIds: (currentData.deletedCharacterIds || []).filter((id) => id !== char.id),
     });
   };
 
@@ -529,11 +530,12 @@ export default function App() {
   // Story Memory Handlers
   const handleSaveMemory = (memory: StoryMemory) => {
     const savedMemory: StoryMemory = { ...memory, updatedAt: new Date().toISOString(), deletedAt: undefined };
-    const existing = data.storyMemories || [];
+    const currentData = dataRef.current;
+    const existing = currentData.storyMemories || [];
     const updated = existing.some((item) => item.id === savedMemory.id)
       ? existing.map((item) => item.id === savedMemory.id ? savedMemory : item)
       : [savedMemory, ...existing];
-    updateData({ ...data, storyMemories: updated });
+    updateData({ ...currentData, storyMemories: updated });
   };
 
   const handleDeleteMemory = (id: string) => {
@@ -658,6 +660,8 @@ export default function App() {
           onUpdatePhoneSystem={(phoneSystem) => updateData({ ...dataRef.current, phoneSystem })}
           onOpenPhone={() => setIsPhoneOpen(true)}
           onUpdateChat={handleUpdateChat}
+          onSaveMemory={handleSaveMemory}
+          onUpdateCharacter={handleSaveCharacter}
           onSelectChat={handleSelectChat}
           onStartNewChat={handleStartNewChat}
           onBackToDashboard={() => setInChatMode(false)}
