@@ -17,7 +17,7 @@ mock.module('../firebase', () => ({
 import { doc, getDoc } from 'firebase/firestore';
 import { auth } from '../firebase';
 import { loadFromFirebase, loadLocalData, mergeDefaultCharacters, DEFAULT_OPENROUTER_CONFIG, DEFAULT_SUPABASE_CONFIG, DEFAULT_MEMORIES, DEFAULT_SAVED_MSGS } from '../storage';
-import { ADDITIONAL_CHARACTER_PLACEHOLDER_AVATARS, INITIAL_CHARACTERS, INITIAL_LOREBOOKS, INITIAL_PERSONAS, INITIAL_PLUGINS, INITIAL_CHATS } from '../defaultData';
+import { ADDITIONAL_CHARACTER_PLACEHOLDER_AVATARS, INITIAL_CHARACTERS, INITIAL_LOREBOOKS, INITIAL_PERSONAS, INITIAL_PLUGINS, INITIAL_CHATS, mergeDefaultPlugins } from '../defaultData';
 
 describe('mergeDefaultCharacters', () => {
   it('keeps deleted default characters removed across normalization merges', () => {
@@ -71,7 +71,7 @@ describe('loadLocalData', () => {
     expect(result.characters).toEqual(INITIAL_CHARACTERS);
     expect(result.lorebooks).toEqual(INITIAL_LOREBOOKS);
     expect(result.personas).toEqual(INITIAL_PERSONAS);
-    expect(result.plugins).toEqual(INITIAL_PLUGINS);
+    expect(result.plugins).toEqual(mergeDefaultPlugins(INITIAL_PLUGINS));
     expect(result.chats).toEqual(INITIAL_CHATS);
     expect(result.activeChatId).toBe(INITIAL_CHATS[0]?.id);
     expect(result.openRouterConfig).toEqual(DEFAULT_OPENROUTER_CONFIG);
@@ -107,7 +107,7 @@ describe('loadLocalData', () => {
     expect(result.characters).toEqual(INITIAL_CHARACTERS);
     expect(result.lorebooks).toEqual(INITIAL_LOREBOOKS);
     expect(result.personas).toEqual(INITIAL_PERSONAS);
-    expect(result.plugins).toEqual(INITIAL_PLUGINS);
+    expect(result.plugins).toEqual(mergeDefaultPlugins(INITIAL_PLUGINS));
     expect(result.chats).toEqual(INITIAL_CHATS);
   });
 
@@ -132,7 +132,7 @@ describe('loadLocalData', () => {
     expect(result.characters).toEqual([...customData.characters, ...INITIAL_CHARACTERS] as any);
     expect(result.lorebooks).toEqual(customData.lorebooks as any);
     expect(result.personas).toEqual(customData.personas as any);
-    expect(result.plugins).toEqual(customData.plugins as any);
+    expect(result.plugins).toEqual(mergeDefaultPlugins(customData.plugins as any));
     expect(result.chats).toEqual(customData.chats as any);
     expect(result.activeChatId).toBe('chat1');
     expect(result.openRouterConfig.apiKey).toBe('test-key');
