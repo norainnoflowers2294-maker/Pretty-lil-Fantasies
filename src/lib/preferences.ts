@@ -1,5 +1,5 @@
 export const DEFAULT_PREFERENCES = {
-  theme: 'colorpop', accent: '#ff007f', fontSize: 16, headerFont: 'sans',
+  theme: 'colorpop', accent: '#ff007f', fontSize: 16, headerFont: 'cooper',
   reducedMotion: false, compactMode: false, messageAnimations: true,
   chatSystemPrompt: '',
   responseLengthTarget: 'medium' as 'short' | 'medium' | 'long' | 'custom', customResponseWords: 180, dialogueBalance: 50,
@@ -14,7 +14,7 @@ export const DEFAULT_PREFERENCES = {
 };
 export type AppPreferences = typeof DEFAULT_PREFERENCES;
 const choices: Record<string, string[]> = {
-  theme: ['colorpop', 'light', 'dark'], headerFont: ['sans', 'serif', 'mono'],
+  theme: ['colorpop', 'light', 'dark'], headerFont: ['cooper', 'sans', 'serif', 'mono'],
   memoryDepth: ['light', 'balanced', 'deep'], narratorFrequency: ['quiet', 'balanced', 'active'],
   responseLengthTarget: ['short', 'medium', 'long', 'custom'],
   scenePacing: ['slow_burn', 'balanced', 'fast'], npcActivity: ['low', 'balanced', 'high'],
@@ -27,6 +27,7 @@ export function normalizePreferences(input: unknown): AppPreferences {
     const value = source[key];
     if (typeof value !== typeof fallback) continue;
     if (typeof fallback === 'boolean') result[key] = value;
+    else if (key === 'headerFont' && value === 'sans') result[key] = 'cooper';
     else if (choices[key] && choices[key].includes(value as string)) result[key] = value;
     else if (key === 'chatSystemPrompt' && typeof value === 'string') result[key] = value.slice(0, 6000);
     else if (key === 'accent' && /^#[0-9a-f]{6}$/i.test(value as string)) result[key] = value;
