@@ -4,6 +4,7 @@ import { resolveImageUrl } from '../utils/imageUrl';
 import React, { useState, useEffect, useRef } from 'react';
 import {
   X,
+  ArrowLeft,
   Wifi,
   AlertCircle,
   CheckCircle2,
@@ -287,7 +288,17 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-0 backdrop-blur-md animate-in fade-in duration-200 sm:p-4">
       <div className="relative flex h-[100dvh] max-h-[calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom))] w-full max-w-2xl flex-col overflow-hidden border-2 border-[#079AF0]/45 bg-[#140410] shadow-[0_0_50px_rgba(7,154,240,0.28)] sm:h-auto sm:max-h-[90dvh] sm:rounded-3xl">
         <div className="flex shrink-0 items-center justify-between border-b border-[#8AABF4]/30 bg-[#0d020b] px-4 py-4 sm:px-6">
-          <div className="flex items-center space-x-3 min-w-0">
+          <div className="flex items-center gap-2 min-w-0">
+            <button
+              type="button"
+              onClick={requestClose}
+              aria-label="Back to the app"
+              title="Back to the app"
+              className="flex min-h-11 shrink-0 items-center gap-1 rounded-xl px-2 text-[#ffd6eb]/80 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              <ArrowLeft className="h-5 w-5" />
+              <span className="hidden text-xs font-semibold sm:inline">Back</span>
+            </button>
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#079AF0] via-[#B12FA7] to-[#FF3B04] flex items-center justify-center text-white shadow-[0_0_15px_rgba(7,154,240,0.4)]">
               <Sparkles className="w-5 h-5" />
             </div>
