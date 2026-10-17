@@ -155,12 +155,20 @@ export const ADDITIONAL_CHARACTERS: Character[] = [
 ];
 
 
-export const ADDITIONAL_CHARACTER_PLACEHOLDER_AVATARS = Object.fromEntries(
-  ADDITIONAL_CHARACTERS.map((character) => [character.id, character.avatar])
-) as Record<string, string>;
+const legacyCharacterPortraits: Record<string, string> = {
+  char_ryker_alexander_wilhelm: '/characters/ryker.svg',
+  char_victor_wilhelm: '/characters/vic.svg',
+  char_abel_wilhelm: '/characters/abel.svg',
+  char_reese_wilhelm: '/characters/reese.svg',
+  char_kaylynn: '/characters/kaylynn.svg',
+  char_brielle_monroe: '/characters/bri.svg',
+  char_asha: '/characters/asha.svg',
+};
+
+export const ADDITIONAL_CHARACTER_PLACEHOLDER_AVATARS = legacyCharacterPortraits;
 
 const additionalCharacterPortraits: Record<string, string> = {
-  // Stable photoreal portrait URLs for the fictional cast; these are not depictions of named real people.
+  // Stable photoreal portrait photos for the fictional cast.
   char_ryker_alexander_wilhelm: 'https://randomuser.me/api/portraits/men/32.jpg',
   char_victor_wilhelm: 'https://randomuser.me/api/portraits/men/75.jpg',
   char_abel_wilhelm: 'https://randomuser.me/api/portraits/men/41.jpg',
