@@ -391,7 +391,12 @@ export default function App() {
     const updated = exists
       ? data.characters.map((c) => (c.id === char.id ? char : c))
       : [char, ...data.characters];
-    updateData({ ...data, characters: updated });
+    updateData({
+      ...data,
+      characters: updated,
+      // Explicitly importing or saving a profile restores it after a prior deletion.
+      deletedCharacterIds: (data.deletedCharacterIds || []).filter((id) => id !== char.id),
+    });
   };
 
   const handleDeleteCharacter = (characterId: string) => {
