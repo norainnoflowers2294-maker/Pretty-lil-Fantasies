@@ -114,6 +114,33 @@ export const ScratchpadView: React.FC<ScratchpadViewProps> = ({ onBack }) => {
     setData((prev) => ({ ...prev, palettes: prev.palettes.filter((p) => p.id !== id) }));
   };
 
+  const handlePaletteNameChange = (id: string, name: string) => {
+    setData((prev) => ({ ...prev, palettes: prev.palettes.map((p) => p.id === id ? { ...p, name } : p) }));
+  };
+
+  const handlePaletteColorChange = (id: string, index: number, color: string) => {
+    setData((prev) => ({
+      ...prev,
+      palettes: prev.palettes.map((p) => {
+        if (p.id !== id) return p;
+        const newColors = [...p.colors];
+        newColors[index] = color;
+        return { ...p, colors: newColors };
+      }),
+    }));
+  };
+
+  const handleAddPaletteColor = (id: string) => {
+    setData((prev) => ({
+      ...prev,
+      palettes: prev.palettes.map((p) => p.id === id ? { ...p, colors: [...p.colors, '#ffffff'] } : p),
+    }));
+  };
+
+  const handlePaletteNotesChange = (id: string, notes: string) => {
+    setData((prev) => ({ ...prev, palettes: prev.palettes.map((p) => p.id === id ? { ...p, notes } : p) }));
+  };
+
   const uploadFile = async (file: File): Promise<{ url: string, name: string, type: string }> => {
     const user = auth.currentUser;
     if (!user) throw new Error("You must be logged in to upload files.");
@@ -342,7 +369,7 @@ export const ScratchpadView: React.FC<ScratchpadViewProps> = ({ onBack }) => {
                       <input
                         type="text"
                         value={palette.name}
-                        onChange={(e) => setData((prev) => ({ ...prev, palettes: prev.palettes.map((p) => p.id === palette.id ? { ...p, name: e.target.value } : p) }))}
+                        onChange={(e) => handlePaletteNameChange(palette.id, e.target.value)}
                         className="bg-transparent border-none text-white font-semibold mb-3 focus:outline-none focus:ring-1 focus:ring-[#ff007f] rounded"
                       />
                       <div className="flex gap-4">
@@ -357,28 +384,13 @@ export const ScratchpadView: React.FC<ScratchpadViewProps> = ({ onBack }) => {
                                  <input
                                    type="text"
                                    value={color}
-                                   onChange={(e) => {
-                                     setData((prev) => {
-                                       const newPalettes = prev.palettes.map((p) => {
-                                         if (p.id === palette.id) {
-                                           const newColors = [...p.colors];
-                                           newColors[idx] = e.target.value;
-                                           return { ...p, colors: newColors };
-                                         }
-                                         return p;
-                                       });
-                                       return { ...prev, palettes: newPalettes };
-                                     });
-                                   }}
+                                   onChange={(e) => handlePaletteColorChange(palette.id, idx, e.target.value)}
                                    className="mt-1 w-16 bg-black/40 text-white text-[10px] text-center border-none rounded p-0.5 focus:outline-none"
                                  />
                                </div>
                              ))}
                              <button
-                               onClick={() => {
-                                 const newColors = [...palette.colors, '#ffffff'];
-                                 setData((prev) => ({ ...prev, palettes: prev.palettes.map((p) => p.id === palette.id ? { ...p, colors: newColors } : p) }));
-                               }}
+                               onClick={() => handleAddPaletteColor(palette.id)}
                                className="w-8 h-8 rounded border border-dashed border-[#ff99cc]/50 flex items-center justify-center text-[#ff99cc] hover:bg-white/5"
                              >
                                +
@@ -386,7 +398,7 @@ export const ScratchpadView: React.FC<ScratchpadViewProps> = ({ onBack }) => {
                            </div>
                            <textarea
                              value={palette.notes || ''}
-                             onChange={(e) => setData((prev) => ({ ...prev, palettes: prev.palettes.map((p) => p.id === palette.id ? { ...p, notes: e.target.value } : p) }))}
+                             onChange={(e) => handlePaletteNotesChange(palette.id, e.target.value)}
                              placeholder="Notes for this palette..."
                              className="w-full bg-black/20 border border-white/5 rounded p-2 text-xs text-[#ffd6eb] resize-none h-16 focus:outline-none focus:border-[#ff007f]/50"
                            />
