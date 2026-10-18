@@ -151,21 +151,21 @@ export default function App() {
 
   // Save immediately on-device, then serialize Firebase writes so older snapshots
   // cannot finish after and replace a newer conversation.
-  const updateData = (newData: StorageData) => {
+  const updateData = (newData: StorageData): Promise<boolean> => {
     dataRef.current = newData;
     setData(newData);
     const saveRevision = ++localSaveRevisionRef.current;
 
-    void saveLocalData(newData).then(() => {
-      if (saveRevision !== localSaveRevisionRef.current) return;
+    return saveLocalData(newData).then(() => {
+      if (saveRevision !== localSaveRevisionRef.current) return true;
       if (newData.appPreferences?.cloudSync === false) {
         firebaseSyncRevisionRef.current += 1;
         setFirebaseSyncMessage('Chats and app data are saved on this device. Firebase sync is turned off in App Settings.');
-        return;
+        return true;
       }
       if (!auth.currentUser) {
         setFirebaseSyncMessage('Chats and app data are saved on this device. Sign in under Settings → Firebase Cloud to back them up.');
-        return;
+        return true;
       }
       setFirebaseSyncMessage('Saving chats and app data to Firebase…');
       void enqueueFirebaseSync(newData).catch((error) => {
@@ -173,6 +173,7 @@ export default function App() {
           setFirebaseSyncMessage(`Firebase could not save the latest changes: ${error instanceof Error ? error.message : String(error)}`);
         }
       });
+      return true;
     }).catch((error) => {
       if (saveRevision === localSaveRevisionRef.current) {
         setFirebaseSyncMessage(`Could not save on this device: ${error instanceof Error ? error.message : String(error)}`);
@@ -184,6 +185,7 @@ export default function App() {
           }
         });
       }
+      return false;
     });
   };
 
@@ -395,18 +397,33 @@ export default function App() {
     if (activeChat) createChatForCharacterIds(activeChat.characterIds);
   };
 
-  const handleSaveCharacter = (char: Character) => {
+  const handleSaveCharacter = async (char: Character): Promise<boolean> => {
     const currentData = dataRef.current;
-    const exists = currentData.characters.find((c) => c.id === char.id);
+    const exists = currentData.characters.some((c) => c.id === char.id);
     const updated = exists
-      ? currentData.characters.map((c) => (c.id === char.id ? char : c))
+      ? currentData.characters.map((c) => (c.id === char.id ? { ...char, updatedAt: new Date().toISOString() } : c))
       : [char, ...currentData.characters];
-    updateData({
+    const nextData = {
       ...currentData,
       characters: updated,
       // Explicitly importing or saving a profile restores it after a prior deletion.
       deletedCharacterIds: (currentData.deletedCharacterIds || []).filter((id) => id !== char.id),
-    });
+    };
+
+    const savedLocally = await updateData(nextData);
+    if (!savedLocally) return false;
+
+    try {
+      const verified = await loadLocalDataAsync();
+      if (!verified.characters.some((character) => character.id === char.id)) {
+        setFirebaseSyncMessage('The character did not appear in the saved device data. Your editor draft is still available; please retry.');
+        return false;
+      }
+      return true;
+    } catch (error) {
+      setFirebaseSyncMessage(`The character could not be verified after saving: ${error instanceof Error ? error.message : String(error)}`);
+      return false;
+    }
   };
 
   const handleDeleteCharacter = (characterId: string) => {
@@ -500,9 +517,24 @@ export default function App() {
     updateData({ ...currentData, plugins });
   };
 
-  const handleSaveOpenRouterConfig = (cfg: OpenRouterConfig) => {
-    updateData({ ...data, openRouterConfig: cfg });
+  const handleSaveOpenRouterConfig = async (cfg: OpenRouterConfig): Promise<boolean> => {
+    const nextData = { ...dataRef.current, openRouterConfig: { ...cfg, apiKey: cfg.apiKey.trim() } };
+    const saved = await updateData(nextData);
+    if (!saved) return false;
+
+    try {
+      const persistedData = await loadLocalDataAsync();
+      if (persistedData.openRouterConfig?.apiKey !== nextData.openRouterConfig.apiKey) {
+        setFirebaseSyncMessage('OpenRouter settings were not confirmed in device storage. Please try saving again.');
+        return false;
+      }
+    } catch (error) {
+      setFirebaseSyncMessage(`Could not verify the OpenRouter settings save: ${error instanceof Error ? error.message : String(error)}`);
+      return false;
+    }
+
     testOpenRouter(cfg.apiKey);
+    return true;
   };
 
   const handleSavePreferences = (value: AppPreferences) => {
@@ -622,9 +654,8 @@ export default function App() {
       <CreateCharacterView
         existingCharacter={characterToEdit}
         existingCharactersList={data.characters}
-        onSaveCharacter={(savedChar) => {
-          handleSaveCharacter(savedChar);
-        }}
+        openRouterConfig={data.openRouterConfig}
+        onSaveCharacter={handleSaveCharacter}
         onBack={() => {
           setIsCreateCharacterOpen(false);
           setCharacterToEdit(null);

@@ -1082,7 +1082,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
       <div className="absolute inset-0 bg-gradient-to-b from-[#0d020b]/95 via-[#0d020b]/80 to-[#0d020b]/95 pointer-events-none" />
 
       {/* Top Chat Bar */}
-      <header className="relative px-3 sm:px-5 py-2.5 bg-[#140410]/95 backdrop-blur-md border-b border-[#ff3399]/40 flex items-center justify-between z-30 shadow-[0_0_25px_rgba(255,0,128,0.3)]">
+      <header className="relative px-3 sm:px-5 pb-2.5 bg-[#140410]/95 backdrop-blur-md border-b border-[#ff3399]/40 flex items-center justify-between z-30 shadow-[0_0_25px_rgba(255,0,128,0.3)]" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 0.625rem)' }}>
         <div className="flex items-center space-x-2 sm:space-x-3">
           <button
             type="button"
@@ -1123,10 +1123,10 @@ export const ChatView: React.FC<ChatViewProps> = ({
                 ? 'bg-[#ff007f] border-[#ff66b2] text-white shadow-[0_0_15px_rgba(255,0,128,0.8)] scale-105'
                 : 'bg-[#ff007f]/20 border-[#ff3399]/60 hover:bg-[#ff007f]/40 text-[#ffd6eb]'
             }`}
-            title="Toggle Dual Track Screen (Pops up Left & Right tracks)"
+            title="Open both chat drawers" aria-label="Open both chat drawers"
           >
             <Columns className="w-4 h-4 text-[#ff99cc]" />
-            <span className="hidden sm:inline">Dual Track Screen</span>
+            <span>Drawers</span>
           </button>
 
           {/* Active Characters */}
@@ -1525,7 +1525,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
                   return;
                 }
               }}
-              className="w-full bg-[#1e0818] border border-[#ff3399]/40 focus:border-[#ff3399] rounded-2xl px-4 py-3 text-xs sm:text-sm text-white placeholder-white/40 focus:outline-none resize-none shadow-inner"
+              className="w-full bg-[#1e0818] border border-[#ff3399]/40 focus:border-[#ff3399] rounded-2xl px-4 py-3 text-sm sm:text-base text-white placeholder-white/40 focus:outline-none resize-none shadow-inner"
             />
           </div>
 

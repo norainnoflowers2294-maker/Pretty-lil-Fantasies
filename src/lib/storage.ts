@@ -87,7 +87,6 @@ export function mergeDefaultCharacters(characters: Character[] | undefined, dele
   const deletedIds = new Set(deletedCharacterIds);
   const saved = (Array.isArray(characters) ? characters : []).filter((character) => !deletedIds.has(character.id));
   const savedIds = new Set(saved.map((character) => character.id));
-  const savedNames = new Set(saved.map((character) => character.name.trim().toLocaleLowerCase()));
   const defaultsById = new Map(INITIAL_CHARACTERS.map((character) => [character.id, character]));
   const refreshedSaved = saved.map((character) => {
     const defaultCharacter = defaultsById.get(character.id);
@@ -98,9 +97,7 @@ export function mergeDefaultCharacters(characters: Character[] | undefined, dele
     return character;
   });
   const missingDefaults = INITIAL_CHARACTERS.filter((character) =>
-    !deletedIds.has(character.id) &&
-    !savedIds.has(character.id) &&
-    !savedNames.has(character.name.trim().toLocaleLowerCase())
+    !deletedIds.has(character.id) && !savedIds.has(character.id)
   );
   return [...refreshedSaved, ...missingDefaults];
 }

@@ -18,7 +18,7 @@ interface CharacterModalProps {
   isOpen: boolean;
   onClose: () => void;
   characters: Character[];
-  onSaveCharacter: (char: Character) => void;
+  onSaveCharacter: (char: Character) => Promise<boolean> | boolean;
   onDeleteCharacter?: (characterId: string) => void;
   onStartChatWithCharacter: (char: Character) => void;
   onOpenCreateCharacter?: (characterToEdit?: Character | null) => void;
@@ -47,12 +47,15 @@ export const CharacterModal: React.FC<CharacterModalProps> = ({
       const parsed = await parseCharacterFile(file);
       const now = new Date().toISOString();
       const fallbackName = file.name.replace(/\\.[^/.]+$/, '').replace(/[-_]/g, ' ').trim() || 'Imported Character';
-      const matchingCharacter = characters.find((character) =>
-        character.name.trim().toLocaleLowerCase() === String(parsed.name || fallbackName).trim().toLocaleLowerCase()
-      );
+      const requestedId = typeof parsed.id === 'string' ? parsed.id.trim() : '';
+      const importedId = requestedId && !characters.some((character) => character.id === requestedId)
+        ? requestedId
+        : `char_import_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
       const imported = {
         ...parsed,
-        id: parsed.id || matchingCharacter?.id || `char_import_${Date.now()}`,
+        // Names are labels, not identity. Only reuse an imported ID when it is
+        // not already in use; otherwise create a separate library record.
+        id: importedId,
         name: String(parsed.name || fallbackName),
         avatar: String(parsed.avatar || '/colorpop_hero.jpg'),
         description: String(parsed.description || ''),
@@ -62,13 +65,16 @@ export const CharacterModal: React.FC<CharacterModalProps> = ({
         summary: String(parsed.summary || parsed.description || 'Imported character card'),
         mes_example: String(parsed.mes_example || ''),
         tags: Array.isArray(parsed.tags) ? parsed.tags : [],
-        createdAt: parsed.createdAt || matchingCharacter?.createdAt || now,
+        createdAt: parsed.createdAt || now,
         updatedAt: now,
       } as Character;
 
       // Save immediately so the imported card appears in the library without
       // requiring a second save step in the editor.
-      onSaveCharacter(imported);
+      const saved = await onSaveCharacter(imported);
+      if (saved === false) {
+        throw new Error('The imported character could not be verified in your saved library.');
+      }
       setSearch('');
       e.target.value = '';
     } catch (err) {
