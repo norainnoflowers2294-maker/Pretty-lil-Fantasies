@@ -163,6 +163,7 @@ export interface Chat {
   inventory?: string[];
   weather?: string;
   timeOfDay?: string;
+  timeCycleEnabled?: boolean;
   promptInstructions?: string;
   oocMode?: boolean;
   socialMediaEnabled?: boolean;
