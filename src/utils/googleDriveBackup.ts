@@ -5,13 +5,9 @@ interface DriveFile {
 }
 
 async function driveJson<T>(url: string, accessToken: string, init: RequestInit = {}): Promise<T> {
-  const response = await fetch(url, {
-    ...init,
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      ...(init.headers || {}),
-    },
-  });
+  const headers = new Headers(init.headers);
+  headers.set('Authorization', `Bearer ${accessToken}`);
+  const response = await fetch(url, { ...init, headers });
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
     const message = payload?.error?.message || `Google Drive returned HTTP ${response.status}.`;
