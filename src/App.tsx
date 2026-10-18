@@ -639,6 +639,7 @@ export default function App() {
       <CreateCharacterView
         existingCharacter={characterToEdit}
         existingCharactersList={data.characters}
+        openRouterConfig={data.openRouterConfig}
         onSaveCharacter={handleSaveCharacter}
         onBack={() => {
           setIsCreateCharacterOpen(false);
