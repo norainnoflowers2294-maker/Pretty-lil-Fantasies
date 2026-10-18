@@ -113,7 +113,7 @@ const RELATIONSHIP_OPTIONS = [
 interface CreateCharacterViewProps {
   existingCharacter?: Character | null;
   existingCharactersList: Character[];
-  onSaveCharacter: (character: Character) => void;
+  onSaveCharacter: (character: Character) => void | Promise<{ localSaved: boolean; firebaseSaved: boolean; message: string }>;
   onBack: () => void;
   onStartChat?: (character: Character) => void;
   onOpenLibrary?: () => void;
@@ -219,6 +219,8 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [createdSuccessChar, setCreatedSuccessChar] = useState<Character | null>(null);
+  const [characterSaveMessage, setCharacterSaveMessage] = useState('');
+  const [isSavingCharacter, setIsSavingCharacter] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const importInputRef = useRef<HTMLInputElement>(null);
@@ -448,7 +450,7 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
         : undefined;
 
     return {
-      id: existingCharacter?.id || `char_${Date.now()}`,
+      id: existingCharacter?.id || `char_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
       name: name.trim() || 'Draft Character',
       nicknames,
       age: age.trim(),
@@ -510,8 +512,9 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
     }
   };
 
-  const handleCreateCharacter = (e?: React.FormEvent) => {
+  const handleCreateCharacter = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+    if (isSavingCharacter) return;
     setValidationError(null);
 
     if (!name.trim()) {
@@ -526,17 +529,28 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
       return;
     }
 
+    setIsSavingCharacter(true);
     const completedChar = constructCharacterObject();
-    onSaveCharacter(completedChar);
-
-    // Clear saved draft since character is finalized
     try {
-      localStorage.removeItem(DRAFT_KEY);
-    } catch {}
+      const result = await onSaveCharacter(completedChar);
+      if (result && !result.localSaved && !result.firebaseSaved) {
+        setDraftStatus('unsaved');
+        showToast(`⚠ ${result.message}`);
+        return;
+      }
 
-    setDraftStatus('saved');
-    setCreatedSuccessChar(completedChar);
-    showToast('✨ Character successfully created and added to Library!');
+      try { localStorage.removeItem(DRAFT_KEY); } catch {}
+      setDraftStatus('saved');
+      setCharacterSaveMessage(result?.message || 'Saved to your Character Library.');
+      setCreatedSuccessChar(completedChar);
+      showToast(result?.message || 'Character successfully saved to your Library!');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'The character could not be saved.';
+      setDraftStatus('unsaved');
+      showToast(`⚠ ${message}`);
+    } finally {
+      setIsSavingCharacter(false);
+    }
   };
 
   // ---------------------------------------------------------------------------
@@ -2388,15 +2402,16 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
           {/* Create Character */}
           <button
             type="button"
-            onClick={() => handleCreateCharacter()}
-            className="flex-1 py-3 px-4 rounded-2xl font-bold text-xs sm:text-sm text-white transition-all shadow-xl active:scale-95 flex items-center justify-center space-x-2 border"
+            disabled={isSavingCharacter}
+            onClick={() => void handleCreateCharacter()}
+            className="flex-1 py-3 px-4 rounded-2xl font-bold text-xs sm:text-sm text-white transition-all shadow-xl active:scale-95 flex items-center justify-center space-x-2 border disabled:opacity-60"
             style={{
               background: `linear-gradient(135deg, ${PALETTE.hotPink}, ${PALETTE.deepRaspberry})`,
               borderColor: PALETTE.bubblegumPink,
             }}
           >
             <Sparkles className="w-4 h-4 text-[#FF7EB0]" />
-            <span>{existingCharacter ? 'Update Character' : 'Create Character'}</span>
+            <span>{isSavingCharacter ? 'Saving…' : existingCharacter ? 'Update Character' : 'Create Character'}</span>
           </button>
         </div>
       </footer>
@@ -2420,10 +2435,9 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
               <Check className="w-8 h-8" />
             </div>
 
-            <h3 className="text-lg font-bold text-white">Character Created!</h3>
+            <h3 className="text-lg font-bold text-white">{existingCharacter ? 'Character Updated!' : 'Character Saved!'}</h3>
             <p className="text-xs text-white/80">
-              <strong className="text-white">{createdSuccessChar.name}</strong> is now saved to your
-              Character Library and synced across sessions.
+              <strong className="text-white">{createdSuccessChar.name}</strong> — {characterSaveMessage}
             </p>
 
             <div className="flex flex-col gap-2 pt-2">

@@ -85,6 +85,74 @@ export async function signInWithGoogle() {
   return signInWithPopup(auth, provider);
 }
 
+interface GoogleDriveTokenResponse {
+  access_token?: string;
+  error?: string;
+  error_description?: string;
+}
+interface GoogleDriveTokenClient {
+  requestAccessToken: (options?: { prompt?: string }) => void;
+}
+interface GoogleIdentityServices {
+  accounts?: {
+    oauth2?: {
+      initTokenClient: (config: {
+        client_id: string;
+        scope: string;
+        callback: (response: GoogleDriveTokenResponse) => void;
+        error_callback?: (error: { type?: string; message?: string }) => void;
+      }) => GoogleDriveTokenClient;
+    };
+  };
+}
+
+async function loadGoogleIdentityServices(): Promise<GoogleIdentityServices> {
+  const browserWindow = window as Window & { google?: GoogleIdentityServices };
+  if (browserWindow.google?.accounts?.oauth2?.initTokenClient) return browserWindow.google;
+  await new Promise<void>((resolve, reject) => {
+    const existing = document.querySelector<HTMLScriptElement>('script[src="https://accounts.google.com/gsi/client"]');
+    if (existing) {
+      existing.addEventListener('load', () => resolve(), { once: true });
+      existing.addEventListener('error', () => reject(new Error('Google sign-in could not load. Check your connection and try again.')), { once: true });
+      if ((window as Window & { google?: GoogleIdentityServices }).google?.accounts?.oauth2?.initTokenClient) resolve();
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('Google sign-in could not load. Check your connection and try again.'));
+    document.head.appendChild(script);
+  });
+  const services = (window as Window & { google?: GoogleIdentityServices }).google;
+  if (!services?.accounts?.oauth2?.initTokenClient) throw new Error('Google Drive sign-in is unavailable in this browser.');
+  return services;
+}
+
+export async function signInWithGoogleDrive(): Promise<{ accessToken: string }> {
+  const services = await loadGoogleIdentityServices();
+  return new Promise((resolve, reject) => {
+    try {
+      const tokenClient = services.accounts!.oauth2!.initTokenClient({
+        client_id: firebaseConfig.oAuthClientId,
+        scope: 'https://www.googleapis.com/auth/drive.file',
+        callback: (response) => {
+          if (response.error || !response.access_token) {
+            reject(new Error(response.error_description || response.error || 'Google did not grant Drive access. Please try again.'));
+            return;
+          }
+          resolve({ accessToken: response.access_token });
+        },
+        error_callback: (error) => reject(new Error(error.message || 'Google Drive sign-in did not finish.')),
+      });
+      tokenClient.requestAccessToken({ prompt: 'consent select_account' });
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
 export async function logOutFirebase() {
   return signOut(auth);
 }
