@@ -59,7 +59,14 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
 
 export async function testConnection(): Promise<boolean> {
   try {
-    await getDocFromServer(doc(db, 'test', 'connection'));
+    // Wait until Firebase has restored any saved session. Never probe a
+    // forbidden test path: the app rules intentionally allow each user to
+    // read only their own backup document.
+    await auth.authStateReady();
+    const user = auth.currentUser;
+    if (!user) return false;
+
+    await getDocFromServer(doc(db, 'users', user.uid));
     return true;
   } catch (error) {
     if (error instanceof Error && error.message.includes('the client is offline')) {
