@@ -10,7 +10,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ColorPopHeader } from './components/ColorPopHeader';
 import { TopNavPill, NavTab } from './components/TopNavPill';
 import { AppDrawers } from './components/AppDrawers';
-import { ColorPopHero } from './components/ColorPopHero';
+import { DailyPromptHub } from './components/DailyPromptHub';
+import { BotStudioModal } from './components/BotStudioModal';
 import { ActionCards } from './components/ActionCards';
 import { CategoryPills, CategoryFilter } from './components/CategoryPills';
 import { RecentChatsSection } from './components/RecentChatsSection';
@@ -119,6 +120,7 @@ export default function App() {
   const [isWalletOpen, setIsWalletOpen] = useState(false);
   const [isPhoneOpen, setIsPhoneOpen] = useState(false);
   const [isYouTubePlayerOpen, setIsYouTubePlayerOpen] = useState(false);
+  const [isCreatorBotOpen, setIsCreatorBotOpen] = useState(false);
   const [walletView, setWalletView] = useState<'dashboard' | 'activity'>('dashboard');
 
   // Persona Page & Creator Mode
@@ -407,21 +409,21 @@ export default function App() {
     }
   };
 
-  const createChatForCharacterIds = (characterIds: string[]) => {
+  const createChatForCharacterIds = (characterIds: string[], options?: { personaId?: string; scenario?: string; title?: string }) => {
     const currentData = dataRef.current;
     const selectedCharacters = characterIds
       .map((id) => currentData.characters.find((character) => character.id === id))
       .filter((character): character is Character => Boolean(character));
     if (!selectedCharacters.length) return;
 
-    const activePersona = currentData.personas.find((persona) => persona.is_default) || currentData.personas[0];
+    const activePersona = currentData.personas.find((persona) => persona.id === options?.personaId) || currentData.personas.find((persona) => persona.is_default) || currentData.personas[0];
     const matchingChats = currentData.chats.filter((existing) =>
       existing.characterIds.length === selectedCharacters.length &&
       selectedCharacters.every((character) => existing.characterIds.includes(character.id))
     );
     const characterNames = selectedCharacters.map((character) => character.name);
     const baseTitle = characterNames.join(' & ');
-    const title = matchingChats.length ? `${baseTitle} · Chat ${matchingChats.length + 1}` : baseTitle;
+    const title = options?.title || (matchingChats.length ? `${baseTitle} · Chat ${matchingChats.length + 1}` : baseTitle);
     const now = new Date().toISOString();
     const chat: Chat = {
       id: `chat_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
@@ -430,7 +432,7 @@ export default function App() {
       personaId: activePersona?.id || 'persona_siren',
       lorebookIds: currentData.lorebooks.slice(0, 3).map((lorebook) => lorebook.id),
       pluginIds: currentData.plugins.slice(0, 5).map((plugin) => plugin.id),
-      scenario: selectedCharacters[0].scenario || 'A new story in the Pretty Little Fantasies universe.',
+      scenario: options?.scenario || selectedCharacters[0].scenario || 'A new story in the Pretty Little Fantasies universe.',
       bgImage: selectedCharacters[0].avatar || '/penthouse.jpg',
       relationshipScore: 88,
       replyLength: currentData.appPreferences.responseLengthTarget === 'custom' ? 'custom' : currentData.appPreferences.responseLengthTarget,
@@ -464,6 +466,29 @@ export default function App() {
     updateData({ ...currentData, chats: [chat, ...currentData.chats], activeChatId: chat.id });
     setActiveChat(chat);
     setInChatMode(true);
+  };
+
+  const handleStartDailyPrompt = (characterIds: string[], personaId: string, scenario: string, title: string) => {
+    createChatForCharacterIds(characterIds, { personaId, scenario, title });
+  };
+
+  const handleStartDedicatedBot = (kind: 'horoscope' | 'chatgpt') => {
+    const current = dataRef.current;
+    const id = kind === 'chatgpt' ? 'dedicated_chatgpt' : 'dedicated_horoscope';
+    const name = kind === 'chatgpt' ? 'ChatGPT' : 'Horoscope Guide';
+    const existing = current.characters.find((character) => character.id === id);
+    const now = new Date().toISOString();
+    const botCharacter: Character = existing || {
+      id, name, age: 'Timeless', avatar: '/colorpop_hero.jpg', description: 'A dedicated in-app assistant bot.',
+      personality: kind === 'chatgpt' ? 'Helpful, clear, curious, and practical.' : 'Warm, reflective, playful, and astrology-inspired.',
+      backstory: 'A dedicated helper available from the home dashboard.', scenario: kind === 'chatgpt' ? 'A friendly assistant chat for questions, planning, and brainstorming.' : 'A daily horoscope companion for zodiac reflections and story inspiration.',
+      first_mes: kind === 'chatgpt' ? 'Hi! I’m ChatGPT. What would you like help with?' : 'Welcome, stargazer. What sign or question should we explore today?',
+      summary: kind === 'chatgpt' ? 'General purpose AI assistant.' : 'Daily horoscope and astrology companion.', mes_example: '', tags: ['Dedicated Bot'],
+      system_prompt: kind === 'chatgpt' ? 'You are ChatGPT, a helpful general-purpose assistant. Answer the user directly and clearly; you are not a roleplay character.' : 'You are a friendly horoscope guide. Offer astrology as reflective entertainment, not certainty. Ask for a zodiac sign when needed.',
+      createdAt: now, updatedAt: now,
+    };
+    if (!existing) updateData({ ...current, characters: [botCharacter, ...current.characters] });
+    createChatForCharacterIds([botCharacter.id], { scenario: botCharacter.scenario, title: name });
   };
 
   const handleStartChatWithCharacter = (char: Character) => {
@@ -1098,30 +1123,12 @@ export default function App() {
         ) : (
           <>
             {/* 3. Luxury Hero Banner + Quick Links 12-Jewel Grid */}
-            <ColorPopHero
-              heroImage={homeImage}
-              onOpenGallery={() => setActiveTab('gallery')}
-              onQuickAction={(id) => {
-                if (id === 'characters') setActiveTab('characters');
-                else if (id === 'lorebooks') setIsLoreModalOpen(true);
-                else if (id === 'plugins') setIsPluginModalOpen(true);
-                else if (id === 'settings') setIsSettingsOpen(true);
-                else if (id === 'gallery') setActiveTab('gallery');
-                else if (id === 'templates' || id === 'loreberry') handleOpenCreateCharacterPage(null);
-              }}
-              onOpenCharacterModal={() => handleOpenCreateCharacterPage(null)}
-              onOpenLorebookModal={() => setIsLoreModalOpen(true)}
-              onOpenPersonaModal={() => {
-                setActiveTab('personas');
-                setIsPersonaCreatorOpen(false);
-                setPersonaToEdit(null);
-              }}
-              onOpenChats={() => {
-                setActiveTab('chats');
-                setInChatMode(false);
-              }}
-              onOpenPlugins={() => setIsPluginModalOpen(true)}
-              onOpenSettings={() => setIsSettingsOpen(true)}
+            <DailyPromptHub
+              characters={data.characters}
+              personas={data.personas}
+              onPlay={handleStartDailyPrompt}
+              onStartBot={handleStartDedicatedBot}
+              onOpenCreator={() => setIsCreatorBotOpen(true)}
             />
 
             {/* 4. Glowing 4 Action Cards */}
@@ -1182,6 +1189,15 @@ export default function App() {
           </>
         )}
       </main>
+
+      <BotStudioModal
+        isOpen={isCreatorBotOpen}
+        config={data.openRouterConfig}
+        onClose={() => setIsCreatorBotOpen(false)}
+        onSaveCharacter={handleSaveCharacter}
+        onSaveLorebook={handleSaveLorebook}
+        onSavePersona={handleSavePersona}
+      />
 
       {/* DUAL TRACK SCREEN OVERLAY (Pops up and slides over from both sides) */}
       <DualTrackOverlay
