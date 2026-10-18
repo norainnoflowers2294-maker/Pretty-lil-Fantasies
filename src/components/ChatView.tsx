@@ -55,6 +55,7 @@ import { buildOpenRouterMessages } from '../utils/promptAssembler';
 import { getSlashCommandSuggestions, parseSlashCommand, type SlashCommand } from '../lib/slashCommands';
 import { DualTrackOverlay } from './DualTrackOverlay';
 import { ChatSettingsPanel } from './ChatSettingsPanel';
+import { StoryWorldPanel } from './StoryWorldPanel';
 import { addPhoneThreadMessage, type PhoneSystemState } from '../lib/phoneSystem';
 import { applyExplicitPreferences, makeStoryBibleEntry } from '../lib/storyFeatures';
 
@@ -263,6 +264,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
   const [savedSuccessMsg, setSavedSuccessMsg] = useState<string | null>(null);
   const [commandNotice, setCommandNotice] = useState<string | null>(null);
   const [isChatSettingsOpen, setIsChatSettingsOpen] = useState(false);
+  const [isStoryWorldOpen, setIsStoryWorldOpen] = useState(false);
   const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(null);
   const [elevenLabsApiKey, setElevenLabsApiKey] = useState(() => {
     try { return typeof window !== 'undefined' ? window.localStorage.getItem('plf_elevenlabs_api_key') || '' : ''; } catch { return ''; }
@@ -1260,6 +1262,9 @@ export const ChatView: React.FC<ChatViewProps> = ({
           <button type="button" onClick={onOpenYouTubePlayer} className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-pink-200 transition-colors" title="Open YouTube scrolling playlist" aria-label="Open YouTube playlist">
             <Music2 className="w-4 h-4" />
           </button>
+          <button type="button" onClick={() => setIsStoryWorldOpen(true)} className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-pink-200 transition-colors" title="Weather, day and night, story branches" aria-label="Story world controls">
+            <CloudMoon className="w-4 h-4" />
+          </button>
           <button type="button" onClick={() => setIsChatSettingsOpen(true)} className="hidden sm:inline-flex p-2 rounded-xl bg-white/10 hover:bg-white/20 text-pink-200 transition-colors" title="Chat reply settings" aria-label="Chat reply settings">
             <SlidersHorizontal className="w-4 h-4" />
           </button>
@@ -1282,6 +1287,27 @@ export const ChatView: React.FC<ChatViewProps> = ({
           />
         </div>
       </header>
+
+      {isStoryWorldOpen && <StoryWorldPanel
+        chat={chat}
+        onClose={() => setIsStoryWorldOpen(false)}
+        onSave={(updatedChat) => onUpdateChat(updatedChat)}
+        onCreateBranch={(direction) => {
+          const suffix = Date.now().toString(36);
+          const branch = {
+            ...chat,
+            id: `${chat.id}-branch-${suffix}`,
+            title: `${chat.title || 'Story'} · Branch`,
+            messages: [...chat.messages],
+            promptInstructions: [chat.promptInstructions?.trim(), `STORY BRANCH: Continue this alternate path from the conversation so far. New direction: ${direction}. Do not overwrite or contradict the original chat branch.`].filter(Boolean).join('\n\n'),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
+          onUpdateChat(branch);
+          setIsStoryWorldOpen(false);
+          onSelectChat(branch.id);
+        }}
+      />}
 
       {isChatSettingsOpen && <ChatSettingsPanel
         chat={chat}
