@@ -35,13 +35,13 @@ export const StoryWorldPanel: React.FC<Props> = ({ chat, onSave, onCreateBranch,
   const saveWorldState = (next: LivingWorldState) => onSave({ ...chat, livingWorld: next, updatedAt: new Date().toISOString() });
   const addLore = () => {
     if (!loreTitle.trim() || !loreEntry.trim()) return;
-    saveWorldState({ ...world, lore: [...world.lore, { id: `lore:${Date.now()}`, title: loreTitle.trim(), category: 'other', entry: loreEntry.trim(), updatedAt: new Date().toISOString() }].slice(-120) });
+    saveWorldState({ ...world, lore: [...world.lore, { id: `lore:${Date.now()}`, title: loreTitle.trim(), category: 'other' as const, entry: loreEntry.trim(), updatedAt: new Date().toISOString() }].slice(-120) });
     setLoreTitle('');
     setLoreEntry('');
   };
   const addRumor = () => {
     if (!rumorDraft.trim()) return;
-    saveWorldState({ ...world, rumors: [...world.rumors, { id: `rumor:${Date.now()}`, text: rumorDraft.trim(), truth: 'unknown', believers: [], createdAt: new Date().toISOString() }].slice(-120) });
+    saveWorldState({ ...world, rumors: [...world.rumors, { id: `rumor:${Date.now()}`, text: rumorDraft.trim(), truth: 'unknown' as const, believers: [], createdAt: new Date().toISOString() }].slice(-120) });
     setRumorDraft('');
   };
   const weatherLabel = useMemo(() => weather === 'Clear' ? 'Clear skies' : `${intensity} ${weather.toLowerCase()}`, [weather, intensity]);
