@@ -701,6 +701,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
       onUpdateChat({
         ...updatedChat,
         messages: [...updatedMessages, replyMessage],
+        timeOfDay: updatedChat.timeCycleEnabled ? advanceStoryTime(updatedChat.timeOfDay) : updatedChat.timeOfDay,
         updatedAt: new Date().toISOString(),
       });
       if (!assistantWasTagged && !updatedChat.oocMode) {
