@@ -73,3 +73,36 @@ export async function saveBackupToGoogleDrive(data: unknown, accessToken: string
   }
   return result as DriveFile;
 }
+
+/** Creates or updates one private journal backup file in the app's Drive backup folder. */
+export async function saveJournalToGoogleDrive(pages: unknown, accessToken: string): Promise<DriveFile> {
+  const folderId = await getOrCreateBackupFolder(accessToken);
+  const name = 'Pretty_Little_Fantasies_Digital_Junk_Journal.json';
+  const query = encodeURIComponent(`name='${name}' and '${folderId}' in parents and trashed=false`);
+  const existing = await driveJson<DriveFileList>(
+    `https://www.googleapis.com/drive/v3/files?q=${query}&pageSize=1&fields=files(id,name,webViewLink)`,
+    accessToken,
+  );
+  const contents = JSON.stringify({ app: 'Pretty Little Fantasies', kind: 'digital-junk-journal', updatedAt: new Date().toISOString(), pages }, null, 2);
+  const file = existing.files?.[0];
+  if (file?.id) {
+    return driveJson<DriveFile>(
+      `https://www.googleapis.com/upload/drive/v3/files/${encodeURIComponent(file.id)}?uploadType=media&fields=id,name,webViewLink`,
+      accessToken,
+      { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: contents },
+    );
+  }
+
+  const metadata = JSON.stringify({ name, mimeType: 'application/json', parents: [folderId] });
+  const boundary = 'plf_journal_boundary_2026';
+  const multipart = [
+    `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${metadata}`,
+    `--${boundary}\r\nContent-Type: application/json\r\n\r\n${contents}`,
+    `--${boundary}--`,
+  ].join('\r\n');
+  return driveJson<DriveFile>(
+    'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink',
+    accessToken,
+    { method: 'POST', headers: { 'Content-Type': `multipart/related; boundary=${boundary}` }, body: multipart },
+  );
+}
