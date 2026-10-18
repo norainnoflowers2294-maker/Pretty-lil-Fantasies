@@ -517,9 +517,24 @@ export default function App() {
     updateData({ ...currentData, plugins });
   };
 
-  const handleSaveOpenRouterConfig = (cfg: OpenRouterConfig) => {
-    updateData({ ...data, openRouterConfig: cfg });
+  const handleSaveOpenRouterConfig = async (cfg: OpenRouterConfig): Promise<boolean> => {
+    const nextData = { ...dataRef.current, openRouterConfig: { ...cfg, apiKey: cfg.apiKey.trim() } };
+    const saved = await updateData(nextData);
+    if (!saved) return false;
+
+    try {
+      const persistedData = await loadLocalDataAsync();
+      if (persistedData.openRouterConfig?.apiKey !== nextData.openRouterConfig.apiKey) {
+        setFirebaseSyncMessage('OpenRouter settings were not confirmed in device storage. Please try saving again.');
+        return false;
+      }
+    } catch (error) {
+      setFirebaseSyncMessage(`Could not verify the OpenRouter settings save: ${error instanceof Error ? error.message : String(error)}`);
+      return false;
+    }
+
     testOpenRouter(cfg.apiKey);
+    return true;
   };
 
   const handleSavePreferences = (value: AppPreferences) => {
