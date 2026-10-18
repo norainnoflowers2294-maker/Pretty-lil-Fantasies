@@ -15,6 +15,7 @@ import { ActionCards } from './components/ActionCards';
 import { CategoryPills, CategoryFilter } from './components/CategoryPills';
 import { RecentChatsSection } from './components/RecentChatsSection';
 import { ChatsLibraryView } from './components/ChatsLibraryView';
+import { CharacterMarketplaceView } from './components/CharacterMarketplaceView';
 import { SocialMediaView } from './components/SocialMediaView';
 import { ChatView } from './components/ChatView';
 import { YouTubePlaylistPlayer } from './components/YouTubePlaylistPlayer';
@@ -1020,6 +1021,12 @@ export default function App() {
             onToggleChat={(enabled) => {
               if (activeChat) handleUpdateChat({ ...activeChat, socialMediaEnabled: enabled, updatedAt: new Date().toISOString() });
             }}
+          />
+        ) : activeTab === 'marketplace' ? (
+          <CharacterMarketplaceView
+            characters={data.characters}
+            onInstall={handleSaveCharacter}
+            onBack={() => setActiveTab('characters')}
           />
         ) : activeTab === 'chats' ? (
           <ChatsLibraryView chats={data.chats} characters={data.characters} onOpenChat={handleSelectChat} />
