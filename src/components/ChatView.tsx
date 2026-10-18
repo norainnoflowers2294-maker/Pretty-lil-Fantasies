@@ -83,9 +83,9 @@ function checkGeneratedReply(
 
   for (const name of userNames) {
     const escapedName = escapeRegex(name);
-    const actionAfterName = new RegExp('\\b' + escapedName + '\\b\\s+(?:' + ACTION_VERBS + ')\\b', 'i');
     const dialogueLabel = new RegExp('(?:^|\\n)\\s*(?:[*_]*' + escapedName + '[*_]*|\\[?' + escapedName + '\\]?)\\s*[:—-]', 'i');
-    if (actionAfterName.test(response) || dialogueLabel.test(response)) {
+    // Explicit user-labeled dialogue is the only strong signal for this retry heuristic.
+    if (dialogueLabel.test(response)) {
       violations.push('The reply appears to speak or act for ' + name + '.');
     }
   }
