@@ -35,6 +35,8 @@ import {
   Copy,
   ChevronLeft,
   ChevronRight,
+  Wallet,
+  DollarSign,
 } from 'lucide-react';
 import {
   Chat,
@@ -1475,10 +1477,10 @@ export const ChatView: React.FC<ChatViewProps> = ({
 
       {/* Chat Input Bar */}
       <div className="relative z-20 p-3 sm:p-4 bg-[#140410]/95 backdrop-blur-md border-t border-[#ff3399]/40">
-        {lastModelUsed && <p className="mx-auto mb-2 max-w-4xl break-all text-[10px] text-[#ffd6eb]/55">Last reply routed through OpenRouter · {lastModelUsed.model}{lastModelUsed.provider ? ` · ${lastModelUsed.provider}` : ''}</p>}
-      <div className="max-w-4xl mx-auto mb-2 flex items-center gap-2 overflow-x-auto whitespace-nowrap [scrollbar-width:none]">
+        {lastModelUsed && <div className="mx-auto mb-2 max-w-4xl overflow-hidden whitespace-nowrap text-[10px] text-[#ffd6eb]/55" aria-label={`Last reply routed through OpenRouter · ${lastModelUsed.model}${lastModelUsed.provider ? ` · ${lastModelUsed.provider}` : ''}`}><marquee scrollAmount={1} scrollDelay={50}>Last reply routed through OpenRouter · {lastModelUsed.model}{lastModelUsed.provider ? ` · ${lastModelUsed.provider}` : ''}</marquee></div>}
+      <div className="max-w-4xl mx-auto mb-2 flex items-center gap-1.5 overflow-x-auto whitespace-nowrap [scrollbar-width:none]">
           <span className="shrink-0 text-[9px] font-bold uppercase tracking-wider text-[#ffd6eb]/50">Quick</span>
-          <button type="button" aria-pressed={textMode} title="Text mode saves messages in this chat’s phone thread" onClick={() => setTextMode((enabled) => !enabled)} className={`min-h-11 shrink-0 rounded-full border px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-colors ${textMode ? 'bg-[#00877E] border-[#37B6A5] shadow-[0_0_14px_rgba(55,182,165,0.35)]' : 'bg-[#0B168C] border-[#8AABF4] hover:bg-[#079AF0]'}`}>
+          <button type="button" aria-pressed={textMode} title="Text mode saves messages in this chat’s phone thread" onClick={() => setTextMode((enabled) => !enabled)} className={`min-h-10 shrink-0 rounded-full border px-3 py-2 text-[11px] font-bold text-white shadow-sm transition-colors ${textMode ? 'bg-[#00877E] border-[#37B6A5] shadow-[0_0_14px_rgba(55,182,165,0.35)]' : 'bg-[#0B168C] border-[#8AABF4] hover:bg-[#079AF0]'}`}>
             Text{textMode ? ' ✓' : ''}
           </button>
           {[
@@ -1512,7 +1514,9 @@ export const ChatView: React.FC<ChatViewProps> = ({
             ['Cash App', '/cashapp', 'bg-[#FE0088] border-[#FC76AA] hover:bg-[#B40061]'],
             ['Read Aloud', '/tts', 'bg-[#DE0A60] border-[#FC76AA] hover:bg-[#B12FA7]'],
           ].map(([label, command, colorClass]) => (
-            <button key={command} type="button" disabled={loading} onClick={() => command.startsWith('/') ? runQuickCommand(command) : void handleChatQuickAction(command)} className={`min-h-11 shrink-0 rounded-full border px-3.5 py-2.5 text-xs font-bold text-white shadow-sm transition-colors ${colorClass} disabled:opacity-40`}>
+            <button key={command} type="button" disabled={loading} onClick={() => command.startsWith('/') ? runQuickCommand(command) : void handleChatQuickAction(command)} className={`min-h-10 shrink-0 rounded-full border px-2.5 py-2 text-[11px] font-bold text-white shadow-sm transition-colors ${colorClass} disabled:opacity-40`}>
+              {command === '/cash' && <Wallet className="mr-1 inline h-3.5 w-3.5" aria-hidden="true" />}
+              {command === '/cashapp' && <DollarSign className="mr-1 inline h-3.5 w-3.5" aria-hidden="true" />}
               {label}
             </button>
           ))}
