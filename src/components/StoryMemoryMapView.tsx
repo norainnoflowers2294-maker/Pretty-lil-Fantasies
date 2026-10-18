@@ -18,6 +18,7 @@ const categoryOptions: Array<{ id: StoryMemoryCategory; label: string }> = [
   { id: 'relationship', label: 'Relationship' }, { id: 'milestone', label: 'Milestone' }, { id: 'place', label: 'Place' },
 ];
 const localDate = (value?: string) => {
+  if (value && /^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
   const date = value ? new Date(value) : new Date();
   if (Number.isNaN(date.getTime())) return new Date().toISOString().slice(0, 10);
   return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
@@ -88,7 +89,7 @@ export const StoryMemoryMapView: React.FC<Props> = ({ memories, characters, chat
       : [...current, { id: person.id, name: person.name, relationship: person.relationship, characterId: person.characterId }]);
   };
   const formatDate = (value?: string) => {
-    const date = value && /^\\d{4}-\\d{2}-\\d{2}$/.test(value) ? new Date(`${value}T12:00:00`) : new Date(value || '');
+    const date = value && /^\d{4}-\d{2}-\d{2}$/.test(value) ? new Date(`${value}T12:00:00`) : new Date(value || '');
     return Number.isNaN(date.getTime()) ? 'Date not set' : date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
