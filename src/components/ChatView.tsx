@@ -6,7 +6,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import {
   Send,
   Sparkles,
-  ArrowLeft,
+  Home,
   Settings,
   SlidersHorizontal,
   Heart,
@@ -1174,14 +1174,16 @@ export const ChatView: React.FC<ChatViewProps> = ({
             <PanelRight className="w-4 h-4" />
           </button>
 
-          {/* Back to Dashboard */}
+          {/* Dedicated Home button */}
           <button
+            type="button"
             onClick={onBackToDashboard}
-            className="p-2 rounded-xl bg-white/10 hover:bg-[#ff007f] text-white transition-all flex items-center space-x-1.5 shadow"
-            title="Back to Dashboard"
+            aria-label="Go to Home"
+            className="flex shrink-0 items-center gap-1.5 rounded-xl border border-[#ff66b2]/50 bg-[#ff007f]/25 px-2.5 py-2 text-white shadow-[0_0_12px_rgba(255,0,128,.2)] transition-all hover:bg-[#ff007f]/50"
+            title="Go to Home"
           >
-            <ArrowLeft className="w-4 h-4" />
-            <span className="text-xs font-bold hidden md:inline">Dashboard</span>
+            <Home className="h-4 w-4" />
+            <span className="text-xs font-bold">Home</span>
           </button>
 
           {/* DUAL TRACK SCREEN TOGGLE (Slide Over Both Sides) */}
