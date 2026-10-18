@@ -3,6 +3,8 @@ name: Deploy ColorPop to GitHub Pages
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -24,8 +26,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
       - name: Install dependencies
         run: npm install --no-audit --no-fund
+      - name: Type-check
+        run: npm run lint
+      - name: Run tests
+        run: bun test
       - name: Build ColorPop
         run: npm run build
         env:
@@ -38,6 +46,7 @@ jobs:
           path: dist
 
   deploy:
+    if: github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
