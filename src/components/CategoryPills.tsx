@@ -74,7 +74,7 @@ export const CategoryPills: React.FC<CategoryPillsProps> = ({
                 </div>
 
                 <span
-                  className={`text-[11px] font-semibold transition-colors ${
+                  className={`text-xs font-semibold transition-colors ${
                     isActive ? 'text-white drop-shadow-[0_0_6px_#ff007f]' : 'text-[#ffd6eb]/70 group-hover:text-white'
                   }`}
                 >

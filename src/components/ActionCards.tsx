@@ -87,7 +87,7 @@ export const ActionCards: React.FC<ActionCardsProps> = ({
               <h3 className="text-xl font-black text-white tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
                 {card.title}
               </h3>
-              <p className="text-[10px] tracking-wider font-extrabold uppercase text-white/80">
+              <p className="text-xs tracking-wider font-extrabold uppercase text-white/80">
                 {card.subtitle}
               </p>
             </div>
