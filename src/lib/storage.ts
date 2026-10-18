@@ -336,7 +336,7 @@ export async function syncToFirebase(data: StorageData): Promise<void> {
       socialWorld: data.socialWorld || DEFAULT_SOCIAL_WORLD,
       phoneSystem: data.phoneSystem || DEFAULT_PHONE_SYSTEM,
       journalPages: data.journalPages || [],
-      openRouterConfig, data.openRouterConfig || DEFAULT_OPENROUTER_CONFIG,
+      openRouterConfig: data.openRouterConfig || DEFAULT_OPENROUTER_CONFIG,
       supabaseConfig: data.supabaseConfig || DEFAULT_SUPABASE_CONFIG,
       updatedAt: new Date().toISOString(),
     }, user.uid)) as Record<string, unknown>;
