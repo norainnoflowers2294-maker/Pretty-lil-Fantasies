@@ -25,12 +25,13 @@ export const StoryWorldPanel: React.FC<Props> = ({ chat, onSave, onCreateBranch,
   });
   const [intensity, setIntensity] = useState(() => /heavy|intense|severe/i.test(chat.weather || '') ? 'Heavy' : /light|mild/i.test(chat.weather || '') ? 'Light' : 'Steady');
   const [direction, setDirection] = useState('');
+  const [autoCycle, setAutoCycle] = useState(Boolean(chat.timeCycleEnabled));
   const [branching, setBranching] = useState(false);
   const weatherLabel = useMemo(() => weather === 'Clear' ? 'Clear skies' : `${intensity} ${weather.toLowerCase()}`, [weather, intensity]);
 
   const saveWorld = (nextHour = hour, nextWeather = weatherLabel) => {
     setHour(nextHour);
-    onSave({ ...chat, timeOfDay: `${formatTime(nextHour)} · ${timePhase(nextHour)}`, weather: nextWeather, updatedAt: new Date().toISOString() });
+    onSave({ ...chat, timeOfDay: `${formatTime(nextHour)} · ${timePhase(nextHour)}`, weather: nextWeather, timeCycleEnabled: autoCycle, updatedAt: new Date().toISOString() });
   };
   const advance = (amount: number) => {
     const next = (hour + amount + 24) % 24;
@@ -68,8 +69,12 @@ export const StoryWorldPanel: React.FC<Props> = ({ chat, onSave, onCreateBranch,
             <div className="flex items-center justify-between rounded-xl bg-white/10 px-3 py-2"><span className="text-sm">{formatTime(hour)} <span className="text-white/60">· {timePhase(hour)}</span></span><span aria-label={timePhase(hour)} className="text-xl">{hour >= 6 && hour < 19 ? '☀️' : '🌙'}</span></div>
             <input aria-label="Set story time" type="range" min="0" max="23" value={hour} onChange={(event) => { const next = Number(event.target.value); setHour(next); saveWorld(next); }} className="mt-3 w-full accent-pink-400" />
             <div className="mt-2 flex justify-between text-[10px] text-white/55"><span>12 AM</span><span>6 AM</span><span>12 PM</span><span>6 PM</span><span>11 PM</span></div>
+            <label className="mt-3 flex cursor-pointer items-center gap-2 rounded-xl border border-white/25 bg-white/10 p-3 text-xs text-white/80">
+              <input type="checkbox" checked={autoCycle} onChange={(event) => { const enabled = event.target.checked; setAutoCycle(enabled); onSave({ ...chat, timeCycleEnabled: enabled, updatedAt: new Date().toISOString() }); }} className="accent-pink-400" />
+              Advance one hour after each AI reply
+            </label>
             <div className="mt-3 flex gap-2">
-              <button type="button" onClick={() => advance(-1)} className="inline-flex flex-1 items-center justify-center gap-1 rounded-xl border border-white/35 bg-white/10 px-3 py-2 text-xs hover:bg-white/20"><Minus className="h-3.5 w-3.5" />Back 1 hour</button>
+              <button type="button" onClick={() => advance(-1) className="inline-flex flex-1 items-center justify-center gap-1 rounded-xl border border-white/35 bg-white/10 px-3 py-2 text-xs hover:bg-white/20"><Minus className="h-3.5 w-3.5" />Back 1 hour</button>
               <button type="button" onClick={() => advance(1)} className="inline-flex flex-1 items-center justify-center gap-1 rounded-xl border border-white/35 bg-white/10 px-3 py-2 text-xs hover:bg-white/20"><Plus className="h-3.5 w-3.5" />Advance 1 hour</button>
             </div>
           </section>
