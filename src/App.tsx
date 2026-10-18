@@ -1194,6 +1194,11 @@ export default function App() {
         isOpen={isCreatorBotOpen}
         config={data.openRouterConfig}
         onClose={() => setIsCreatorBotOpen(false)}
+        onSaved={(target) => {
+          if (target === 'character') setActiveTab('characters');
+          else if (target === 'persona') { setActiveTab('personas'); setIsPersonaCreatorOpen(false); setPersonaToEdit(null); }
+          else { setIsLoreModalOpen(true); }
+        }}
         onSaveCharacter={handleSaveCharacter}
         onSaveLorebook={handleSaveLorebook}
         onSavePersona={handleSavePersona}
