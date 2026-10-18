@@ -25,3 +25,151 @@ body {
     padding-top: calc(env(safe-area-inset-top, 0px) + 0.75rem);
   }
 }
+
+
+/* Aether glass reskin: visual styling only, with existing layout and spacing preserved. */
+:root {
+  color-scheme: dark;
+  --aether-pink: #f20aa8;
+  --aether-pink-light: #ff53d2;
+  --aether-violet: #7f28eb;
+  --aether-glass: rgba(244, 237, 255, .24);
+  --aether-glass-strong: rgba(244, 237, 255, .36);
+  --aether-glass-border: rgba(255, 255, 255, .54);
+  --aether-ink: #170d25;
+}
+
+html,
+body,
+#root {
+  background-color: #10091b;
+}
+
+body {
+  color: #fff;
+  background-image:
+    radial-gradient(ellipse at 88% 8%, rgba(144, 28, 244, .48), transparent 34%),
+    radial-gradient(ellipse at 4% 24%, rgba(229, 25, 153, .25), transparent 35%),
+    radial-gradient(ellipse at 73% 58%, rgba(83, 28, 173, .34), transparent 38%),
+    radial-gradient(ellipse at 15% 91%, rgba(190, 36, 133, .2), transparent 34%),
+    linear-gradient(135deg, #090711 0%, #171023 44%, #10091b 100%);
+  background-attachment: fixed;
+}
+
+#root {
+  color: #fff;
+  background: transparent;
+}
+
+/* Frosted surfaces keep their original dimensions and positions. */
+#root [class*="backdrop-blur"],
+#root [class*="rounded-"][class*="bg-[#"] {
+  background-color: var(--aether-glass) !important;
+  border-color: var(--aether-glass-border) !important;
+  box-shadow:
+    0 14px 36px rgba(4, 0, 12, .32),
+    inset 0 1px 0 rgba(255, 255, 255, .6),
+    inset 0 -1px 0 rgba(255, 255, 255, .16) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(155%);
+  backdrop-filter: blur(24px) saturate(155%);
+}
+
+/* Glossy hot-pink actions and selected controls. */
+#root button[class*="from-[#ff"],
+#root a[class*="from-[#ff"],
+#root [class*="cp-primary"],
+#root button[aria-pressed="true"] {
+  background: linear-gradient(110deg, #d90091 0%, #ff27b9 52%, #ed0b9d 100%) !important;
+  color: #fff !important;
+  border-color: rgba(255, 210, 248, .9) !important;
+  box-shadow:
+    0 0 18px rgba(255, 15, 171, .62),
+    0 8px 22px rgba(52, 0, 44, .34),
+    inset 0 1px 0 rgba(255, 255, 255, .66) !important;
+  text-shadow: 0 1px 2px rgba(70, 0, 56, .55);
+}
+
+#root button[class*="rounded-full"][class*="bg-[#"],
+#root button[class*="rounded-full"][class*="backdrop-blur"] {
+  background-color: rgba(250, 244, 255, .26) !important;
+  border-color: rgba(255, 255, 255, .6) !important;
+  color: #fff !important;
+  box-shadow: 0 5px 18px rgba(13, 4, 24, .25), inset 0 1px 0 rgba(255, 255, 255, .72) !important;
+}
+
+#root button {
+  transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+#root button:active {
+  transform: scale(.98);
+}
+
+/* Keep form controls readable while giving them the same translucent finish. */
+#root input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+#root textarea,
+#root select {
+  background-color: rgba(255, 255, 255, .18) !important;
+  border-color: rgba(255, 255, 255, .5) !important;
+  color: #fff !important;
+  -webkit-backdrop-filter: blur(18px) saturate(145%);
+  backdrop-filter: blur(18px) saturate(145%);
+}
+
+#root input::placeholder,
+#root textarea::placeholder {
+  color: rgba(255, 255, 255, .74) !important;
+}
+
+#root option {
+  background: #21152e;
+  color: #fff;
+}
+
+/* Preserve the app's existing dialogs and panels, recolored as glass. */
+.cp-preferences {
+  background: rgba(10, 5, 18, .54) !important;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+.cp-preferences-card {
+  background: linear-gradient(140deg, rgba(247, 239, 255, .32), rgba(135, 96, 167, .25) 58%, rgba(55, 20, 87, .42)) !important;
+  border-color: rgba(255, 255, 255, .62) !important;
+  box-shadow: 0 18px 70px rgba(5, 0, 14, .48), inset 0 1px 0 rgba(255, 255, 255, .62) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(155%);
+  backdrop-filter: blur(28px) saturate(155%);
+}
+.cp-preferences header {
+  background: rgba(255, 255, 255, .15) !important;
+  border-color: rgba(255, 255, 255, .35) !important;
+}
+.cp-preferences nav {
+  border-color: rgba(255, 255, 255, .35) !important;
+}
+.cp-preferences button[aria-pressed="true"],
+.cp-preferences .cp-primary {
+  background: linear-gradient(110deg, #d90091, #ff27b9 52%, #ed0b9d) !important;
+  border-color: rgba(255, 255, 255, .8) !important;
+  box-shadow: 0 0 18px rgba(255, 15, 171, .52), inset 0 1px 0 rgba(255, 255, 255, .6) !important;
+}
+.cp-preferences button:not([aria-pressed="true"]):not(.cp-primary) {
+  background: rgba(255, 255, 255, .18) !important;
+  border-color: rgba(255, 255, 255, .42) !important;
+}
+.cp-preferences select {
+  background: rgba(255, 255, 255, .18) !important;
+  color: #fff !important;
+}
+.cp-preferences option {
+  background: #21152e;
+  color: #fff;
+}
+
+/* Coordinated pink scrollbars without changing scroll behavior. */
+* {
+  scrollbar-color: rgba(255, 83, 210, .68) rgba(255, 255, 255, .1);
+}
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(#ff53d2, #7f28eb);
+  border-radius: 999px;
+}
