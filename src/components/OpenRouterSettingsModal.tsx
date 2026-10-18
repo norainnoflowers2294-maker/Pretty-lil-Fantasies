@@ -32,7 +32,7 @@ interface OpenRouterSettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
   config: OpenRouterConfig;
-  onSaveConfig: (cfg: OpenRouterConfig) => void;
+  onSaveConfig: (cfg: OpenRouterConfig) => Promise<boolean | void> | boolean | void;
   activeChat?: Chat;
   onUpdateChat?: (chat: Chat) => void;
   onImportBackup?: (data: unknown) => void;
@@ -79,6 +79,8 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   useEffect(() => { tabRefs.current[activeTab]?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' }); }, [activeTab]);
   const [testing, setTesting] = useState(false);
+  const [savingConfig, setSavingConfig] = useState(false);
+  const [configSaveError, setConfigSaveError] = useState('');
   const [firebaseSigningIn, setFirebaseSigningIn] = useState(false);
   const [firebaseSignInError, setFirebaseSignInError] = useState('');
 
@@ -209,19 +211,32 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
     return matchesQuery && matchesCategory;
   });
 
-  const handleSave = () => {
-    onSaveConfig({
-      ...config,
-      apiKey: apiKey.trim(),
-      model: model.trim(),
-      temperature,
-      maxTokens,
-      topP,
-      frequencyPenalty,
-      presencePenalty,
-      supportedParameters,
-    });
-    onClose();
+  const handleSave = async () => {
+    if (savingConfig) return;
+    setSavingConfig(true);
+    setConfigSaveError('');
+    try {
+      const saved = await onSaveConfig({
+        ...config,
+        apiKey: apiKey.trim(),
+        model: model.trim(),
+        temperature,
+        maxTokens,
+        topP,
+        frequencyPenalty,
+        presencePenalty,
+        supportedParameters,
+      });
+      if (saved === false) {
+        setConfigSaveError('Could not confirm that your OpenRouter settings were saved. Please try again.');
+        return;
+      }
+      onClose();
+    } catch (error) {
+      setConfigSaveError(error instanceof Error ? error.message : 'Could not save your OpenRouter settings. Please try again.');
+    } finally {
+      setSavingConfig(false);
+    }
   };
 
   const handleGitPush = async () => {
@@ -712,9 +727,10 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
             </button>
             <button
               onClick={handleSave}
-              className="min-h-11 rounded-xl bg-gradient-to-r from-[#B12FA7] to-[#079AF0] px-5 py-2 text-white font-bold text-xs shadow-[0_0_15px_rgba(7,154,240,0.35)] transition-all"
+              disabled={savingConfig}
+              className="min-h-11 rounded-xl bg-gradient-to-r from-[#B12FA7] to-[#079AF0] px-5 py-2 text-white font-bold text-xs shadow-[0_0_15px_rgba(7,154,240,0.35)] transition-all disabled:opacity-60"
             >
-              Save Settings
+              {savingConfig ? 'Saving…' : 'Save Settings'}
             </button>
           </div>
         </div>
