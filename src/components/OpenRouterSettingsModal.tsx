@@ -19,7 +19,8 @@ import {
   LogOut,
 } from 'lucide-react';
 import { OpenRouterConfig, ConnectionDiagnostic, Chat } from '../types/roleplay';
-import { signInWithGoogle, logOutFirebase } from '../lib/firebase';
+import { signInWithGoogle, signInWithGoogleDrive, logOutFirebase } from '../lib/firebase';
+import { saveBackupToGoogleDrive } from '../utils/googleDriveBackup';
 import { User } from 'firebase/auth';
 import { saveGitHubDataBackup } from '../utils/githubBackup';
 import { fetchOpenRouterModels, sendOpenRouterChatDetailed, type OpenRouterModelInfo } from '../lib/openrouter';
@@ -41,6 +42,7 @@ interface OpenRouterSettingsModalProps {
   firebaseUser: User | null;
   firebaseSyncMessage?: string;
   firebaseLastSync?: string;
+  onSyncFirebase: () => Promise<void>;
 }
 
 export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = ({
@@ -57,6 +59,7 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
   firebaseUser,
   firebaseSyncMessage = '',
   firebaseLastSync = '',
+  onSyncFirebase,
 }) => {
   const [showPreferences, setShowPreferences] = useState(false);
   const [frequencyPenalty, setFrequencyPenalty] = useState(config.frequencyPenalty);
@@ -75,12 +78,15 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
   const [testingModel, setTestingModel] = useState(false);
   const [modelTestResult, setModelTestResult] = useState('');
 
-  const [activeTab, setActiveTab] = useState<'openrouter' | 'firebase' | 'github'>('openrouter');
+  const [activeTab, setActiveTab] = useState<'openrouter' | 'firebase' | 'drive' | 'github'>('openrouter');
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   useEffect(() => { tabRefs.current[activeTab]?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' }); }, [activeTab]);
   const [testing, setTesting] = useState(false);
   const [firebaseSigningIn, setFirebaseSigningIn] = useState(false);
   const [firebaseSignInError, setFirebaseSignInError] = useState('');
+  const [firebaseSyncing, setFirebaseSyncing] = useState(false);
+  const [driveBackupSaving, setDriveBackupSaving] = useState(false);
+  const [driveBackupResult, setDriveBackupResult] = useState<{ success: boolean; message: string; url?: string } | null>(null);
 
   const [githubToken, setGithubToken] = useState(() => { try { return localStorage.getItem('plf_github_backup_token') || ''; } catch { return ''; } });
   const [rememberGitToken, setRememberGitToken] = useState(() => { try { return localStorage.getItem('plf_github_backup_token_remember') === 'true'; } catch { return false; } });
@@ -156,6 +162,44 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
       setFirebaseSigningIn(false);
     }
   };
+  const handleSyncFirebase = async () => {
+    if (firebaseSyncing) return;
+    setFirebaseSyncing(true);
+    setFirebaseSignInError('');
+    try {
+      await onSyncFirebase();
+    } catch (error) {
+      setFirebaseSignInError(error instanceof Error ? error.message : 'Firebase could not save the latest data.');
+    } finally {
+      setFirebaseSyncing(false);
+    }
+  };
+
+  const handleDriveBackup = async () => {
+    if (driveBackupSaving) return;
+    setDriveBackupSaving(true);
+    setDriveBackupResult(null);
+    try {
+      const { accessToken, user } = await signInWithGoogleDrive();
+      const file = await saveBackupToGoogleDrive(backupData, accessToken);
+      setDriveBackupResult({
+        success: true,
+        message: `Backup saved to Google Drive as ${file.name} (${user.email || 'signed-in account'}).`,
+        url: file.webViewLink,
+      });
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : 'Unknown Google Drive error.';
+      setDriveBackupResult({
+        success: false,
+        message: /drive api.*(disabled|not enabled)|access not configured/i.test(detail)
+          ? 'Google Drive sign-in worked, but the Drive API is not enabled for this Firebase/Google project. Enable Google Drive API in Google Cloud Console, then try again.'
+          : detail,
+      });
+    } finally {
+      setDriveBackupSaving(false);
+    }
+  };
+
   const refreshModels = async () => {
     setModelsLoading(true);
     setModelsError('');
@@ -351,6 +395,19 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
             <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-blue-500/20 text-blue-400 font-mono">
               Auto-Save
             </span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('drive')}
+            ref={(node) => { tabRefs.current['drive'] = node; }}
+            className={`min-h-11 shrink-0 whitespace-nowrap px-3 pb-3 text-xs font-bold border-b-2 transition-colors flex items-center gap-1.5 ${
+              activeTab === 'drive'
+                ? 'border-[#ff007f] text-[#ff3399]'
+                : 'border-transparent text-[#ffd6eb]/70 hover:text-white'
+            }`}
+          >
+            <ExternalLink className="w-3.5 h-3.5 text-emerald-300" />
+            <span>Google Drive</span>
           </button>
 
           <button
@@ -609,6 +666,52 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
                   </div>
                 )}
                 {firebaseSyncMessage && <p role="status" className="mt-3 rounded-lg bg-white/5 px-3 py-2 text-[11px] text-[#ffd6eb]/80">{firebaseSyncMessage}</p>}
+                {firebaseLastSync && <p className="text-[10px] text-[#ffd6eb]/55">Last successful Firebase sync: {new Date(firebaseLastSync).toLocaleString()}</p>}
+                {firebaseSignInError && <p role="alert" className="rounded-lg border border-rose-400/30 bg-rose-500/10 px-3 py-2 text-[11px] leading-relaxed text-rose-200">{firebaseSignInError}</p>}
+                {firebaseUser && <button type="button" onClick={() => void handleSyncFirebase()} disabled={firebaseSyncing} className="w-full min-h-11 rounded-xl border border-[#8AABF4]/40 bg-[#07128F]/35 px-3 py-2 text-xs font-bold text-white disabled:opacity-60">{firebaseSyncing ? 'Saving to Firebase…' : 'Save latest app data to Firebase now'}</button>}
+              </div>
+
+              <div className="rounded-2xl border border-[#8AABF4]/30 bg-[#1a0515] p-4 space-y-3">
+                <h4 className="font-bold text-white text-sm">Usage &amp; free-tier limits</h4>
+                <p className="text-[11px] leading-relaxed text-[#ffd6eb]/80">
+                  Open Firebase’s usage page for the actual counts on this project. The app cannot read account-wide billing metrics from the client, so the Firebase console is the source of truth.
+                </p>
+                <div className="rounded-xl bg-white/5 p-3 text-[11px] leading-relaxed text-[#ffd6eb]/75">
+                  <p><strong className="text-white">Cloud Firestore Standard no-cost quota:</strong> 50,000 document reads per day, 20,000 writes per day, and 1 GiB of stored data. Edition, region, and other Firebase products can have different quotas.</p>
+                  <p className="mt-2">Blaze can charge for usage beyond no-cost quotas. A billing budget sends alerts; it does not stop service or cap charges.</p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <a href="https://console.firebase.google.com/project/gen-lang-client-0115242033/usage" target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[#8AABF4]/40 bg-[#07128F]/35 px-3 py-2 font-bold text-white">Open Firebase usage <ExternalLink className="h-3.5 w-3.5" /></a>
+                  <a href="https://console.cloud.google.com/billing/" target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[#8AABF4]/40 bg-white/5 px-3 py-2 font-semibold text-white/85">Billing &amp; budgets <ExternalLink className="h-3.5 w-3.5" /></a>
+                </div>
+                <p className="break-all text-[10px] text-[#ffd6eb]/50">Firebase project: gen-lang-client-0115242033</p>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'drive' && (
+            <div className="space-y-4">
+              <div className="rounded-2xl border border-emerald-400/30 bg-[#1a0515] p-4 space-y-3">
+                <h4 className="font-bold text-white text-sm">Back up to Google Drive</h4>
+                <p className="text-[11px] leading-relaxed text-[#ffd6eb]/80">
+                  Sign in to Google and save a downloadable backup of your characters, chats, personas, notes, and settings in a “Pretty Little Fantasies Backups” folder. API keys are excluded. Google grants this app access only to files it creates.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => void handleDriveBackup()}
+                  disabled={driveBackupSaving}
+                  aria-busy={driveBackupSaving}
+                  className="w-full min-h-11 rounded-xl bg-white px-4 py-3 font-bold text-sm text-[#171717] disabled:opacity-60"
+                >
+                  {driveBackupSaving ? 'Signing in and saving backup…' : 'Sign in to Google Drive & save backup'}
+                </button>
+                {driveBackupResult && (
+                  <div role={driveBackupResult.success ? 'status' : 'alert'} className={`rounded-xl border p-3 text-[11px] leading-relaxed ${driveBackupResult.success ? 'border-emerald-400/30 bg-emerald-950/30 text-emerald-100' : 'border-rose-400/30 bg-rose-950/30 text-rose-100'}`}>
+                    <p>{driveBackupResult.message}</p>
+                    {driveBackupResult.url && <a href={driveBackupResult.url} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1 font-semibold underline">Open saved backup <ExternalLink className="h-3 w-3" /></a>}
+                  </div>
+                )}
+                <p className="text-[10px] text-[#ffd6eb]/55">Google Drive and Firebase are separate sign-ins. Each backup is a new dated JSON file; this does not move or delete your Firebase copy.</p>
               </div>
             </div>
           )}
