@@ -18,7 +18,7 @@ interface CharacterModalProps {
   isOpen: boolean;
   onClose: () => void;
   characters: Character[];
-  onSaveCharacter: (char: Character) => void;
+  onSaveCharacter: (char: Character) => Promise<boolean> | boolean;
   onDeleteCharacter?: (characterId: string) => void;
   onStartChatWithCharacter: (char: Character) => void;
   onOpenCreateCharacter?: (characterToEdit?: Character | null) => void;
@@ -71,7 +71,10 @@ export const CharacterModal: React.FC<CharacterModalProps> = ({
 
       // Save immediately so the imported card appears in the library without
       // requiring a second save step in the editor.
-      onSaveCharacter(imported);
+      const saved = await onSaveCharacter(imported);
+      if (saved === false) {
+        throw new Error('The imported character could not be verified in your saved library.');
+      }
       setSearch('');
       e.target.value = '';
     } catch (err) {
