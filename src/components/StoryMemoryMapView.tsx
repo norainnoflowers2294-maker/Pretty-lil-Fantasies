@@ -57,8 +57,9 @@ export const StoryMemoryMapView: React.FC<Props> = ({ memories, characters, chat
     .sort((a, b) => Date.parse(a.storyDate || a.createdAt) - Date.parse(b.storyDate || b.createdAt)), [memories, activeFilter, query]);
   const selectedMemory = memories.find((memory) => memory.id === selectedId && !memory.deletedAt) || null;
   const peopleInMemories = useMemo(() => {
-    const ids = new Set(visibleMemories.flatMap((memory) => (memory.people || []).map((person) => person.id)));
-    return contacts.filter((person) => ids.has(person.id));
+    const linked = new Map<string, StoryMemoryPerson>();
+    visibleMemories.forEach((memory) => (memory.people || []).forEach((person) => linked.set(person.id, person)));
+    return contacts.filter((person) => linked.has(person.id)).map((person) => ({ ...person, ...linked.get(person.id) }));
   }, [visibleMemories, contacts]);
 
   const beginNew = () => {
@@ -87,7 +88,7 @@ export const StoryMemoryMapView: React.FC<Props> = ({ memories, characters, chat
       : [...current, { id: person.id, name: person.name, relationship: person.relationship, characterId: person.characterId }]);
   };
   const formatDate = (value?: string) => {
-    const date = new Date(value || '');
+    const date = value && /^\\d{4}-\\d{2}-\\d{2}$/.test(value) ? new Date(`${value}T12:00:00`) : new Date(value || '');
     return Number.isNaN(date.getTime()) ? 'Date not set' : date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
@@ -150,7 +151,9 @@ export const StoryMemoryMapView: React.FC<Props> = ({ memories, characters, chat
           <div className="mt-4"><p className="mb-2 text-xs font-semibold text-white/75">Who was part of it?</p>{contacts.length ? <div className="flex max-h-40 flex-wrap gap-2 overflow-y-auto">{contacts.map((person) => {
             const isOn = selectedPeople.some((item) => item.id === person.id);
             return <button type="button" key={person.id} onClick={() => togglePerson(person)} aria-pressed={isOn} className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-xs ${isOn ? 'border-pink-200/80 bg-pink-500/40' : 'border-white/25 bg-white/10 text-white/70'}`}>{person.avatar && <img src={person.avatar} alt="" className="h-4 w-4 rounded-full object-cover" />}{person.name}<span className="text-[9px] opacity-70">{person.subtitle}</span></button>;
-          })}</div> : <p className="text-xs text-white/55">Create a character or add relatives in a character profile first.</p>}</div>
+          })}</div> : <p className="text-xs text-white/55">Create a character or add relatives in a character profile first.</p>}
+            {!!selectedPeople.length && <div className="mt-3 flex flex-wrap gap-2">{selectedPeople.map((person) => <label key={person.id} className="flex items-center gap-2 rounded-xl border border-white/25 bg-black/10 px-2.5 py-2 text-xs"><span>{person.name}</span><select aria-label={`${person.name} relationship`} value={person.relationship} onChange={(event) => setSelectedPeople((current) => current.map((item) => item.id === person.id ? { ...item, relationship: event.target.value as StoryMemoryPerson['relationship'] } : item))} className="rounded-lg bg-[#21152e] px-2 py-1 text-[10px] text-white"><option value="friend">Friend</option><option value="family">Family</option><option value="character">Character</option></select></label>)}</div>}
+          </div>
           <div className="mt-4 flex justify-end gap-2"><button type="button" onClick={() => setEditing(false)} className="rounded-xl border border-white/30 bg-white/10 px-3 py-2 text-xs">Cancel</button><button type="button" onClick={save} className="inline-flex items-center gap-2 rounded-xl bg-pink-500/85 px-4 py-2 text-xs font-bold"><Save className="h-3.5 w-3.5" />Save memory</button></div>
           {notice && <p role="status" className="mt-3 text-xs text-pink-100">{notice}</p>}
         </section>}
