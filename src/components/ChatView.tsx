@@ -35,6 +35,8 @@ import {
   Copy,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
   Wallet,
   DollarSign,
 } from 'lucide-react';
@@ -220,6 +222,12 @@ export const ChatView: React.FC<ChatViewProps> = ({
   onBookmarkMessage,
 }) => {
   const [inputText, setInputText] = useState('');
+  const [quickActionsCollapsed, setQuickActionsCollapsed] = useState(() => {
+    try { return localStorage.getItem('plf_chat_quick_actions_collapsed') === 'true'; } catch { return false; }
+  });
+  useEffect(() => {
+    try { localStorage.setItem('plf_chat_quick_actions_collapsed', String(quickActionsCollapsed)); } catch {}
+  }, [quickActionsCollapsed]);
   const [textMode, setTextMode] = useState(false);
   const phoneSystemRef = useRef(phoneSystem);
   useEffect(() => { phoneSystemRef.current = phoneSystem; }, [phoneSystem]);
@@ -1501,7 +1509,13 @@ export const ChatView: React.FC<ChatViewProps> = ({
       {/* Chat Input Bar */}
       <div className="relative z-20 p-3 sm:p-4 bg-[#140410]/95 backdrop-blur-md border-t border-[#ff3399]/40" style={{ paddingBottom: "calc(1rem + env(safe-area-inset-bottom, 0px))" }}>
         {lastModelUsed && <><style>{'@keyframes plf-model-name-scroll { to { transform: translateX(var(--plf-model-name-end)); } }'}</style><div ref={modelLineViewportRef} className="mx-auto mb-2 max-w-4xl overflow-hidden whitespace-nowrap text-[10px] text-[#ffd6eb]/55" aria-label={'Last reply routed through OpenRouter · ' + lastModelUsed.model + (lastModelUsed.provider ? ' · ' + lastModelUsed.provider : '')}><span ref={modelLineTextRef} className="block w-max whitespace-nowrap" style={modelLineScroll > 2 ? ({ '--plf-model-name-end': '-' + modelLineScroll + 'px', animation: 'plf-model-name-scroll 44s ease-in-out infinite alternate' } as React.CSSProperties) : undefined}>Last reply routed through OpenRouter · {lastModelUsed.model}{lastModelUsed.provider ? ` · ${lastModelUsed.provider}` : ''}</span></div></>}
-      <div className="max-w-4xl mx-auto mb-2 flex items-center gap-1.5 overflow-x-auto whitespace-nowrap [scrollbar-width:none]">
+      <div className="max-w-4xl mx-auto mb-2">
+        <div className="flex justify-end">
+          <button type="button" aria-expanded={!quickActionsCollapsed} aria-controls="chat-quick-actions" onClick={() => setQuickActionsCollapsed((collapsed) => !collapsed)} className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-[#ff66b2]/35 bg-white/5 px-3 text-[11px] font-semibold text-[#ffd6eb]/80 hover:bg-[#ff007f]/20 hover:text-white">
+            {quickActionsCollapsed ? <><ChevronUp className="h-3.5 w-3.5" /> Show buttons</> : <><ChevronDown className="h-3.5 w-3.5" /> Hide buttons</>}
+          </button>
+        </div>
+        {!quickActionsCollapsed && <div id="chat-quick-actions" className="mt-2 flex items-center gap-1.5 overflow-x-auto whitespace-nowrap [scrollbar-width:none]">
           <span className="shrink-0 text-[9px] font-bold uppercase tracking-wider text-[#ffd6eb]/50">Quick</span>
           <label className="flex min-h-10 shrink-0 items-center gap-1.5 rounded-full border border-[#FC76AA] bg-[#FE0088] px-3 text-[11px] font-bold text-white shadow-sm">
             <User className="h-3.5 w-3.5" aria-hidden="true" />
@@ -1559,7 +1573,8 @@ export const ChatView: React.FC<ChatViewProps> = ({
               {label}
             </button>
           ))}
-        </div>
+        </div>}
+      </div>
         <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto flex items-center space-x-2">
           {/* Quick Dice Roll Action */}
           <button
@@ -1583,7 +1598,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
             </div>}
             <textarea
               ref={inputRef}
-              rows={1}
+              rows={quickActionsCollapsed ? 3 : 1}
               placeholder={`Reply to ${activeCharacters.map((c) => c.name).join(' & ')} as ${
                 activePersona?.name || 'yourself'
               }... Type / for commands, @assistant to summon help`}
