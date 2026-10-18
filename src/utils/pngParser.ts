@@ -221,9 +221,9 @@ function normalizeCharacterCard(parsed: any, fallbackName: string, avatar?: stri
 }
 
 function decodeCardPayload(raw: string): any {
-  const normalized = raw.replace(/\\u0000/g, '').trim();
+  const normalized = raw.replace(/\u0000/g, '').trim();
   const candidates = [normalized];
-  const base64Payload = normalized.replace(/^data:[^,]*;base64,/i, '').replace(/\\s+/g, '');
+  const base64Payload = normalized.replace(/^data:[^,]*;base64,/i, '').replace(/\s+/g, '');
   const encoded = base64Payload.replace(/-/g, '+').replace(/_/g, '/');
   try {
     const binary = atob(encoded.padEnd(Math.ceil(encoded.length / 4) * 4, '='));
@@ -248,7 +248,7 @@ function hasCharacterCardData(parsed: any): boolean {
 }
 
 export async function parseCharacterFile(file: File): Promise<Partial<Character>> {
-  const fallbackName = file.name.replace(/\\.[^/.]+$/, '').replace(/[-_]/g, ' ') || 'Unnamed Character';
+  const fallbackName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ') || 'Unnamed Character';
   if (file.name.toLowerCase().endsWith('.json')) {
     return normalizeCharacterCard(JSON.parse(await file.text()), fallbackName);
   }
@@ -332,7 +332,7 @@ function normalizePersonaCard(parsed: any, fallbackName: string, avatar?: string
 }
 
 export async function parsePersonaFile(file: File): Promise<Partial<Persona>> {
-  const fallbackName = file.name.replace(/\\.[^/.]+$/, '').replace(/[-_]/g, ' ') || 'Unnamed Persona';
+  const fallbackName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ') || 'Unnamed Persona';
   if (file.name.toLowerCase().endsWith('.json')) {
     return normalizePersonaCard(JSON.parse(await file.text()), fallbackName);
   }
