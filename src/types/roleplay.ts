@@ -221,6 +221,14 @@ export interface SupabaseConfig {
   lastSync?: number;
 }
 
+export type StoryMemoryCategory = 'memory' | 'friendship' | 'family' | 'relationship' | 'milestone' | 'place';
+export interface StoryMemoryPerson {
+  id: string;
+  name: string;
+  relationship: 'friend' | 'family' | 'character';
+  characterId?: string;
+}
+
 export interface StoryMemory {
   id: string;
   chatId?: string;
@@ -231,4 +239,7 @@ export interface StoryMemory {
   updatedAt?: string;
   deletedAt?: string;
   pinned?: boolean;
+  storyDate?: string;
+  category?: StoryMemoryCategory;
+  people?: StoryMemoryPerson[];
 }
