@@ -314,11 +314,19 @@ export const ChatView: React.FC<ChatViewProps> = ({
   const shouldAutoScrollRef = useRef(true);
   const openingGenerationStartedRef = useRef(new Set<string>());
   const currentChatIdRef = useRef(chat.id);
+  const activePersonaIdRef = useRef(chat.personaId || '');
   currentChatIdRef.current = chat.id;
 
   // Active entities in this chat
   const activeCharacters = characters.filter((c) => chat.characterIds.includes(c.id));
-  const activePersona = chat.personaId ? personas.find((p) => p.id === chat.personaId) || null : personas[0] || null;
+  const activePersona = personas.find((persona) => persona.id === chat.personaId) || personas.find((persona) => persona.is_default) || personas[0] || null;
+  useEffect(() => {
+    activePersonaIdRef.current = chat.personaId || activePersona?.id || '';
+  }, [chat.id, chat.personaId, activePersona?.id]);
+  const handlePersonaChange = (personaId: string) => {
+    activePersonaIdRef.current = personaId;
+    onUpdateChat({ ...chat, personaId, updatedAt: new Date().toISOString() });
+  };
   const activeLorebooks = lorebooks.filter((l) => chat.lorebookIds.includes(l.id)).slice(0, 3);
   const activePlugins = plugins.filter((plugin) => plugin.enabled);
   const slashSuggestions = getSlashCommandSuggestions(inputText);
@@ -586,14 +594,15 @@ export const ChatView: React.FC<ChatViewProps> = ({
 
     const userText = inputText.trim();
     const assistantWasTagged = /(^|\\s)@assistant\\b/i.test(userText);
-    const userDisplayName = activePersona ? activePersona.name : 'You';
+    const personaForMessage = personas.find((persona) => persona.id === activePersonaIdRef.current) || activePersona;
+    const userDisplayName = personaForMessage ? (personaForMessage.display_name || personaForMessage.name) : 'You';
     const messageTimestamp = Date.now();
     const formattedUserText = textMode ? userDisplayName + ' - ' + userText : userText;
     const userMessage: ChatMessage = {
       id: `msg_u_${Date.now()}`,
       senderId: 'user',
-      senderName: activePersona ? activePersona.name : 'You',
-      avatar: activePersona?.avatar || '/colorpop_hero.jpg',
+      senderName: personaForMessage ? (personaForMessage.display_name || personaForMessage.name) : 'You',
+      avatar: personaForMessage?.avatar || '/colorpop_hero.jpg',
       content: textMode ? formattedUserText : chat.oocMode ? `[OOC] ${formattedUserText}` : formattedUserText,
       timestamp: messageTimestamp,
     };
@@ -601,6 +610,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
     const updatedMessages = [...chat.messages, userMessage];
     const updatedChat: Chat = {
       ...chat,
+      ...(personaForMessage ? { personaId: personaForMessage.id } : {}),
       messages: updatedMessages,
       updatedAt: new Date().toISOString(),
       relationshipScore: Math.min(100, (chat.relationshipScore || 85) + 1),
@@ -614,7 +624,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
     try {
       const apiMessages = buildOpenRouterMessages({
         characters: activeCharacters,
-        persona: activePersona,
+        persona: personaForMessage,
         lorebooks: activeLorebooks,
         plugins: activePlugins,
         chat: updatedChat,
@@ -649,7 +659,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
         { ...openRouterConfig, temperature: updatedChat.creativity ?? openRouterConfig.temperature, maxTokens },
         apiMessages,
         activeCharacters,
-        activePersona,
+        personaForMessage,
         assistantWasTagged || Boolean(updatedChat.oocMode),
         false,
         recordModelUsed,
@@ -1112,9 +1122,9 @@ export const ChatView: React.FC<ChatViewProps> = ({
 
       {/* Top Chat Bar */}
       <header
-        className="cp-chat-header relative px-3 sm:px-5 pb-2.5 bg-[#140410]/95 backdrop-blur-md border-b border-[#ff3399]/40 flex items-center justify-between z-30 shadow-[0_0_25px_rgba(255,0,128,0.3)]"
+        className="cp-chat-header relative px-2 sm:px-5 pb-2.5 bg-[#140410]/95 backdrop-blur-md border-b border-[#ff3399]/40 flex flex-wrap items-center justify-between gap-y-2 z-30 shadow-[0_0_25px_rgba(255,0,128,0.3)]"
       >
-        <div className="flex items-center space-x-2 sm:space-x-3">
+        <div className="flex min-w-0 flex-1 items-center space-x-1.5 sm:space-x-3">
           <button
             type="button"
             aria-label="Open chat navigation drawer"
@@ -1183,20 +1193,20 @@ export const ChatView: React.FC<ChatViewProps> = ({
                 </span>
               </div>
               <p className="text-[10px] text-[#ffd6eb]/70 truncate max-w-xs">
-                Playing as <select aria-label="Choose persona for this chat" value={chat.personaId || activePersona?.id || ''} onChange={(e) => onUpdateChat({ ...chat, personaId: e.target.value, updatedAt: new Date().toISOString() })} className="max-w-[130px] bg-[#1e0818] border border-[#ff66b2]/50 rounded-md px-1 py-0.5 text-white focus:outline-none focus:border-[#ff007f]">{personas.map((persona) => <option key={persona.id} value={persona.id}>{persona.display_name || persona.name}</option>)}</select> &bull; {activeLorebooks.length} Lorebooks &bull; {activePlugins.length} Plugins
+                Playing as <select aria-label="Choose persona for this chat" value={chat.personaId || activePersona?.id || ''} onChange={(e) => handlePersonaChange(e.target.value)} className="max-w-[130px] bg-[#1e0818] border border-[#ff66b2]/50 rounded-md px-1 py-0.5 text-white focus:outline-none focus:border-[#ff007f]">{personas.map((persona) => <option key={persona.id} value={persona.id}>{persona.display_name || persona.name}</option>)}</select> &bull; {activeLorebooks.length} Lorebooks &bull; {activePlugins.length} Plugins
               </p>
             </div>
           </div>
         </div>
 
         {/* Right Action Icons: Affinity, Plugins, Scene, Story Notes, Settings */}
-        <div className="flex items-center space-x-1.5 sm:space-x-2">
+        <div className="flex shrink-0 items-center space-x-1 sm:space-x-2">
           <button
             type="button"
             onClick={() => onStartNewChat?.()}
             aria-label="Start another chat with these characters"
             title="Start another chat with these characters"
-            className="p-2 rounded-xl bg-[#ff007f]/20 hover:bg-[#ff007f]/40 border border-[#ff66b2]/50 text-[#ffd6eb] transition-colors"
+            className="hidden sm:inline-flex p-2 rounded-xl bg-[#ff007f]/20 hover:bg-[#ff007f]/40 border border-[#ff66b2]/50 text-[#ffd6eb] transition-colors" title="Start another chat"
           >
             <Plus className="w-4 h-4" />
           </button>
@@ -1207,7 +1217,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
               const updatedScore = Math.min(100, (chat.relationshipScore || 85) + 1);
               onUpdateChat({ ...chat, relationshipScore: updatedScore });
             }}
-            className="flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-[#ff007f]/20 hover:bg-[#ff007f]/40 border border-[#ff66b2]/50 text-xs font-bold text-[#ffb3d9] shadow-[0_0_12px_rgba(255,0,128,0.4)] transition-all"
+            className="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-[#ff007f]/20 hover:bg-[#ff007f]/40 border border-[#ff66b2]/50 text-xs font-bold text-[#ffb3d9] shadow-[0_0_12px_rgba(255,0,128,0.4)] transition-all"
             title="Relationship Affinity Score (Click to boost!)"
           >
             <Heart className="w-3.5 h-3.5 fill-[#ff007f] text-[#ff007f] animate-pulse" />
@@ -1217,7 +1227,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
           {/* Scene Background Button */}
           <button
             onClick={onOpenSceneGeneratorModal}
-            className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-cyan-400 transition-colors"
+            className="hidden sm:inline-flex p-2 rounded-xl bg-white/10 hover:bg-white/20 text-cyan-400 transition-colors"
             title="Scene Backgrounds & Visualizer"
           >
             <ImageIcon className="w-4 h-4" />
@@ -1226,7 +1236,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
           {/* Story Notes Button */}
           <button
             onClick={onOpenStoryNotesModal}
-            className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-indigo-400 transition-colors"
+            className="hidden sm:inline-flex p-2 rounded-xl bg-white/10 hover:bg-white/20 text-indigo-400 transition-colors"
             title="Story Notes & Memories"
           >
             <FileText className="w-4 h-4" />
@@ -1235,21 +1245,22 @@ export const ChatView: React.FC<ChatViewProps> = ({
           {/* Plugin Button */}
           <button
             onClick={onOpenPlugins}
-            className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-[#ffd6eb] transition-colors"
+            className="hidden sm:inline-flex p-2 rounded-xl bg-white/10 hover:bg-white/20 text-[#ffd6eb] transition-colors"
             title="Manage 5 Active Plugins"
           >
             <Puzzle className="w-4 h-4 text-fuchsia-400" />
           </button>
 
-          <button type="button" onClick={() => setIsChatSettingsOpen(true)} className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-pink-200 transition-colors" title="Chat reply settings" aria-label="Chat reply settings">
+          <button type="button" onClick={() => setIsChatSettingsOpen(true)} className="hidden sm:inline-flex p-2 rounded-xl bg-white/10 hover:bg-white/20 text-pink-200 transition-colors" title="Chat reply settings" aria-label="Chat reply settings">
             <SlidersHorizontal className="w-4 h-4" />
           </button>
 
           {/* Settings / Diagnostic Button */}
           <button
             onClick={onOpenSettings}
-            className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-[#ffd6eb] transition-colors"
+            className="shrink-0 p-2 rounded-xl bg-white/10 hover:bg-white/20 text-[#ffd6eb] transition-colors"
             title="OpenRouter & Diagnostics"
+            aria-label="Open settings and diagnostics"
           >
             <Settings className="w-4 h-4 text-[#ff3399]" />
           </button>
@@ -1258,7 +1269,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
             src={resolveImageUrl(activePersona?.avatar || '/colorpop_hero.jpg')}
             alt={activePersona?.display_name || activePersona?.name || 'Selected persona'}
             title={`Playing as ${activePersona?.display_name || activePersona?.name || 'your persona'}`}
-            className="ml-1 h-8 w-8 shrink-0 rounded-full border-2 border-[#ff66b2] object-cover shadow-[0_0_12px_rgba(255,0,128,0.4)]"
+            className="ml-1 hidden sm:block h-8 w-8 shrink-0 rounded-full border-2 border-[#ff66b2] object-cover shadow-[0_0_12px_rgba(255,0,128,0.4)]"
           />
         </div>
       </header>
@@ -1714,7 +1725,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
               </section>
               <section className="rounded-xl border border-[#ff66b2]/30 bg-white/5 p-3">
                 <h3 className="mb-2 text-[10px] font-bold uppercase tracking-widest text-[#ff99cc]">Playing as</h3>
-                <select aria-label="Choose persona for this chat" value={chat.personaId || activePersona?.id || ''} onChange={(event) => onUpdateChat({ ...chat, personaId: event.target.value, updatedAt: new Date().toISOString() })} className="w-full rounded-lg border border-[#ff66b2]/40 bg-[#1e0818] p-2 text-sm text-white">
+                <select aria-label="Choose persona for this chat" value={chat.personaId || activePersona?.id || ''} onChange={(event) => handlePersonaChange(event.target.value)} className="w-full rounded-lg border border-[#ff66b2]/40 bg-[#1e0818] p-2 text-sm text-white">
                   {personas.map((persona) => <option key={persona.id} value={persona.id}>{persona.display_name || persona.name}</option>)}
                 </select>
                 <div className="mt-3 space-y-2">

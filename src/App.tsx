@@ -491,13 +491,23 @@ export default function App() {
   };
 
   const handleStartChatWithPersona = (persona: Persona) => {
-    handleSelectDefaultPersona(persona.id);
-    if (activeChat) {
-      setInChatMode(true);
-    } else if (data.chats.length > 0) {
-      setActiveChat(data.chats[0]);
-      setInChatMode(true);
+    const currentData = dataRef.current;
+    const updatedPersonas = currentData.personas.map((item) => ({ ...item, is_default: item.id === persona.id }));
+    const chatToOpen = currentData.chats.find((chat) => chat.id === (currentData.activeChatId || activeChat?.id)) || currentData.chats[0];
+    try { localStorage.setItem('colorpop_default_persona', persona.id); } catch { /* Storage may be unavailable in private browsing. */ }
+    if (!chatToOpen) {
+      updateData({ ...currentData, personas: updatedPersonas });
+      return;
     }
+    const updatedChat = { ...chatToOpen, personaId: persona.id, updatedAt: new Date().toISOString() };
+    updateData({
+      ...currentData,
+      personas: updatedPersonas,
+      chats: currentData.chats.map((chat) => chat.id === updatedChat.id ? updatedChat : chat),
+      activeChatId: updatedChat.id,
+    });
+    setActiveChat(updatedChat);
+    setInChatMode(true);
   };
 
   const MAX_PLUGIN_PROMPT_CHARS = 14000;
