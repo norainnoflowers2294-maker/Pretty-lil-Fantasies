@@ -4,6 +4,8 @@ interface DriveFile {
   webViewLink?: string;
 }
 
+interface DriveFileList { files?: DriveFile[]; }
+
 async function driveJson<T>(url: string, accessToken: string, init: RequestInit = {}): Promise<T> {
   const headers = new Headers(init.headers);
   headers.set('Authorization', `Bearer ${accessToken}`);
