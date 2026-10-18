@@ -68,27 +68,27 @@ export const ColorPopHero: React.FC<ColorPopHeroProps> = ({
 
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none" />
 
-          {onOpenGallery && <button onClick={onOpenGallery} className="absolute top-3 right-3 z-20 px-3 py-1.5 rounded-full bg-black/60 border border-white/30 text-white text-[11px] font-semibold backdrop-blur-md hover:bg-black/80">Change home picture</button>}
+          {onOpenGallery && <button onClick={onOpenGallery} className="absolute top-3 right-3 z-20 px-3 py-1.5 rounded-full bg-black/60 border border-white/30 text-white text-xs font-semibold backdrop-blur-md hover:bg-black/80">Change home picture</button>}
           <div className="absolute top-4 left-4 text-[#ff99cc] drop-shadow-[0_0_10px_#ff007f] pointer-events-none">
             <Sparkles className="w-6 h-6 animate-pulse" />
           </div>
 
           <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between z-10">
             <div className="space-y-1">
-              <span className="px-3 py-1 rounded-full bg-[#ff007f]/40 backdrop-blur-md border border-[#ff80bf]/50 text-white font-mono text-[10px] tracking-wider uppercase font-bold flex items-center gap-1.5 w-fit shadow-[0_0_15px_rgba(255,0,128,0.5)]">
+              <span className="px-3 py-1 rounded-full bg-[#ff007f]/40 backdrop-blur-md border border-[#ff80bf]/50 text-white font-mono text-xs tracking-wider uppercase font-bold flex items-center gap-1.5 w-fit shadow-[0_0_15px_rgba(255,0,128,0.5)]">
                 <Sparkles className="w-3 h-3 text-[#ffd6eb]" /> Pretty Little Fantasies
               </span>
               <h2 className="text-xl sm:text-2xl font-black text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
                 The Sovereign Billionaires &bull; Chapter IV
               </h2>
-              <p className="text-xs text-[#ffd6eb]/90 max-w-lg hidden sm:block drop-shadow">
+              <p className="text-sm text-[#ffd6eb]/90 max-w-lg hidden sm:block drop-shadow">
                 Immerse yourself in high-stakes romance, opulent penthouses, and unforgettable dynamic roleplay powered by OpenRouter.
               </p>
             </div>
 
             <button
               onClick={onOpenChats}
-              className="shrink-0 px-4 py-2 bg-gradient-to-r from-[#ff007f] to-[#ff3399] hover:from-[#ff1a8c] hover:to-[#ff4da6] text-white text-xs font-bold rounded-2xl shadow-[0_0_20px_rgba(255,0,128,0.8)] transition-all flex items-center space-x-1.5"
+              className="shrink-0 px-4 py-2 bg-gradient-to-r from-[#ff007f] to-[#ff3399] hover:from-[#ff1a8c] hover:to-[#ff4da6] text-white text-sm font-bold rounded-2xl shadow-[0_0_20px_rgba(255,0,128,0.8)] transition-all flex items-center space-x-1.5"
             >
               <span>Enter Story</span>
               <span>&rarr;</span>
@@ -127,7 +127,7 @@ export const ColorPopHero: React.FC<ColorPopHeroProps> = ({
                 </div>
                 <div className="absolute inset-0 rounded-full border border-white/20 pointer-events-none" />
               </div>
-              <span className="text-[10px] sm:text-[11px] font-semibold text-[#ffd6eb]/90 group-hover:text-white text-center leading-tight transition-colors line-clamp-1">
+              <span className="text-xs sm:text-xs font-semibold text-[#ffd6eb]/90 group-hover:text-white text-center leading-tight transition-colors line-clamp-1">
                 {item.label}
               </span>
             </button>
