@@ -2,6 +2,16 @@ export const DEFAULT_PREFERENCES = {
   theme: 'colorpop', accent: '#ff007f', fontSize: 16, headerFont: 'cooper', homeImage: '',
   reducedMotion: false, compactMode: false, messageAnimations: true,
   chatSystemPrompt: '',
+  dontLeaveScene: true,
+  dontLeaveScenePrompt: 'Keep selected characters present in the current scene. Do not have them leave, dismiss, expel, or abruptly send {{user}} or another character away. Only leave when the user asks or the established scene clearly requires it; make any transition natural and leave the user’s choices open.',
+  varyCharacterVoice: true,
+  varyCharacterVoicePrompt: 'Keep each character’s voice distinct in vocabulary, rhythm, humor, and emotional expression. Vary sentence structure and dialogue beats naturally instead of repeating the same cadence.',
+  avoidAICliches: true,
+  avoidAIClichesPrompt: 'Avoid stock AI and romance clichés, generic pet names, recycled metaphors, formulaic reactions, and repeated phrases. Choose specific language grounded in this character and this moment.',
+  unstuckRecovery: true,
+  unstuckRecoveryPrompt: 'If the scene starts repeating, stalling, or circling the same emotion, continue from the last concrete moment. Add one plausible new action, detail, question, or character response without restarting, apologizing, skipping ahead, or taking control of {{user}}.',
+  finishRepliesCleanly: true,
+  finishRepliesPrompt: 'Finish every sentence, thought, and dialogue quote. Do not cut off mid-sentence or end on an incomplete thought. Keep the scene open for the user’s next turn; do not prematurely end the conversation.',
   responseLengthTarget: 'medium' as 'short' | 'medium' | 'long' | 'custom', customResponseWords: 180, dialogueBalance: 50,
   scenePacing: 'balanced' as 'slow_burn' | 'balanced' | 'fast', npcActivity: 'balanced' as 'low' | 'balanced' | 'high', knowledgeBoundaries: true,
   relationshipContinuity: true, naturalSpeech: true, reduceRepetition: true,
@@ -30,6 +40,7 @@ export function normalizePreferences(input: unknown): AppPreferences {
     else if (key === 'headerFont' && value === 'sans') result[key] = 'cooper';
     else if (choices[key] && choices[key].includes(value as string)) result[key] = value;
     else if (key === 'chatSystemPrompt' && typeof value === 'string') result[key] = value.slice(0, 6000);
+    else if (key.endsWith('Prompt') && typeof value === 'string') result[key] = value.slice(0, 3000);
     else if (key === 'homeImage' && typeof value === 'string') result[key] = value.slice(0, 8000000);
     else if (key === 'accent' && /^#[0-9a-f]{6}$/i.test(value as string)) result[key] = value;
     else if (key === 'fontSize' && Number.isFinite(value)) result[key] = Math.round(Math.min(24, Math.max(12, value as number)));
