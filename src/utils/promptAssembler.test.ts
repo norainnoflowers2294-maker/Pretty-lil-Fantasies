@@ -43,6 +43,43 @@ describe('buildOpenRouterMessages', () => {
     expect(messages[0].content).toContain('Never write dialogue or actions for {{user}}.');
   });
 
+  it('adds the scene, voice, anti-cliché, stuck-recovery, and complete-reply settings to the prompt', () => {
+    const params = {
+      ...getBaseParams(),
+      preferences: normalizePreferences({
+        dontLeaveScenePrompt: 'Keep everyone in the scene.',
+        varyCharacterVoicePrompt: 'Give each speaker a distinct rhythm.',
+        avoidAIClichesPrompt: 'Avoid stock romance phrases.',
+        unstuckRecoveryPrompt: 'Add one grounded new beat.',
+        finishRepliesPrompt: 'Complete all thoughts and dialogue.',
+      }),
+    };
+    const system = buildOpenRouterMessages(params)[0].content;
+    for (const instruction of [
+      'Keep everyone in the scene.',
+      'Give each speaker a distinct rhythm.',
+      'Avoid stock romance phrases.',
+      'Add one grounded new beat.',
+      'Complete all thoughts and dialogue.',
+    ]) expect(system).toContain(instruction);
+  });
+
+  it('starts model history at the selected context reset while leaving older UI messages intact', () => {
+    const params = getBaseParams();
+    params.chat = {
+      ...params.chat,
+      contextResetAt: 2,
+      messages: [
+        { id: '1', senderId: 'user', senderName: 'User', content: 'Old context', timestamp: 1 },
+        { id: '2', senderId: 'bot', senderName: 'Bot', content: 'Old reply', timestamp: 2 },
+        { id: '3', senderId: 'user', senderName: 'User', content: 'Fresh start', timestamp: 3 },
+      ],
+    };
+    const messages = buildOpenRouterMessages(params);
+    expect(messages.slice(1)).toEqual([{ role: 'user', content: 'Fresh start' }]);
+    expect(params.chat.messages).toHaveLength(3);
+  });
+
   it('should include Persona / User Identity if provided', () => {
     const params = getBaseParams();
     params.persona = {
