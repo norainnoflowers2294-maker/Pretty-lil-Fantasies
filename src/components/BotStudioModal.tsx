@@ -4,14 +4,14 @@ import { sendOpenRouterChatDetailed } from '../lib/openrouter';
 import type { Character, Lorebook, OpenRouterConfig, Persona } from '../types/roleplay';
 
 type Target = 'character' | 'lorebook' | 'persona';
-interface Props { isOpen: boolean; config: OpenRouterConfig; onClose: () => void; onSaveCharacter: (item: Character) => void; onSaveLorebook: (item: Lorebook) => void; onSavePersona: (item: Persona) => void; }
+interface Props { isOpen: boolean; config: OpenRouterConfig; onClose: () => void; onSaved: (target: Target) => void; onSaveCharacter: (item: Character) => void; onSaveLorebook: (item: Lorebook) => void; onSavePersona: (item: Persona) => void; }
 function jsonFrom(text: string): any {
   const cleaned = text.replace(/^```(?:json)?/i, '').replace(/```$/,'').trim();
   const start = cleaned.indexOf('{'); const end = cleaned.lastIndexOf('}');
   if (start < 0 || end <= start) throw new Error('The creator returned an unreadable draft. Please try again.');
   return JSON.parse(cleaned.slice(start, end + 1));
 }
-export function BotStudioModal({ isOpen, config, onClose, onSaveCharacter, onSaveLorebook, onSavePersona }: Props) {
+export function BotStudioModal({ isOpen, config, onClose, onSaved, onSaveCharacter, onSaveLorebook, onSavePersona }: Props) {
   const [target, setTarget] = useState<Target>('character');
   const [idea, setIdea] = useState('');
   const [draft, setDraft] = useState<any>(null);
@@ -57,7 +57,7 @@ export function BotStudioModal({ isOpen, config, onClose, onSaveCharacter, onSav
       appearance: String(draft.appearance || ''), backstory: String(draft.backstory || ''), speaking_style: String(draft.speaking_style || ''),
       traits: Array.isArray(draft.traits) ? draft.traits.map(String) : [], is_default: false, createdAt: now, updatedAt: now,
     });
-    onClose(); setIdea(''); setDraft(null);
+    onClose(); onSaved(target); setIdea(''); setDraft(null);
   };
   return <div className="fixed inset-0 z-[95] grid place-items-center bg-black/75 p-4 backdrop-blur-sm" onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}>
     <section role="dialog" aria-modal="true" aria-label="Story creator bot" className="max-h-[92dvh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-[#ff66b2]/50 bg-[#140410] p-5 text-white shadow-2xl">
