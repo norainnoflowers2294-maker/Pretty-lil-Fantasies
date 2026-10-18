@@ -2,7 +2,7 @@ import type { AppPreferences } from '../lib/preferences';
 import type { StoryMemory } from '../types/roleplay';
 import type { Character, Persona, Lorebook, Plugin, Chat } from '../types/roleplay';
 import { buildEnabledPluginRules } from '../lib/pluginPrompts.ts';
-import { getLivingWorldState, isDailyStoryDue } from '../lib/livingWorld';
+import { getLivingWorldState, isDailyStoryDue } from '../lib/livingWorld.ts';
 
 interface AssembleParams {
   preferences?: AppPreferences;
