@@ -1300,7 +1300,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
           <div className="flex items-start space-x-2">
             <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
             <div className="space-y-0.5">
-              <div className="font-bold text-white">Problem Connecting to OpenRouter:</div>
+              <div className="font-bold text-white">Chat request failed:</div>
               <p>{errorDetails.message}</p>
               {errorDetails.suggestedFix && (
                 <p className="text-[11px] text-rose-300 font-semibold">{errorDetails.suggestedFix}</p>
