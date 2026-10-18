@@ -259,6 +259,7 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
   }, [existingCharacter]);
 
   const populateFromCharacter = (char: Partial<Character>) => {
+    setManualAgeOverride(false);
     setName(char.name || '');
     setNicknames(char.nicknames || []);
     setAge(char.age || '');
