@@ -37,6 +37,7 @@ const navItems: Array<{ id: NavTab; label: string; icon: React.ReactNode; color:
   { id: 'personas', label: 'Personas', icon: <UserRound className="h-4 w-4" />, color: '#FE0088' },
   { id: 'gallery', label: 'Gallery', icon: <Image className="h-4 w-4" />, color: '#FC76AA' },
   { id: 'files', label: 'Files', icon: <FolderOpen className="h-4 w-4" />, color: '#FFCEA8' },
+  { id: 'journal', label: 'Junk Journal', icon: <BookOpen className="h-4 w-4" />, color: '#FE0088' },
   { id: 'perchance', label: 'Perchance AI', icon: <Sparkles className="h-4 w-4" />, color: '#FF9086' },
   { id: 'social', label: 'Social Media', icon: <AtSign className="h-4 w-4" />, color: '#E60960' },
 ];
