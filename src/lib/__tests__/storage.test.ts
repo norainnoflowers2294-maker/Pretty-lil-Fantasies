@@ -3,7 +3,7 @@ import { describe, it, expect, mock, beforeEach, spyOn, afterEach } from 'bun:te
 // Mock dependencies before importing the module under test
 mock.module('firebase/firestore', () => ({
   doc: mock(),
-  getDoc: mock(),
+  getDocFromServer: mock(),
   setDoc: mock(),
 }));
 
@@ -14,10 +14,25 @@ mock.module('../firebase', () => ({
   db: {},
 }));
 
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDocFromServer } from 'firebase/firestore';
 import { auth } from '../firebase';
-import { loadFromFirebase, loadLocalData, mergeDefaultCharacters, DEFAULT_OPENROUTER_CONFIG, DEFAULT_SUPABASE_CONFIG, DEFAULT_MEMORIES, DEFAULT_SAVED_MSGS, sanitizeFirestoreValue } from '../storage';
+import { loadFromFirebase, loadLocalData, mergeDefaultCharacters, DEFAULT_OPENROUTER_CONFIG, DEFAULT_SUPABASE_CONFIG, DEFAULT_MEMORIES, DEFAULT_SAVED_MSGS, sanitizeFirestoreValue, shouldPreferFirebaseSnapshot } from '../storage';
 import { ADDITIONAL_CHARACTER_PLACEHOLDER_AVATARS, INITIAL_CHARACTERS, INITIAL_LOREBOOKS, INITIAL_PERSONAS, INITIAL_PLUGINS, INITIAL_CHATS, mergeDefaultPlugins } from '../defaultData';
+
+describe('shouldPreferFirebaseSnapshot', () => {
+  it('restores the cloud snapshot when it was saved after this device snapshot', () => {
+    expect(shouldPreferFirebaseSnapshot('2026-10-18T05:00:00.000Z', Date.parse('2026-10-18T04:00:00.000Z'))).toBe(true);
+  });
+
+  it('keeps a newer local snapshot when it contains offline edits', () => {
+    expect(shouldPreferFirebaseSnapshot('2026-10-18T04:00:00.000Z', Date.parse('2026-10-18T05:00:00.000Z'))).toBe(false);
+  });
+
+  it('does not treat an old cloud document without a timestamp as newer than saved local data', () => {
+    expect(shouldPreferFirebaseSnapshot(undefined, Date.parse('2026-10-18T05:00:00.000Z'))).toBe(false);
+    expect(shouldPreferFirebaseSnapshot(undefined, 0)).toBe(true);
+  });
+});
 
 describe('sanitizeFirestoreValue', () => {
   it('removes undefined fields at every object depth before Firestore writes', () => {
@@ -161,7 +176,7 @@ describe('loadFromFirebase', () => {
   beforeEach(() => {
     // Reset mocks
     (doc as any).mockClear();
-    (getDoc as any).mockClear();
+    (getDocFromServer as any).mockClear();
     Object.defineProperty(auth, 'currentUser', { value: null, writable: true });
     consoleWarnMock = spyOn(console, 'warn').mockImplementation(() => {});
   });
@@ -177,7 +192,7 @@ describe('loadFromFirebase', () => {
 
     expect(result).toBeNull();
     expect(doc).not.toHaveBeenCalled();
-    expect(getDoc).not.toHaveBeenCalled();
+    expect(getDocFromServer).not.toHaveBeenCalled();
   });
 
   it('should return data if document exists', async () => {
@@ -191,12 +206,12 @@ describe('loadFromFirebase', () => {
       exists: () => true,
       data: () => mockData,
     };
-    (getDoc as any).mockResolvedValue(mockSnap);
+    (getDocFromServer as any).mockResolvedValue(mockSnap);
 
     const result = await loadFromFirebase();
 
     expect(doc).toHaveBeenCalledWith(expect.anything(), 'users', 'test-user-id');
-    expect(getDoc).toHaveBeenCalledWith(mockDocRef);
+    expect(getDocFromServer).toHaveBeenCalledWith(mockDocRef);
     expect(result).toEqual(mockData);
   });
 
@@ -210,12 +225,12 @@ describe('loadFromFirebase', () => {
       exists: () => false,
       data: () => ({}),
     };
-    (getDoc as any).mockResolvedValue(mockSnap);
+    (getDocFromServer as any).mockResolvedValue(mockSnap);
 
     const result = await loadFromFirebase();
 
     expect(doc).toHaveBeenCalledWith(expect.anything(), 'users', 'test-user-id');
-    expect(getDoc).toHaveBeenCalledWith(mockDocRef);
+    expect(getDocFromServer).toHaveBeenCalledWith(mockDocRef);
     expect(result).toBeNull();
   });
 
@@ -226,12 +241,12 @@ describe('loadFromFirebase', () => {
     (doc as any).mockReturnValue(mockDocRef);
 
     const mockError = new Error('Network error');
-    (getDoc as any).mockRejectedValue(mockError);
+    (getDocFromServer as any).mockRejectedValue(mockError);
 
     await expect(loadFromFirebase()).rejects.toThrow('Network error');
 
     expect(doc).toHaveBeenCalledWith(expect.anything(), 'users', 'test-user-id');
-    expect(getDoc).toHaveBeenCalledWith(mockDocRef);
+    expect(getDocFromServer).toHaveBeenCalledWith(mockDocRef);
     expect(consoleWarnMock).toHaveBeenCalledWith('Could not load from Firebase Firestore:', mockError);
   });
 });

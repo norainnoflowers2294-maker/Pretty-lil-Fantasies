@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithCredential, signOut } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithCredential, signOut, browserLocalPersistence, setPersistence } from 'firebase/auth';
 import { getFirestore, doc, getDocFromServer } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import firebaseConfig from '../../firebase-applet-config.json';
@@ -77,6 +77,7 @@ export async function testConnection(): Promise<boolean> {
 }
 
 export async function signInWithGoogle() {
+  await setPersistence(auth, browserLocalPersistence);
   if (!firebaseGoogleTokenClient) {
     throw new Error('Google sign-in is still loading. Wait a moment and try again.');
   }

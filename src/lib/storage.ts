@@ -4,7 +4,7 @@ import { Character, Lorebook, Persona, Plugin, Chat, OpenRouterConfig, SupabaseC
 import { ADDITIONAL_CHARACTER_PLACEHOLDER_AVATARS, INITIAL_CHARACTERS, INITIAL_LOREBOOKS, INITIAL_PERSONAS, INITIAL_PLUGINS, INITIAL_CHATS, mergeDefaultPlugins } from './defaultData';
 import { db, auth, storage } from './firebase';
 import { DEFAULT_WALLETS, type StoryWallet } from './wallet';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDocFromServer, setDoc } from 'firebase/firestore';
 import { getDownloadURL, ref as storageRef, uploadString } from 'firebase/storage';
 import { DEFAULT_SOCIAL_WORLD, type SocialMediaWorld } from './socialMedia';
 import { DEFAULT_PHONE_SYSTEM, type PhoneSystemState } from './phoneSystem';
@@ -113,6 +113,17 @@ const LOCAL_DB_STORE = 'snapshots';
 const LOCAL_DB_KEY = 'app-data';
 let localWriteQueue: Promise<void> = Promise.resolve();
 let lastLocalSavedAt = 0;
+
+export function getLocalDataSavedAt(): number {
+  return lastLocalSavedAt;
+}
+
+export function shouldPreferFirebaseSnapshot(remoteUpdatedAt: unknown, localSavedAt: number): boolean {
+  const cloudTime = typeof remoteUpdatedAt === 'string' ? Date.parse(remoteUpdatedAt) : Number.NaN;
+  const deviceTime = Number.isFinite(localSavedAt) ? localSavedAt : 0;
+  if (!Number.isFinite(cloudTime)) return deviceTime === 0;
+  return cloudTime >= deviceTime;
+}
 
 interface LocalDataSnapshot {
   savedAt: number;
@@ -324,6 +335,7 @@ export async function syncToFirebase(data: StorageData): Promise<void> {
     // embedded images in Storage and store their URLs in the user document.
     const cloudData = sanitizeFirestoreValue(await storeEmbeddedImages({
       appPreferences: data.appPreferences || DEFAULT_PREFERENCES,
+      deletedCharacterIds: data.deletedCharacterIds || [],
       characters: data.characters,
       lorebooks: data.lorebooks,
       personas: data.personas,
@@ -354,7 +366,7 @@ export async function loadFromFirebase(): Promise<Partial<StorageData> | null> {
 
   try {
     const userDocRef = doc(db, 'users', user.uid);
-    const snap = await getDoc(userDocRef);
+    const snap = await getDocFromServer(userDocRef);
     if (snap.exists()) {
       return snap.data() as Partial<StorageData>;
     }

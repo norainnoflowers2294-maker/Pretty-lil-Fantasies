@@ -57,6 +57,8 @@ import type { JournalPage } from './types/journal';
 import {
   loadLocalData,
   loadLocalDataAsync,
+  getLocalDataSavedAt,
+  shouldPreferFirebaseSnapshot,
   saveLocalData,
   syncToFirebase,
   loadFromFirebase,
@@ -70,6 +72,9 @@ export default function App() {
   const [data, setData] = useState<StorageData>(loadLocalData);
   const dataRef = useRef(data);
   const [storageHydrated, setStorageHydrated] = useState(false);
+  const [firebaseCloudHydrated, setFirebaseCloudHydrated] = useState(false);
+  const firebaseCloudReadyRef = useRef(false);
+  const firebaseAuthRevisionRef = useRef(0);
   const localSaveRevisionRef = useRef(0);
   const firebaseSyncRevisionRef = useRef(0);
   const firebaseSyncQueueRef = useRef<Promise<void>>(Promise.resolve());
@@ -191,6 +196,11 @@ export default function App() {
       return { localSaved: true, firebaseSaved: false, message };
     }
 
+    if (!firebaseCloudReadyRef.current) {
+      const message = 'Saved on this device. Firebase is still restoring your cloud backup, so this change is being kept local until it is safe to sync.';
+      if (saveRevision === localSaveRevisionRef.current) setFirebaseSyncMessage(message);
+      return { localSaved: true, firebaseSaved: false, message };
+    }
     setFirebaseSyncMessage('Saving chats and app data to Firebase…');
     try {
       await enqueueFirebaseSync(newData);
@@ -243,67 +253,65 @@ export default function App() {
     });
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      const authRevision = ++firebaseAuthRevisionRef.current;
+      firebaseCloudReadyRef.current = false;
+      setFirebaseCloudHydrated(false);
       setFirebaseUser(user);
       await hydration;
-      if (!mounted) return;
+      if (!mounted || authRevision !== firebaseAuthRevisionRef.current) return;
       if (!user) {
-        setFirebaseSyncMessage('Chats and app data are saved on this device. Sign in under Settings → Firebase Cloud to back them up.');
+        setFirebaseSyncMessage('Saved chats appear in this browser when you are signed out. Sign in with the same Google account in each app context to load the Firebase copy.');
+        setFirebaseCloudHydrated(true);
         return;
       }
       if (dataRef.current.appPreferences?.cloudSync === false) {
         setFirebaseSyncMessage('Firebase sync is turned off in App Settings.');
+        setFirebaseCloudHydrated(true);
         return;
       }
-
       try {
         const remote = await loadFromFirebase();
+        if (!mounted || authRevision !== firebaseAuthRevisionRef.current) return;
         const current = dataRef.current;
-        const mergeById = <T extends { id: string; updatedAt?: string }>(cloudItems: T[] | undefined, localItems: T[]): T[] => {
-          const merged = new Map((cloudItems || []).map((item) => [item.id, item]));
-          for (const item of localItems) {
-            const cloudItem = merged.get(item.id);
-            const localTime = item.updatedAt ? Date.parse(item.updatedAt) : Number.POSITIVE_INFINITY;
-            const cloudTime = cloudItem?.updatedAt ? Date.parse(cloudItem.updatedAt) : Number.NEGATIVE_INFINITY;
-            if (!cloudItem || localTime >= cloudTime) merged.set(item.id, item);
-          }
-          return [...merged.values()];
-        };
-        const deletedCharacterIds = [...new Set([
-          ...(remote?.deletedCharacterIds || []),
-          ...(current.deletedCharacterIds || []),
-        ])];
-        const merged: StorageData = {
+        const remoteUpdatedAt = (remote as (Partial<StorageData> & { updatedAt?: unknown }) | null)?.updatedAt;
+        const useCloudSnapshot = Boolean(remote && shouldPreferFirebaseSnapshot(remoteUpdatedAt, getLocalDataSavedAt()));
+        const merged: StorageData = remote && useCloudSnapshot ? {
           ...current,
-          deletedCharacterIds,
-          appPreferences: normalizePreferences({ ...(remote?.appPreferences || {}), ...current.appPreferences, homeImage: current.appPreferences.homeImage || remote?.appPreferences?.homeImage || homeImage }),
-          characters: mergeDefaultCharacters(mergeById(remote?.characters, current.characters), deletedCharacterIds),
-          chats: mergeById(remote?.chats, current.chats),
-          lorebooks: mergeById(remote?.lorebooks, current.lorebooks),
-          personas: mergeById(remote?.personas, current.personas),
-          plugins: mergeDefaultPlugins(mergeById(remote?.plugins, current.plugins)),
-          storyMemories: mergeStoryMemories(remote?.storyMemories, current.storyMemories),
-          savedMessages: mergeById(remote?.savedMessages, current.savedMessages),
-          wallets: mergeById(remote?.wallets, current.wallets),
-          activeChatId: current.activeChatId || remote?.activeChatId,
-          openRouterConfig: {
-            ...(remote?.openRouterConfig || {}),
-            ...current.openRouterConfig,
-            apiKey: current.openRouterConfig.apiKey || remote?.openRouterConfig?.apiKey || '',
-          },
+          ...remote,
+          appPreferences: normalizePreferences({ ...current.appPreferences, ...(remote.appPreferences || {}) }),
+          deletedCharacterIds: remote.deletedCharacterIds || [],
+          characters: Array.isArray(remote.characters) ? mergeDefaultCharacters(remote.characters, remote.deletedCharacterIds || []) : current.characters,
+          chats: Array.isArray(remote.chats) ? remote.chats : current.chats,
+          lorebooks: Array.isArray(remote.lorebooks) ? remote.lorebooks : current.lorebooks,
+          personas: Array.isArray(remote.personas) ? remote.personas : current.personas,
+          plugins: Array.isArray(remote.plugins) ? mergeDefaultPlugins(remote.plugins) : current.plugins,
+          storyMemories: Array.isArray(remote.storyMemories) ? remote.storyMemories : current.storyMemories,
+          savedMessages: Array.isArray(remote.savedMessages) ? remote.savedMessages : current.savedMessages,
+          wallets: Array.isArray(remote.wallets) ? remote.wallets : current.wallets,
+          socialWorld: remote.socialWorld || current.socialWorld,
+          phoneSystem: remote.phoneSystem || current.phoneSystem,
+          journalPages: Array.isArray(remote.journalPages) ? remote.journalPages : current.journalPages,
+          activeChatId: remote.activeChatId || current.activeChatId,
+          openRouterConfig: { ...(current.openRouterConfig || {}), ...(remote.openRouterConfig || {}), apiKey: remote.openRouterConfig?.apiKey || current.openRouterConfig.apiKey || '' },
           supabaseConfig: current.supabaseConfig,
-          socialWorld: remote?.socialWorld || current.socialWorld,
-          phoneSystem: mergePhoneSystemData(remote?.phoneSystem, current.phoneSystem),
-          journalPages: mergeById(remote?.journalPages, current.journalPages || []),
-        };
-        dataRef.current = merged;
-        setData(merged);
-        if (merged.appPreferences.homeImage) setHomeImage(merged.appPreferences.homeImage);
-        const selected = merged.chats.find((item) => item.id === merged.activeChatId);
-        if (selected) setActiveChat(selected);
-        await saveLocalData(merged);
-        await enqueueFirebaseSync(merged);
+        } : current;
+        const activeChatId = merged.chats.some((chat) => chat.id === merged.activeChatId)
+          ? merged.activeChatId
+          : merged.chats.some((chat) => chat.id === current.activeChatId) ? current.activeChatId : merged.chats[0]?.id;
+        const readyData = { ...merged, activeChatId };
+        dataRef.current = readyData;
+        setData(readyData);
+        if (readyData.appPreferences.homeImage) setHomeImage(readyData.appPreferences.homeImage);
+        setActiveChat(readyData.chats.find((chat) => chat.id === activeChatId) || null);
+        await saveLocalData(readyData);
+        if (!useCloudSnapshot) await enqueueFirebaseSync(readyData);
+        firebaseCloudReadyRef.current = true;
+        if (useCloudSnapshot) setFirebaseSyncMessage('Your latest chats and app data were restored from Firebase.');
       } catch (error) {
-        setFirebaseSyncMessage(`Firebase could not finish syncing: ${error instanceof Error ? error.message : String(error)}`);
+        firebaseCloudReadyRef.current = false;
+        setFirebaseSyncMessage(`Firebase could not load your saved copy. Your local data is safe; cloud saving is paused to protect the existing backup. ${error instanceof Error ? error.message : String(error)}`);
+      } finally {
+        if (mounted && authRevision === firebaseAuthRevisionRef.current) setFirebaseCloudHydrated(true);
       }
     });
 
@@ -631,6 +639,7 @@ export default function App() {
   const handleFirebaseSyncNow = async () => {
     if (!auth.currentUser) throw new Error('Sign in to Firebase first.');
     if (dataRef.current.appPreferences?.cloudSync === false) throw new Error('Turn on Firebase sync in App Settings first.');
+    if (!firebaseCloudReadyRef.current) throw new Error('Firebase has not finished loading your saved copy. Reload the app to retry before syncing.');
     setFirebaseSyncMessage('Saving chats and app data to Firebase…');
     try {
       await enqueueFirebaseSync(dataRef.current);
@@ -698,7 +707,7 @@ export default function App() {
     );
   }
 
-  if (!storageHydrated) {
+  if (!storageHydrated || !firebaseCloudHydrated) {
     return (
       <main className="min-h-screen grid place-items-center bg-[#0d020b] text-[#ffd6eb]" role="status">
         Loading your saved chats…
