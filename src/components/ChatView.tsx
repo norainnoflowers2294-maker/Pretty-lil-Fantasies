@@ -59,6 +59,18 @@ import { StoryWorldPanel } from './StoryWorldPanel';
 import { addPhoneThreadMessage, type PhoneSystemState } from '../lib/phoneSystem';
 import { applyExplicitPreferences, makeStoryBibleEntry } from '../lib/storyFeatures';
 
+const advanceStoryTime = (value?: string) => {
+  const match = value?.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/i);
+  let hour = match ? Number(match[1]) % 24 : 20;
+  const minute = match ? Number(match[2] || 0) : 0;
+  if (match?.[3]?.toUpperCase() === 'PM' && hour < 12) hour += 12;
+  if (match?.[3]?.toUpperCase() === 'AM' && hour === 12) hour = 0;
+  hour = (hour + 1) % 24;
+  const label = `${hour % 12 || 12}:${String(minute).padStart(2, '0')} ${hour < 12 ? 'AM' : 'PM'}`;
+  const phase = hour >= 5 && hour < 11 ? 'Morning' : hour >= 11 && hour < 16 ? 'Daytime' : hour >= 16 && hour < 20 ? 'Evening' : 'Night';
+  return `${label} · ${phase}`;
+};
+
 const ACTION_VERBS = 'says?|said|asks?|asked|replies?|replied|answers?|answered|whispers?|whispered|shouts?|shouted|laughs?|laughed|smiles?|smiled|nods?|nodded|shakes?|shook|looks?|looked|glances?|glanced|walks?|walked|moves?|moved|steps?|stepped|reaches?|reached|takes?|took|turns?|turned|stands?|stood|sits?|sat|leans?|leaned|runs?|ran|cries?|cried|thinks?|thought|feels?|felt|decides?|decided|chooses?|chose|opens?|opened|closes?|closed|grabs?|grabbed|holds?|held|pulls?|pulled|pushes?|pushed|follows?|followed|leaves?|left|enters?|entered|begins?|began|starts?|started|frowns?|frowned|blinks?|blinked|breathes?|breathed|watches?|watched|stares?|stared|tells?|told|murmurs?|murmured|sighs?|sighed|shrugs?|shrugged|kneels?|knelt|rolls?|rolled';
 
 function escapeRegex(value: string): string {
@@ -392,7 +404,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
         currentSwipeIndex: 0,
       };
       if (textMode) savePhoneThreadMessage(responder, responder.id, responder.name, botReply, 'incoming', replyTimestamp);
-      onUpdateChat({ ...chat, messages: [...chat.messages, replyMessage], updatedAt: new Date().toISOString() });
+      onUpdateChat({ ...chat, messages: [...chat.messages, replyMessage], timeOfDay: chat.timeCycleEnabled ? advanceStoryTime(chat.timeOfDay) : chat.timeOfDay, updatedAt: new Date().toISOString() });
       const bibleEntry = makeStoryBibleEntry(chat.id, '', botReply);
       if (bibleEntry) onSaveMemory(bibleEntry);
       const learnedCharacter = characters.find((item) => item.id === responder.id);
@@ -913,7 +925,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
         swipes: [reply],
         currentSwipeIndex: 0,
       };
-      onUpdateChat({ ...chat, messages: [...chat.messages, message], updatedAt: new Date().toISOString() });
+      onUpdateChat({ ...chat, messages: [...chat.messages, message], timeOfDay: chat.timeCycleEnabled ? advanceStoryTime(chat.timeOfDay) : chat.timeOfDay, updatedAt: new Date().toISOString() });
     } catch (err: any) {
       setErrorDetails({
         message: err.message || `Could not run the ${action} quick action.`,
