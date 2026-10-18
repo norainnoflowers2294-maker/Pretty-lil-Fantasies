@@ -85,6 +85,18 @@ export async function signInWithGoogle() {
   return signInWithPopup(auth, provider);
 }
 
+export async function signInWithGoogleDrive() {
+  const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
+  provider.addScope('https://www.googleapis.com/auth/drive.file');
+  const result = await signInWithPopup(auth, provider);
+  const credential = GoogleAuthProvider.credentialFromResult(result);
+  if (!credential?.accessToken) {
+    throw new Error('Google sign-in did not return Drive access. Try again and approve access to files created by Pretty Little Fantasies.');
+  }
+  return { user: result.user, accessToken: credential.accessToken };
+}
+
 export async function logOutFirebase() {
   return signOut(auth);
 }
