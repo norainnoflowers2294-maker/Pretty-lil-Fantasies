@@ -1092,7 +1092,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
       {/* Top Chat Bar */}
       <header
         className="relative px-3 sm:px-5 pb-2.5 bg-[#140410]/95 backdrop-blur-md border-b border-[#ff3399]/40 flex items-center justify-between z-30 shadow-[0_0_25px_rgba(255,0,128,0.3)]"
-        style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 0.625rem)' }}
+        style={{ paddingTop: 'max(calc(env(safe-area-inset-top, 0px) + 0.75rem), 3.75rem)' }}
       >
         <div className="flex items-center space-x-2 sm:space-x-3">
           <button
