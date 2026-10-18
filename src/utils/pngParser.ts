@@ -228,7 +228,7 @@ function decodeCardPayload(raw: string): any {
   try {
     const binary = atob(encoded.padEnd(Math.ceil(encoded.length / 4) * 4, '='));
     const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
-    candidates.unshift(new TextDecoder('utf-8', { fatal: true }).decode(bytes).replace(/^\\uFEFF/, '').trim());
+    candidates.unshift(new TextDecoder('utf-8', { fatal: true }).decode(bytes).replace(/^\uFEFF/, '').trim());
   } catch {}
   for (const candidate of candidates) {
     try { return JSON.parse(candidate); } catch {}
