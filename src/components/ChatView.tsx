@@ -406,7 +406,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
       };
       if (textMode) savePhoneThreadMessage(responder, responder.id, responder.name, botReply, 'incoming', replyTimestamp);
       const continuedChat = { ...chat, messages: [...chat.messages, replyMessage], timeOfDay: chat.timeCycleEnabled ? advanceStoryTime(chat.timeOfDay) : chat.timeOfDay, updatedAt: new Date().toISOString() };
-      onUpdateChat(applyLivingWorldReply(continuedChat, botReply));
+      onUpdateChat(applyLivingWorldReply(continuedChat, botReply, responder));
       const bibleEntry = makeStoryBibleEntry(chat.id, '', botReply);
       if (bibleEntry) onSaveMemory(bibleEntry);
       const learnedCharacter = characters.find((item) => item.id === responder.id);
@@ -706,7 +706,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
         timeOfDay: updatedChat.timeCycleEnabled ? advanceStoryTime(updatedChat.timeOfDay) : updatedChat.timeOfDay,
         updatedAt: new Date().toISOString(),
       };
-      onUpdateChat(applyLivingWorldReply(repliedChat, botReply));
+      onUpdateChat(applyLivingWorldReply(repliedChat, botReply, responder));
       if (!assistantWasTagged && !updatedChat.oocMode) {
         const bibleEntry = makeStoryBibleEntry(chat.id, userText, botReply);
         if (bibleEntry) onSaveMemory(bibleEntry);
