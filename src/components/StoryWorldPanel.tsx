@@ -74,7 +74,7 @@ export const StoryWorldPanel: React.FC<Props> = ({ chat, onSave, onCreateBranch,
               Advance one hour after each AI reply
             </label>
             <div className="mt-3 flex gap-2">
-              <button type="button" onClick={() => advance(-1) className="inline-flex flex-1 items-center justify-center gap-1 rounded-xl border border-white/35 bg-white/10 px-3 py-2 text-xs hover:bg-white/20"><Minus className="h-3.5 w-3.5" />Back 1 hour</button>
+              <button type="button" onClick={() => advance(-1)} className="inline-flex flex-1 items-center justify-center gap-1 rounded-xl border border-white/35 bg-white/10 px-3 py-2 text-xs hover:bg-white/20"><Minus className="h-3.5 w-3.5" />Back 1 hour</button>
               <button type="button" onClick={() => advance(1)} className="inline-flex flex-1 items-center justify-center gap-1 rounded-xl border border-white/35 bg-white/10 px-3 py-2 text-xs hover:bg-white/20"><Plus className="h-3.5 w-3.5" />Advance 1 hour</button>
             </div>
           </section>
