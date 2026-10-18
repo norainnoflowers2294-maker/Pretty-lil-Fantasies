@@ -40,6 +40,8 @@ import {
   Wallet,
   DollarSign,
   Music2,
+  PhoneCall,
+  Shirt,
 } from 'lucide-react';
 import {
   Chat,
@@ -59,6 +61,7 @@ import { StoryWorldPanel } from './StoryWorldPanel';
 import { addPhoneThreadMessage, type PhoneSystemState } from '../lib/phoneSystem';
 import { applyExplicitPreferences, makeStoryBibleEntry } from '../lib/storyFeatures';
 import { applyLivingWorldReply } from '../lib/livingWorld';
+import { WeatherClockCard } from './WeatherClockCard';
 
 const advanceStoryTime = (value?: string) => {
   const match = value?.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/i);
@@ -225,6 +228,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
   onBookmarkMessage,
 }) => {
   const [inputText, setInputText] = useState('');
+  const [wardrobeDraft, setWardrobeDraft] = useState('');
   const [quickActionsCollapsed, setQuickActionsCollapsed] = useState(() => {
     try { return localStorage.getItem('plf_chat_quick_actions_collapsed') === 'true'; } catch { return false; }
   });
@@ -1748,6 +1752,18 @@ export const ChatView: React.FC<ChatViewProps> = ({
               <button type="button" onClick={() => { setIsLeftDrawerOpen(false); onOpenCharacterModal(); }} className="w-full rounded-xl bg-white/5 p-3 text-left text-sm text-white hover:bg-white/10">Character Library</button>
               <button type="button" onClick={() => { setIsLeftDrawerOpen(false); onOpenPersonaModal(); }} className="w-full rounded-xl bg-white/5 p-3 text-left text-sm text-white hover:bg-white/10">Persona Library</button>
               <button type="button" onClick={() => { setIsLeftDrawerOpen(false); onOpenLorebookModal(); }} className="w-full rounded-xl bg-white/5 p-3 text-left text-sm text-white hover:bg-white/10">Lorebooks</button>
+            </div>
+            <div className="max-h-[54dvh] space-y-2 overflow-y-auto border-b border-[#ff3399]/25 p-3">
+              <button type="button" onClick={() => { setIsLeftDrawerOpen(false); onOpenWallet('dashboard'); }} className="flex w-full items-center gap-3 rounded-xl border border-emerald-300/25 bg-emerald-500/10 p-3 text-left text-white hover:bg-emerald-500/20"><Wallet className="h-5 w-5 text-emerald-200" /><span><strong className="block text-xs">Money system · Story Wallet</strong><small className="text-[10px] text-white/55">Balances and story transfers for this chat</small></span></button>
+              <section className="rounded-xl border border-[#ff66b2]/30 bg-white/5 p-3">
+                <h3 className="mb-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#ff99cc]"><Shirt className="h-3.5 w-3.5" />Wardrobe</h3>
+                <form onSubmit={(event) => { event.preventDefault(); const outfit = wardrobeDraft.trim(); if (!outfit || loading) return; const personaName = activePersona?.display_name || activePersona?.name || 'my persona'; setInputText(`Outfit for ${personaName}: ${outfit}. Please use this as the outfit detail in the current scene.`); setWardrobeDraft(''); setIsLeftDrawerOpen(false); window.setTimeout(() => inputRef.current?.form?.requestSubmit(), 0); }}>
+                  <textarea value={wardrobeDraft} onChange={(event) => setWardrobeDraft(event.target.value)} rows={2} maxLength={500} placeholder="What are they wearing today?" className="w-full resize-y rounded-lg border border-white/15 bg-[#1e0818] p-2 text-xs text-white placeholder:text-white/35" />
+                  <button type="submit" disabled={!wardrobeDraft.trim() || loading} className="mt-2 w-full rounded-lg bg-[#ff007f]/25 p-2 text-xs font-semibold text-white hover:bg-[#ff007f]/40 disabled:opacity-40">Send outfit into chat</button>
+                </form>
+              </section>
+              <button type="button" onClick={() => { setIsLeftDrawerOpen(false); onOpenPhone(); }} className="flex w-full items-center gap-3 rounded-xl border border-cyan-300/25 bg-cyan-500/10 p-3 text-left text-white hover:bg-cyan-500/20"><PhoneCall className="h-5 w-5 text-cyan-200" /><span><strong className="block text-xs">Persona phone</strong><small className="text-[10px] text-white/55">Texts, calls, contacts, and photos</small></span></button>
+              <WeatherClockCard />
             </div>
             <div className="min-h-0 flex-1 overflow-y-auto p-3">
               <h3 className="mb-2 px-1 text-[10px] font-bold uppercase tracking-widest text-[#ff99cc]">Your chats</h3>
