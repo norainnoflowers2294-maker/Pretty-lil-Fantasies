@@ -151,40 +151,53 @@ export default function App() {
 
   // Save immediately on-device, then serialize Firebase writes so older snapshots
   // cannot finish after and replace a newer conversation.
-  const updateData = (newData: StorageData) => {
+  const updateData = async (newData: StorageData) => {
     dataRef.current = newData;
     setData(newData);
     const saveRevision = ++localSaveRevisionRef.current;
 
-    void saveLocalData(newData).then(() => {
-      if (saveRevision !== localSaveRevisionRef.current) return;
-      if (newData.appPreferences?.cloudSync === false) {
-        firebaseSyncRevisionRef.current += 1;
-        setFirebaseSyncMessage('Chats and app data are saved on this device. Firebase sync is turned off in App Settings.');
-        return;
-      }
-      if (!auth.currentUser) {
-        setFirebaseSyncMessage('Chats and app data are saved on this device. Sign in under Settings → Firebase Cloud to back them up.');
-        return;
-      }
-      setFirebaseSyncMessage('Saving chats and app data to Firebase…');
-      void enqueueFirebaseSync(newData).catch((error) => {
-        if (saveRevision === localSaveRevisionRef.current) {
-          setFirebaseSyncMessage(`Firebase could not save the latest changes: ${error instanceof Error ? error.message : String(error)}`);
-        }
-      });
-    }).catch((error) => {
-      if (saveRevision === localSaveRevisionRef.current) {
-        setFirebaseSyncMessage(`Could not save on this device: ${error instanceof Error ? error.message : String(error)}`);
-      }
+    try {
+      await saveLocalData(newData);
+    } catch (error) {
+      const message = `Could not save on this device: ${error instanceof Error ? error.message : String(error)}`;
+      if (saveRevision === localSaveRevisionRef.current) setFirebaseSyncMessage(message);
       if (auth.currentUser && newData.appPreferences?.cloudSync !== false) {
-        void enqueueFirebaseSync(newData).catch((syncError) => {
-          if (saveRevision === localSaveRevisionRef.current) {
-            setFirebaseSyncMessage(`Device and Firebase saves failed: ${syncError instanceof Error ? syncError.message : String(syncError)}`);
-          }
-        });
+        try {
+          await enqueueFirebaseSync(newData);
+          return { localSaved: false, firebaseSaved: true, message: 'Firebase backup saved, but this device could not keep a local copy.' };
+        } catch (syncError) {
+          const failure = `Device and Firebase saves failed: ${syncError instanceof Error ? syncError.message : String(syncError)}`;
+          if (saveRevision === localSaveRevisionRef.current) setFirebaseSyncMessage(failure);
+          return { localSaved: false, firebaseSaved: false, message: failure };
+        }
       }
-    });
+      return { localSaved: false, firebaseSaved: false, message };
+    }
+
+    if (saveRevision !== localSaveRevisionRef.current) {
+      return { localSaved: true, firebaseSaved: false, message: 'Saved on this device. A newer update is being saved.' };
+    }
+    if (newData.appPreferences?.cloudSync === false) {
+      firebaseSyncRevisionRef.current += 1;
+      const message = 'Saved on this device. Firebase sync is turned off in App Settings.';
+      setFirebaseSyncMessage(message);
+      return { localSaved: true, firebaseSaved: false, message };
+    }
+    if (!auth.currentUser) {
+      const message = 'Saved on this device only. Sign in under Settings → Firebase Cloud to back it up.';
+      setFirebaseSyncMessage(message);
+      return { localSaved: true, firebaseSaved: false, message };
+    }
+
+    setFirebaseSyncMessage('Saving chats and app data to Firebase…');
+    try {
+      await enqueueFirebaseSync(newData);
+      return { localSaved: true, firebaseSaved: true, message: 'Saved on this device and backed up to Firebase.' };
+    } catch (error) {
+      const message = `Saved on this device, but Firebase could not save the latest changes: ${error instanceof Error ? error.message : String(error)}`;
+      if (saveRevision === localSaveRevisionRef.current) setFirebaseSyncMessage(message);
+      return { localSaved: true, firebaseSaved: false, message };
+    }
   };
 
   const handleSetHomeImage = (image: string) => {
@@ -401,7 +414,7 @@ export default function App() {
     const updated = exists
       ? currentData.characters.map((c) => (c.id === char.id ? char : c))
       : [char, ...currentData.characters];
-    updateData({
+    return updateData({
       ...currentData,
       characters: updated,
       // Explicitly importing or saving a profile restores it after a prior deletion.
@@ -607,6 +620,19 @@ export default function App() {
     updateData({ ...data, chats: updatedChats });
   };
 
+  const handleFirebaseSyncNow = async () => {
+    if (!auth.currentUser) throw new Error('Sign in to Firebase first.');
+    if (dataRef.current.appPreferences?.cloudSync === false) throw new Error('Turn on Firebase sync in App Settings first.');
+    setFirebaseSyncMessage('Saving chats and app data to Firebase…');
+    try {
+      await enqueueFirebaseSync(dataRef.current);
+    } catch (error) {
+      const message = `Firebase could not save the latest changes: ${error instanceof Error ? error.message : String(error)}`;
+      setFirebaseSyncMessage(message);
+      throw new Error(message);
+    }
+  };
+
   const handleOpenCreateCharacterPage = (charToEdit?: Character | null) => {
     setCharacterToEdit(charToEdit || null);
     setIsCreateCharacterOpen(true);
@@ -784,6 +810,7 @@ export default function App() {
           firebaseUser={firebaseUser}
           firebaseSyncMessage={firebaseSyncMessage}
           firebaseLastSync={firebaseLastSync}
+          onSyncFirebase={handleFirebaseSyncNow}
         />
         <StoryNotesModal
           isOpen={isStoryNotesOpen}
