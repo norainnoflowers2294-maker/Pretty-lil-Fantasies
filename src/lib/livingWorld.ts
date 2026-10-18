@@ -58,11 +58,30 @@ export function applyLivingWorldReply(chat: Chat, reply: string, now = new Date(
   const lieMatch = reply.match(/\b(?:lied|lie|false story|wasn't true|was not true)\b/i);
   const speaker = chat.characterIds[0] || 'unknown';
   const lieAlreadyTracked = current.lies.some((lie) => lie.characterId === speaker && !lie.discovered && lieMatch && lie.claim.toLowerCase().includes(lieMatch[0].toLowerCase()));
+  const dailyLore = due && reply.trim() ? [{
+    id: `lore:daily:${now.toISOString().slice(0, 10)}`,
+    title: `Daily chronicle · ${now.toLocaleDateString()}`,
+    category: 'history' as const,
+    entry: summarize(reply),
+    updatedAt: timestamp,
+  }] : [];
+  const relationshipNotes = [...current.relationshipNotes];
+  if (/\bjealous|jealousy|possessive|territorial|competing for (?:your|her|his) attention\b/i.test(reply)) {
+    const characterId = chat.characterIds[0] || 'unknown';
+    const existing = relationshipNotes.findIndex((note) => note.characterId === characterId && note.toward === '{{user}}');
+    if (existing >= 0) {
+      relationshipNotes[existing] = { ...relationshipNotes[existing], jealousy: Math.min(100, relationshipNotes[existing].jealousy + 12), note: summarize(reply, 160) };
+    } else {
+      relationshipNotes.push({ characterId, characterName: characterId, toward: '{{user}}', affinity: chat.relationshipScore ?? 50, jealousy: 18, note: summarize(reply, 160) });
+    }
+  }
   const nextState: LivingWorldState = {
     ...current,
     lastDailyStoryAt: due ? timestamp : current.lastDailyStoryAt,
     events: events.slice(-120),
     rumors: [...current.rumors, ...newRumors].slice(-120),
+    lore: [...current.lore, ...dailyLore].slice(-120),
+    relationshipNotes: relationshipNotes.slice(-80),
   };
   if (lieMatch && !lieAlreadyTracked) {
     nextState.lies = [...current.lies, {
