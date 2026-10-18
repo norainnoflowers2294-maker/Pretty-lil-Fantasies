@@ -828,7 +828,7 @@ export default function App() {
           onUpdateCharacter={handleSaveCharacter}
           onSelectChat={handleSelectChat}
           onStartNewChat={handleStartNewChat}
-          onBackToDashboard={() => setInChatMode(false)}
+          onBackToDashboard={() => { setInChatMode(false); setActiveTab('home'); }}
           onOpenSettings={() => setIsSettingsOpen(true)}
           onOpenPlugins={() => setIsPluginModalOpen(true)}
           onOpenCharacterModal={() => setIsCharModalOpen(true)}
