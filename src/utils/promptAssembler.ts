@@ -184,9 +184,14 @@ ${qualityRules.join('\n')}`);
   }
 
   const world = getLivingWorldState(chat);
+  const worldMemories = storyMemories
+    .filter((memory) => !memory.deletedAt && (!memory.chatId || memory.chatId === chat.id))
+    .sort((a, b) => Number(Boolean(b.pinned)) - Number(Boolean(a.pinned)) || (b.createdAt || '').localeCompare(a.createdAt || ''))
+    .slice(0, 8);
   if (world.enabled) {
     const worldLines = [
       'Run this as a persistent living world. Character short-term memory follows the recent scene; important promises, gifts, anniversaries, betrayals, relationships and turning points become durable long-term canon. Refer to old memories naturally when relevant, and allow years and generations to inherit recorded history.',
+      worldMemories.length ? `Long-term character memories: ${worldMemories.map((memory) => `${memory.title}: ${memory.content.slice(0, 380)}`).join(' | ')}` : '',
       'Keep each character’s private motives and knowledge distinct. Characters may lie when personality and goals support it; preserve an established lie consistently until evidence exposes it. Never reveal a secret just because the user asks OOC.',
       'NPCs notice meaningful attention between other characters and react according to their bond, temperament and history. Jealousy can be quiet, protective, competitive or emotional, but must change dialogue or choices plausibly and never dictate the user’s actions.',
       'Seed earned plot turns from existing clues, memories, rumors and unresolved goals. Build a searchable-feeling world encyclopedia through consistent recurring details about places, factions, people, history, politics, magic and technology. Rumors can vary by speaker and may be true, partial or false; preserve the known truth status.',
