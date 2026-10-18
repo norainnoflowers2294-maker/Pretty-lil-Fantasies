@@ -98,9 +98,10 @@ export async function parsePngMetadata(file: File): Promise<{ textChunks: Record
     }
   }
 
-  const base64Image = await new Promise<string>((resolve) => {
+  const base64Image = await new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(reader.error || new Error('Could not read the selected PNG file.'));
     reader.readAsDataURL(file);
   });
 
@@ -222,7 +223,8 @@ function normalizeCharacterCard(parsed: any, fallbackName: string, avatar?: stri
 function decodeCardPayload(raw: string): any {
   const normalized = raw.replace(/\u0000/g, '').trim();
   const candidates = [normalized];
-  const encoded = normalized.replace(/-/g, '+').replace(/_/g, '/');
+  const base64Payload = normalized.replace(/^data:[^,]*;base64,/i, '').replace(/\s+/g, '');
+  const encoded = base64Payload.replace(/-/g, '+').replace(/_/g, '/');
   try {
     const binary = atob(encoded.padEnd(Math.ceil(encoded.length / 4) * 4, '='));
     const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
@@ -235,22 +237,51 @@ function decodeCardPayload(raw: string): any {
   throw new Error('No valid character card data was found in this PNG.');
 }
 
+function hasCharacterCardData(parsed: any): boolean {
+  try {
+    const data = unwrapCard(parsed);
+    return ['name', 'description', 'personality', 'scenario', 'first_mes', 'first_message', 'greeting', 'mes_example', 'backstory', 'history', 'system_prompt']
+      .some((key) => typeof data[key] === 'string' && data[key].trim().length > 0);
+  } catch {
+    return false;
+  }
+}
+
 export async function parseCharacterFile(file: File): Promise<Partial<Character>> {
   const fallbackName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ') || 'Unnamed Character';
   if (file.name.toLowerCase().endsWith('.json')) {
     return normalizeCharacterCard(JSON.parse(await file.text()), fallbackName);
   }
+  if (!file.name.toLowerCase().endsWith('.png')) throw new Error('Choose a character PNG or JSON card.');
 
   const { textChunks, base64Image } = await parsePngMetadata(file);
-  const metadataPriority = ['chara', 'ccv3', 'character', 'description', 'comment'];
-  for (const preferredKey of metadataPriority) {
-    const rawCard = Object.entries(textChunks).find(([key]) => key.toLowerCase() === preferredKey)?.[1];
-    if (!rawCard) continue;
+  const metadataPriority = ['chara', 'ccv3', 'ccv2', 'character', 'character_card', 'character_card_v2', 'chara_card', 'chara_card_v2', 'chara_card_v3', 'description', 'comment'];
+  const attempted = new Set<string>();
+  const tryEmbeddedCard = (key: string, rawCard: string): Partial<Character> | undefined => {
+    attempted.add(key.toLowerCase());
     try {
-      return normalizeCharacterCard(decodeCardPayload(rawCard), fallbackName, base64Image);
+      const decoded = decodeCardPayload(rawCard);
+      if (!hasCharacterCardData(decoded)) return undefined;
+      return normalizeCharacterCard(decoded, fallbackName, base64Image);
     } catch (error) {
-      console.warn(`Could not read embedded ${preferredKey} character card data:`, error);
+      console.warn(`Could not read embedded ${key} character card data:`, error);
+      return undefined;
     }
+  };
+
+  for (const preferredKey of metadataPriority) {
+    const entry = Object.entries(textChunks).find(([key]) => key.toLowerCase() === preferredKey);
+    if (!entry) continue;
+    const parsed = tryEmbeddedCard(entry[0], entry[1]);
+    if (parsed) return parsed;
+  }
+
+  // PNG exporters use different text keywords. Check remaining chunks for
+  // recognizable character data before treating the image as avatar-only.
+  for (const [key, rawCard] of Object.entries(textChunks)) {
+    if (attempted.has(key.toLowerCase())) continue;
+    const parsed = tryEmbeddedCard(key, rawCard);
+    if (parsed) return parsed;
   }
 
   return {
@@ -301,7 +332,7 @@ function normalizePersonaCard(parsed: any, fallbackName: string, avatar?: string
 }
 
 export async function parsePersonaFile(file: File): Promise<Partial<Persona>> {
-  const fallbackName = file.name.replace(/\\.[^/.]+$/, '').replace(/[-_]/g, ' ') || 'Unnamed Persona';
+  const fallbackName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ') || 'Unnamed Persona';
   if (file.name.toLowerCase().endsWith('.json')) {
     return normalizePersonaCard(JSON.parse(await file.text()), fallbackName);
   }

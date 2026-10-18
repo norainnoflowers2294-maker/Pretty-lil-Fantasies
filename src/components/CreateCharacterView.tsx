@@ -30,7 +30,7 @@ import {
   RotateCcw,
 } from 'lucide-react';
 import { Character, FeatureMark, FamilyMember, CharacterSpouse } from '../types/roleplay';
-import { parseBirthdayToZodiac, calculateAgeFromBirthYear } from '../utils/zodiac';
+import { parseBirthdayToZodiac, calculateAgeFromBirthYear, calculateBirthYearFromAge } from '../utils/zodiac';
 import { parseCharacterFile, exportCharacterJson } from '../utils/pngParser';
 import { resolveImageUrl } from '../utils/imageUrl';
 
@@ -259,6 +259,7 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
   }, [existingCharacter]);
 
   const populateFromCharacter = (char: Partial<Character>) => {
+    setManualAgeOverride(false);
     setName(char.name || '');
     setNicknames(char.nicknames || []);
     setAge(char.age || '');
@@ -310,13 +311,21 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
   }, [birthday]);
 
   useEffect(() => {
-    if (birthYear && !manualAgeOverride) {
+    if (manualAgeOverride) {
+      const computedBirthYear = calculateBirthYearFromAge(age, birthday);
+      if (computedBirthYear && computedBirthYear !== birthYear) {
+        setBirthYear(computedBirthYear);
+      }
+      return;
+    }
+
+    if (birthYear) {
       const computedAge = calculateAgeFromBirthYear(birthYear, birthday);
-      if (computedAge) {
+      if (computedAge && computedAge !== age) {
         setAge(computedAge);
       }
     }
-  }, [birthYear, birthday, manualAgeOverride]);
+  }, [age, birthYear, birthday, manualAgeOverride]);
 
   // Mark changes as unsaved
   const markUnsaved = () => {
@@ -1356,6 +1365,7 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
                     value={birthYear}
                     onChange={(e) => {
                       setBirthYear(e.target.value);
+                      setManualAgeOverride(false);
                       markUnsaved();
                     }}
                     className="w-full px-3.5 py-2 rounded-xl bg-black/40 border text-white focus:outline-none"
