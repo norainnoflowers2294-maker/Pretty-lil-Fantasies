@@ -241,6 +241,23 @@ describe('parseCharacterFile', () => {
     expect(result.tags).toEqual(['Mystery']);
   });
 
+  it('finds character cards stored under alternate PNG metadata labels', async () => {
+    const card = { spec: 'chara_card_v2', data: { name: 'Keyword Mira', personality: 'Clever and kind' } };
+    const keywordBytes = new TextEncoder().encode('character_card_v2');
+    const payload = new TextEncoder().encode(JSON.stringify(card));
+    const chunkData = new Uint8Array([...keywordBytes, 0, ...payload]);
+    const length = chunkData.length;
+    const bytes = new Uint8Array([
+      0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
+      (length >>> 24) & 0xff, (length >>> 16) & 0xff, (length >>> 8) & 0xff, length & 0xff,
+      0x74, 0x45, 0x58, 0x74, ...chunkData, 0, 0, 0, 0,
+    ]);
+    const result = await parseCharacterFile(new File([bytes], 'keyword-mira.png', { type: 'image/png' }));
+
+    expect(result.name).toBe('Keyword Mira');
+    expect(result.personality).toBe('Clever and kind');
+  });
+
   it('marks PNGs without embedded card data as image-only imports', async () => {
     const file = new File([new Uint8Array([1, 2, 3])], 'avatar.png', { type: 'image/png' });
     const result = await parseCharacterFile(file);
