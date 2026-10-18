@@ -82,13 +82,14 @@ function checkGeneratedReply(
 ): string[] {
   const violations: string[] = [];
   const response = reply.trim();
+  const genericUserNames = new Set(['the', 'a', 'an']);
   const userNames = Array.from(new Set([
     'Emmy',
     '{{user}}',
     persona?.name || '',
     persona?.display_name || '',
     persona?.name?.split(/\s+/)[0] || '',
-  ].map((name) => name.trim()).filter(Boolean)));
+  ].map((name) => name.trim()).filter((name) => Boolean(name) && !genericUserNames.has(name.toLowerCase()))));
 
   for (const name of userNames) {
     const escapedName = escapeRegex(name);
