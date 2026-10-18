@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { BookOpen, Check, ChevronDown, ChevronLeft, ChevronRight, Cloud, FileImage, FilePlus2, Flower2, Grid2X2, ImagePlus, LayoutGrid, LoaderCircle, NotebookPen, Palette, Plus, Save, Sparkles, Trash2, Type, Upload, X } from 'lucide-react';
+import { BookOpen, Check, Cloud, FilePlus2, Flower2, ImagePlus, LoaderCircle, NotebookPen, Palette, Plus, Sparkles, Trash2, Type, X } from 'lucide-react';
 import type { JournalPage, JournalPaper, JournalSection } from '../types/journal';
 import { signInWithGoogleDrive } from '../lib/firebase';
 import { saveJournalToGoogleDrive } from '../utils/googleDriveBackup';
