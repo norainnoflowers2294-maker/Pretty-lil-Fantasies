@@ -294,6 +294,23 @@ async function storeEmbeddedImages(value: unknown, userId: string, path = 'app-d
   return value;
 }
 
+export function sanitizeFirestoreValue(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    // Firestore rejects undefined array entries; keep their positions as null.
+    return value.map((entry) => entry === undefined ? null : sanitizeFirestoreValue(entry));
+  }
+  if (value && typeof value === 'object') {
+    if (value instanceof Date) return value;
+    const sanitized: Record<string, unknown> = {};
+    for (const [key, child] of Object.entries(value)) {
+      // Firestore rejects undefined fields, including deeply nested card fields.
+      if (child !== undefined) sanitized[key] = sanitizeFirestoreValue(child);
+    }
+    return sanitized;
+  }
+  return value;
+}
+
 export async function syncToFirebase(data: StorageData): Promise<void> {
   const user = auth.currentUser;
   if (!user || data.appPreferences?.cloudSync === false) return;
@@ -301,7 +318,7 @@ export async function syncToFirebase(data: StorageData): Promise<void> {
   try {
     // Firestore documents have a 1 MiB limit. Keep imported PNGs and other
     // embedded images in Storage and store their URLs in the user document.
-    const cloudData = await storeEmbeddedImages({
+    const cloudData = sanitizeFirestoreValue(await storeEmbeddedImages({
       appPreferences: data.appPreferences || DEFAULT_PREFERENCES,
       characters: data.characters,
       lorebooks: data.lorebooks,
@@ -317,7 +334,7 @@ export async function syncToFirebase(data: StorageData): Promise<void> {
       openRouterConfig: data.openRouterConfig || DEFAULT_OPENROUTER_CONFIG,
       supabaseConfig: data.supabaseConfig || DEFAULT_SUPABASE_CONFIG,
       updatedAt: new Date().toISOString(),
-    }, user.uid) as Record<string, unknown>;
+    }, user.uid)) as Record<string, unknown>;
 
     await setDoc(doc(db, 'users', user.uid), cloudData, { merge: true });
   } catch (err) {
