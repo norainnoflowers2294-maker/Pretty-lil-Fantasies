@@ -77,6 +77,7 @@ export default function App() {
   const firebaseAuthRevisionRef = useRef(0);
   const localSaveRevisionRef = useRef(0);
   const firebaseSyncRevisionRef = useRef(0);
+  const firebaseSavedRevisionRef = useRef(0);
   const firebaseSyncQueueRef = useRef<Promise<void>>(Promise.resolve());
   const [firebaseSyncMessage, setFirebaseSyncMessage] = useState('');
   const [firebaseLastSync, setFirebaseLastSync] = useState('');
@@ -204,6 +205,7 @@ export default function App() {
     setFirebaseSyncMessage('Saving chats and app data to Firebase…');
     try {
       await enqueueFirebaseSync(newData);
+      if (saveRevision === localSaveRevisionRef.current) firebaseSavedRevisionRef.current = saveRevision;
       return { localSaved: true, firebaseSaved: true, message: 'Saved on this device and backed up to Firebase.' };
     } catch (error) {
       const message = `Saved on this device, but Firebase could not save the latest changes: ${error instanceof Error ? error.message : String(error)}`;
@@ -211,6 +213,41 @@ export default function App() {
       return { localSaved: true, firebaseSaved: false, message };
     }
   };
+
+  // Retry any pending cloud backup every 30 seconds and when the app is backgrounded.
+  // Local changes are already written immediately; this protects against interrupted network writes.
+  useEffect(() => {
+    if (!storageHydrated) return;
+
+    const flushPendingCloudBackup = () => {
+      const user = auth.currentUser;
+      const snapshot = dataRef.current;
+      const revision = localSaveRevisionRef.current;
+      if (!user || !firebaseCloudReadyRef.current || snapshot.appPreferences?.cloudSync === false) return;
+      if (revision <= firebaseSavedRevisionRef.current) return;
+
+      void enqueueFirebaseSync(snapshot).then(() => {
+        if (revision === localSaveRevisionRef.current) firebaseSavedRevisionRef.current = revision;
+      }).catch((error) => {
+        if (revision === localSaveRevisionRef.current) {
+          setFirebaseSyncMessage(`Auto-save is waiting to retry: ${error instanceof Error ? error.message : String(error)}`);
+        }
+      });
+    };
+
+    const intervalId = window.setInterval(flushPendingCloudBackup, 30_000);
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') flushPendingCloudBackup();
+    };
+    window.addEventListener('pagehide', flushPendingCloudBackup);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener('pagehide', flushPendingCloudBackup);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [storageHydrated, firebaseUser?.uid]);
 
   const handleSetHomeImage = (image: string) => {
     setHomeImage(image);

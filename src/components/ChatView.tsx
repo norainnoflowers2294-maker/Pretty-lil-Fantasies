@@ -1506,7 +1506,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
       </div>
 
       {/* Chat Input Bar */}
-      <div className="relative z-20 p-3 sm:p-4 bg-[#140410]/95 backdrop-blur-md border-t border-[#ff3399]/40">
+      <div className="relative z-20 p-3 sm:p-4 bg-[#140410]/95 backdrop-blur-md border-t border-[#ff3399]/40" style={{ paddingBottom: "calc(1rem + env(safe-area-inset-bottom, 0px))" }}>
         {lastModelUsed && <><style>{'@keyframes plf-model-name-scroll { to { transform: translateX(var(--plf-model-name-end)); } }'}</style><div ref={modelLineViewportRef} className="mx-auto mb-2 max-w-4xl overflow-hidden whitespace-nowrap text-[10px] text-[#ffd6eb]/55" aria-label={'Last reply routed through OpenRouter · ' + lastModelUsed.model + (lastModelUsed.provider ? ' · ' + lastModelUsed.provider : '')}><span ref={modelLineTextRef} className="block w-max whitespace-nowrap" style={modelLineScroll > 2 ? ({ '--plf-model-name-end': '-' + modelLineScroll + 'px', animation: 'plf-model-name-scroll 44s ease-in-out infinite alternate' } as React.CSSProperties) : undefined}>Last reply routed through OpenRouter · {lastModelUsed.model}{lastModelUsed.provider ? ` · ${lastModelUsed.provider}` : ''}</span></div></>}
       <div className="max-w-4xl mx-auto mb-2 flex items-center gap-1.5 overflow-x-auto whitespace-nowrap [scrollbar-width:none]">
           <span className="shrink-0 text-[9px] font-bold uppercase tracking-wider text-[#ffd6eb]/50">Quick</span>
