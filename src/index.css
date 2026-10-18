@@ -1,1 +1,13 @@
 @import "tailwindcss";
+
+
+/* Keep the chat toolbar below the Dynamic Island on compact iPhones. */
+.cp-chat-header {
+  padding-top: max(calc(env(safe-area-inset-top, 0px) + 0.75rem), 3.75rem);
+}
+
+@media (min-width: 640px) {
+  .cp-chat-header {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 0.75rem);
+  }
+}
