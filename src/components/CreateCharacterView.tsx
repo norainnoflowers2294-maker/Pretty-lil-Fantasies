@@ -113,7 +113,7 @@ const RELATIONSHIP_OPTIONS = [
 interface CreateCharacterViewProps {
   existingCharacter?: Character | null;
   existingCharactersList: Character[];
-  onSaveCharacter: (character: Character) => void;
+  onSaveCharacter: (character: Character) => Promise<boolean> | boolean;
   onBack: () => void;
   onStartChat?: (character: Character) => void;
   onOpenLibrary?: () => void;
@@ -219,6 +219,7 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [createdSuccessChar, setCreatedSuccessChar] = useState<Character | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const importInputRef = useRef<HTMLInputElement>(null);
@@ -439,7 +440,7 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
         : undefined;
 
     return {
-      id: existingCharacter?.id || `char_${Date.now()}`,
+      id: existingCharacter?.id || `char_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`,
       name: name.trim() || 'Draft Character',
       nicknames,
       age: age.trim(),
@@ -501,8 +502,9 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
     }
   };
 
-  const handleCreateCharacter = (e?: React.FormEvent) => {
+  const handleCreateCharacter = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+    if (isSaving) return;
     setValidationError(null);
 
     if (!name.trim()) {
@@ -517,17 +519,28 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
       return;
     }
 
+    setIsSaving(true);
     const completedChar = constructCharacterObject();
-    onSaveCharacter(completedChar);
-
-    // Clear saved draft since character is finalized
     try {
-      localStorage.removeItem(DRAFT_KEY);
-    } catch {}
+      const saved = await onSaveCharacter(completedChar);
+      if (saved === false) {
+        setValidationError('Could not verify the character was saved. Your draft is still here—try Save again.');
+        return;
+      }
 
-    setDraftStatus('saved');
-    setCreatedSuccessChar(completedChar);
-    showToast('✨ Character successfully created and added to Library!');
+      // Keep the recovery draft until the durable device write is verified.
+      try {
+        localStorage.removeItem(DRAFT_KEY);
+      } catch {}
+      setDraftStatus('saved');
+      setCreatedSuccessChar(completedChar);
+      showToast('Character saved to your library on this device.');
+    } catch (err) {
+      console.error('Character save failed:', err);
+      setValidationError(`Could not save this character: ${err instanceof Error ? err.message : String(err)}. Your draft is still here—try again.`);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   // ---------------------------------------------------------------------------
@@ -2376,68 +2389,50 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
           {/* Create Character */}
           <button
             type="button"
-            onClick={() => handleCreateCharacter()}
-            className="flex-1 py-3 px-4 rounded-2xl font-bold text-xs sm:text-sm text-white transition-all shadow-xl active:scale-95 flex items-center justify-center space-x-2 border"
+            onClick={() => void handleCreateCharacter()}
+            disabled={isSaving}
+            className="flex-1 py-3 px-4 rounded-2xl font-bold text-xs sm:text-sm text-white transition-all shadow-xl active:scale-95 disabled:opacity-60 disabled:cursor-wait flex items-center justify-center space-x-2 border"
             style={{
               background: `linear-gradient(135deg, ${PALETTE.hotPink}, ${PALETTE.deepRaspberry})`,
               borderColor: PALETTE.bubblegumPink,
             }}
           >
             <Sparkles className="w-4 h-4 text-[#FF7EB0]" />
-            <span>{existingCharacter ? 'Update Character' : 'Create Character'}</span>
+            <span>{isSaving ? 'Saving…' : existingCharacter ? 'Update Character' : 'Create Character'}</span>
           </button>
         </div>
       </footer>
 
-      {/* SUCCESS MODAL AFTER CREATION */}
+      {/* Compact confirmation stays out of the way on small screens. */}
       {createdSuccessChar && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-          <div
-            className="w-full max-w-md p-6 rounded-3xl border-2 space-y-4 text-center shadow-2xl"
-            style={{
-              backgroundColor: PALETTE.midnight,
-              borderColor: PALETTE.mint,
-            }}
-          >
-            <div
-              className="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center text-white shadow-lg"
-              style={{
-                background: `linear-gradient(135deg, ${PALETTE.mint}, ${PALETTE.teal})`,
+        <div className="fixed bottom-[calc(env(safe-area-inset-bottom)+5.25rem)] left-3 right-3 z-40 mx-auto max-w-xl rounded-2xl border border-[#39B99F] bg-[#07122f]/95 p-3 shadow-[0_0_24px_rgba(57,185,159,.3)] backdrop-blur-xl">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#048074] text-white">
+              <Check className="h-5 w-5" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-bold text-white">Saved to this device</p>
+              <p className="truncate text-xs text-white/75">{createdSuccessChar.name} is in your Character Library.</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setCreatedSuccessChar(null);
+                if (onOpenLibrary) onOpenLibrary();
+                else onBack();
               }}
+              className="shrink-0 rounded-xl bg-[#FF007E] px-3 py-2 text-xs font-bold text-white"
             >
-              <Check className="w-8 h-8" />
-            </div>
-
-            <h3 className="text-lg font-bold text-white">Character Created!</h3>
-            <p className="text-xs text-white/80">
-              <strong className="text-white">{createdSuccessChar.name}</strong> is now saved to your
-              Character Library and synced across sessions.
-            </p>
-
-            <div className="flex flex-col gap-2 pt-2">
-              {onStartChat && (
-                <button
-                  onClick={() => {
-                    onStartChat(createdSuccessChar);
-                  }}
-                  className="w-full py-3 rounded-2xl font-bold text-xs text-white shadow-lg"
-                  style={{ backgroundColor: PALETTE.hotPink }}
-                >
-                  Start Roleplay Chat
-                </button>
-              )}
-
-              <button
-                onClick={() => {
-                  setCreatedSuccessChar(null);
-                  if (onOpenLibrary) onOpenLibrary();
-                  else onBack();
-                }}
-                className="w-full py-2.5 rounded-2xl font-bold text-xs text-white bg-white/10"
-              >
-                View in Character Library
-              </button>
-            </div>
+              Open Library
+            </button>
+            <button
+              type="button"
+              aria-label="Dismiss saved message"
+              onClick={() => setCreatedSuccessChar(null)}
+              className="shrink-0 rounded-lg p-2 text-white/70 hover:bg-white/10"
+            >
+              <X className="h-4 w-4" />
+            </button>
           </div>
         </div>
       )}
