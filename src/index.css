@@ -192,3 +192,87 @@ body {
   -webkit-backdrop-filter: blur(20px) saturate(150%);
   backdrop-filter: blur(20px) saturate(150%);
 }
+
+
+/* Chat drawers: clear jelly glass skin, preserving their existing layout. */
+#root div.fixed.inset-0[class*="z-[80]"] > div.absolute.inset-0 {
+  background: rgba(18, 8, 29, .48) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(125%);
+  backdrop-filter: blur(12px) saturate(125%);
+}
+
+#root aside[role="dialog"][aria-label="App navigation drawer"],
+#root aside[role="dialog"][aria-label="App tools drawer"] {
+  color: #fff !important;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, .28), rgba(244, 218, 255, .16) 44%, rgba(255, 221, 244, .14)),
+    rgba(30, 15, 42, .52) !important;
+  border-color: rgba(255, 255, 255, .62) !important;
+  box-shadow:
+    0 18px 60px rgba(8, 1, 19, .42),
+    0 0 32px rgba(240, 10, 168, .18),
+    inset 0 1px 0 rgba(255, 255, 255, .72),
+    inset 0 -1px 0 rgba(255, 255, 255, .2) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(165%);
+  backdrop-filter: blur(30px) saturate(165%);
+}
+
+#root aside[role="dialog"][aria-label="App navigation drawer"] > div:first-child,
+#root aside[role="dialog"][aria-label="App tools drawer"] > div:first-child {
+  background: rgba(255, 255, 255, .11) !important;
+  border-color: rgba(255, 255, 255, .34) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .38);
+}
+
+#root aside[role="dialog"][aria-label="App navigation drawer"] nav button,
+#root aside[role="dialog"][aria-label="App navigation drawer"] nav > div > button,
+#root aside[role="dialog"][aria-label="App tools drawer"] > div:nth-child(2) > button {
+  color: #fff !important;
+  background: rgba(255, 255, 255, .12) !important;
+  border-color: rgba(255, 255, 255, .36) !important;
+  box-shadow:
+    0 5px 16px rgba(13, 3, 25, .15),
+    inset 0 1px 0 rgba(255, 255, 255, .38) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(145%);
+  backdrop-filter: blur(14px) saturate(145%);
+}
+
+#root aside[role="dialog"][aria-label="App navigation drawer"] nav button:hover,
+#root aside[role="dialog"][aria-label="App tools drawer"] > div:nth-child(2) > button:hover {
+  background: rgba(255, 255, 255, .22) !important;
+  border-color: rgba(255, 255, 255, .66) !important;
+}
+
+#root aside[role="dialog"][aria-label="App navigation drawer"] nav button[aria-current="page"] {
+  background: linear-gradient(115deg, rgba(236, 20, 164, .55), rgba(151, 69, 222, .38)) !important;
+  border-color: rgba(255, 231, 251, .88) !important;
+  box-shadow:
+    0 0 20px rgba(242, 10, 168, .34),
+    inset 0 1px 0 rgba(255, 255, 255, .62) !important;
+}
+
+#root aside[role="dialog"][aria-label="App navigation drawer"] h3 {
+  color: #ffd7f3 !important;
+}
+
+#root aside[role="dialog"][aria-label="App navigation drawer"] p,
+#root aside[role="dialog"][aria-label="App navigation drawer"] nav span,
+#root aside[role="dialog"][aria-label="App tools drawer"] small {
+  color: rgba(255, 255, 255, .78) !important;
+}
+
+#root aside[role="dialog"][aria-label="App navigation drawer"] button[aria-label="Close navigation drawer"],
+#root aside[role="dialog"][aria-label="App tools drawer"] button[aria-label="Close tools drawer"] {
+  background: rgba(255, 255, 255, .19) !important;
+  border-color: rgba(255, 255, 255, .52) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .58);
+}
+
+#root button[aria-label="Open app navigation drawer"],
+#root button[aria-label="Open app tools drawer"] {
+  background: rgba(255, 255, 255, .2) !important;
+  border-color: rgba(255, 255, 255, .58) !important;
+  box-shadow: 0 0 18px rgba(242, 10, 168, .22), inset 0 1px 0 rgba(255, 255, 255, .65) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(155%);
+  backdrop-filter: blur(18px) saturate(155%);
+}
