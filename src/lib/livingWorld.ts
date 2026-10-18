@@ -78,10 +78,10 @@ export function applyLivingWorldReply(chat: Chat, reply: string, responder?: { i
   const nextState: LivingWorldState = {
     ...current,
     lastDailyStoryAt: due ? timestamp : current.lastDailyStoryAt,
-    events: events.slice(-120),
-    rumors: [...current.rumors, ...newRumors].slice(-120),
-    lore: [...current.lore, ...dailyLore].slice(-120),
-    relationshipNotes: relationshipNotes.slice(-80),
+    events,
+    rumors: [...current.rumors, ...newRumors],
+    lore: [...current.lore, ...dailyLore],
+    relationshipNotes,
   };
   if (lieMatch && !lieAlreadyTracked) {
     nextState.lies = [...current.lies, {
@@ -90,7 +90,7 @@ export function applyLivingWorldReply(chat: Chat, reply: string, responder?: { i
       claim: summarize(reply, 220),
       discovered: false,
       createdAt: timestamp,
-    }].slice(-80);
+    }];
   }
   return { ...chat, livingWorld: nextState, updatedAt: timestamp };
 }
