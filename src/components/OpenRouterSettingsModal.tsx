@@ -180,11 +180,11 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
     setDriveBackupSaving(true);
     setDriveBackupResult(null);
     try {
-      const { accessToken, user } = await signInWithGoogleDrive();
+      const { accessToken } = await signInWithGoogleDrive();
       const file = await saveBackupToGoogleDrive(backupData, accessToken);
       setDriveBackupResult({
         success: true,
-        message: `Backup saved to Google Drive as ${file.name} (${user.email || 'signed-in account'}).`,
+        message: `Backup saved to Google Drive as ${file.name}.`,
         url: file.webViewLink,
       });
     } catch (error) {
@@ -711,7 +711,7 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
                     {driveBackupResult.url && <a href={driveBackupResult.url} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1 font-semibold underline">Open saved backup <ExternalLink className="h-3 w-3" /></a>}
                   </div>
                 )}
-                <p className="text-[10px] text-[#ffd6eb]/55">Google Drive and Firebase are separate sign-ins. Each backup is a new dated JSON file; this does not move or delete your Firebase copy.</p>
+                <p className="text-[10px] text-[#ffd6eb]/55">Google Drive and Firebase use separate sign-ins. Each backup is a new dated JSON file; this does not move or delete your Firebase copy.</p>
               </div>
             </div>
           )}
