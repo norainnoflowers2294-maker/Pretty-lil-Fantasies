@@ -612,11 +612,12 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
       {/* 2. PAGE HEADER WITH MOBILE DRAWER ARROWS */}
       {/* ----------------------------------------------------------------------- */}
       <header
-        className="sticky top-0 z-30 px-4 py-3 border-b-2 backdrop-blur-xl flex items-center justify-between"
+        className="sticky top-0 z-30 px-4 pb-3 border-b-2 backdrop-blur-xl flex items-center justify-between"
         style={{
           backgroundColor: '#010925e6',
           borderColor: PALETTE.hotPink,
           boxShadow: '0 4px 20px rgba(255, 0, 126, 0.25)',
+          paddingTop: 'calc(env(safe-area-inset-top, 0px) + 0.75rem)',
         }}
       >
         {/* Left Section: Drawer Arrow & Back Button */}
