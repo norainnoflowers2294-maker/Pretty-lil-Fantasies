@@ -619,7 +619,7 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-[#ffd6eb]/80">Security Rules:</span>
-                    <span className="text-emerald-400 font-bold">Deployed & Active</span>
+                    <span className="text-emerald-400 font-bold">Private to your signed-in account</span>
                   </div>
                 </div>
               </div>
@@ -662,7 +662,6 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
                       {firebaseSigningIn && <Loader2 className="w-4 h-4 animate-spin" />}
                       <span>{firebaseSigningIn ? 'Opening Google sign-in…' : 'Sign in with Google'}</span>
                     </button>
-                    {firebaseSignInError && <p role="alert" className="rounded-lg border border-rose-400/30 bg-rose-500/10 px-3 py-2 text-[11px] leading-relaxed text-rose-200">{firebaseSignInError}</p>}
                   </div>
                 )}
                 {firebaseSyncMessage && <p role="status" className="mt-3 rounded-lg bg-white/5 px-3 py-2 text-[11px] text-[#ffd6eb]/80">{firebaseSyncMessage}</p>}
