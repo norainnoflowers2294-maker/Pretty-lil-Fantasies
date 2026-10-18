@@ -276,7 +276,8 @@ describe('buildOpenRouterMessages', () => {
     const messages = buildOpenRouterMessages(params);
     const prompt = messages[0].content;
     expect(prompt).toContain('[NON-NEGOTIABLE USER AGENCY RULE]');
-    expect(prompt).toContain('including a persona named Emmy');
+    expect(prompt).toContain('including Emmy.');
+    expect(prompt).toContain('You may mention Emmy, address her, or let other characters speak to/about her; do not write her side of the scene.');
     expect(prompt).toContain('This rule overrides any conflicting character card');
     expect(prompt.lastIndexOf('[NON-NEGOTIABLE USER AGENCY RULE]')).toBeGreaterThan(prompt.lastIndexOf('[YOUR EXTRA INSTRUCTIONS FOR THIS CHAT]'));
   });
