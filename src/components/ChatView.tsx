@@ -237,7 +237,15 @@ export const ChatView: React.FC<ChatViewProps> = ({
   });
   const [errorDetails, setErrorDetails] = useState<{ message: string; suggestedFix?: string } | null>(null);
   const [lastModelUsed, setLastModelUsed] = useState<OpenRouterResponseInfo | null>(null);
-  const recordModelUsed = (info: OpenRouterResponseInfo) => setLastModelUsed(info);
+  const recordModelUsed = (info: OpenRouterResponseInfo) => {
+    setLastModelUsed(info);
+    setErrorDetails(null);
+  };
+
+  useEffect(() => {
+    // A successful connection test clears a stale warning left by an earlier failure.
+    if (diagnostic.status === 'connected') setErrorDetails(null);
+  }, [diagnostic.status, diagnostic.lastChecked]);
   const [editingMsgId, setEditingMsgId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState('');
   const [diceResult, setDiceResult] = useState<string | null>(null);
@@ -1082,7 +1090,10 @@ export const ChatView: React.FC<ChatViewProps> = ({
       <div className="absolute inset-0 bg-gradient-to-b from-[#0d020b]/95 via-[#0d020b]/80 to-[#0d020b]/95 pointer-events-none" />
 
       {/* Top Chat Bar */}
-      <header className="relative px-3 sm:px-5 py-2.5 bg-[#140410]/95 backdrop-blur-md border-b border-[#ff3399]/40 flex items-center justify-between z-30 shadow-[0_0_25px_rgba(255,0,128,0.3)]">
+      <header
+        className="relative px-3 sm:px-5 pb-2.5 bg-[#140410]/95 backdrop-blur-md border-b border-[#ff3399]/40 flex items-center justify-between z-30 shadow-[0_0_25px_rgba(255,0,128,0.3)]"
+        style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 0.625rem)' }}
+      >
         <div className="flex items-center space-x-2 sm:space-x-3">
           <button
             type="button"
@@ -1266,12 +1277,23 @@ export const ChatView: React.FC<ChatViewProps> = ({
             </div>
           </div>
 
-          <button
-            onClick={onOpenSettings}
-            className="shrink-0 px-3 py-1 bg-white/20 hover:bg-white/30 text-white rounded-lg font-bold text-xs"
-          >
-            Fix in Settings
-          </button>
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              onClick={onOpenSettings}
+              className="px-3 py-1 bg-white/20 hover:bg-white/30 text-white rounded-lg font-bold text-xs"
+            >
+              Fix in Settings
+            </button>
+            <button
+              type="button"
+              onClick={() => setErrorDetails(null)}
+              aria-label="Dismiss OpenRouter warning"
+              title="Dismiss warning"
+              className="rounded-lg p-1.5 text-rose-200 hover:bg-white/15 hover:text-white"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       )}
 
