@@ -58,6 +58,7 @@ import { ChatSettingsPanel } from './ChatSettingsPanel';
 import { StoryWorldPanel } from './StoryWorldPanel';
 import { addPhoneThreadMessage, type PhoneSystemState } from '../lib/phoneSystem';
 import { applyExplicitPreferences, makeStoryBibleEntry } from '../lib/storyFeatures';
+import { applyLivingWorldReply } from '../lib/livingWorld';
 
 const advanceStoryTime = (value?: string) => {
   const match = value?.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/i);
@@ -404,7 +405,8 @@ export const ChatView: React.FC<ChatViewProps> = ({
         currentSwipeIndex: 0,
       };
       if (textMode) savePhoneThreadMessage(responder, responder.id, responder.name, botReply, 'incoming', replyTimestamp);
-      onUpdateChat({ ...chat, messages: [...chat.messages, replyMessage], timeOfDay: chat.timeCycleEnabled ? advanceStoryTime(chat.timeOfDay) : chat.timeOfDay, updatedAt: new Date().toISOString() });
+      const continuedChat = { ...chat, messages: [...chat.messages, replyMessage], timeOfDay: chat.timeCycleEnabled ? advanceStoryTime(chat.timeOfDay) : chat.timeOfDay, updatedAt: new Date().toISOString() };
+      onUpdateChat(applyLivingWorldReply(continuedChat, botReply));
       const bibleEntry = makeStoryBibleEntry(chat.id, '', botReply);
       if (bibleEntry) onSaveMemory(bibleEntry);
       const learnedCharacter = characters.find((item) => item.id === responder.id);
@@ -698,12 +700,13 @@ export const ChatView: React.FC<ChatViewProps> = ({
       if (preferences.notifyReplies && document.hidden && 'Notification' in window && Notification.permission === 'granted') {
         try { new Notification('Pretty Little Fantasies', { body: 'A reply is ready.' }); } catch { /* Unsupported notification constructor on some mobile browsers. */ }
       }
-      onUpdateChat({
+      const repliedChat = {
         ...updatedChat,
         messages: [...updatedMessages, replyMessage],
         timeOfDay: updatedChat.timeCycleEnabled ? advanceStoryTime(updatedChat.timeOfDay) : updatedChat.timeOfDay,
         updatedAt: new Date().toISOString(),
-      });
+      };
+      onUpdateChat(applyLivingWorldReply(repliedChat, botReply));
       if (!assistantWasTagged && !updatedChat.oocMode) {
         const bibleEntry = makeStoryBibleEntry(chat.id, userText, botReply);
         if (bibleEntry) onSaveMemory(bibleEntry);
