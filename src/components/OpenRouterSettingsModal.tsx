@@ -124,6 +124,7 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
     maxTokens !== config.maxTokens || topP !== config.topP || JSON.stringify(supportedParameters) !== JSON.stringify(config.supportedParameters) || frequencyPenalty !== config.frequencyPenalty ||
     presencePenalty !== config.presencePenalty;
   const requestClose = () => {
+    if (savingConfig) return;
     if (hasUnsavedChanges && !window.confirm('Discard unsaved settings changes?')) return;
     onClose();
   };
@@ -713,6 +714,7 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
           )}
         </div>
 
+        {configSaveError && <p role="alert" className="mx-4 rounded-xl border border-rose-400/40 bg-rose-500/10 px-3 py-2 text-xs text-rose-200 sm:mx-6">{configSaveError}</p>}
         <div className="flex shrink-0 items-center justify-between gap-3 border-t border-[#8AABF4]/30 bg-[#0d020b] px-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-4 sm:px-6">
           <div className="text-[11px] text-[#ffd6eb]/60">
             OpenRouter AI &bull; Firebase &bull; Pretty Little Fantasies
