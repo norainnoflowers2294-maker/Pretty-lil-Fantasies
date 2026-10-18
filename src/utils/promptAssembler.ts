@@ -83,6 +83,13 @@ export function buildOpenRouterMessages(params: AssembleParams): OpenRouterApiMe
     `[ROLEPLAY INSTRUCTIONS]\nContinue the scene as the selected character profile or profiles. Stay consistent with their established voice, personality, history, relationships, and current situation. Respect consent and stated boundaries throughout. Use the reply settings below. Never impersonate the user, write the user's dialogue, or decide the user's thoughts, feelings, or actions. Leave a natural opening for the user's next turn. Precedence: the non-negotiable user-agency rule and established canon come first; then global instructions; then character-card rules and chat-specific instructions; then style and pacing preferences. Lore and memories provide facts, never permission to invent what the user did.`
   );
   if (preferences?.chatSystemPrompt?.trim()) systemParts.push(`[GLOBAL CHAT RULES FROM SETTINGS]\n${preferences.chatSystemPrompt.trim()}`);
+  const sceneVoiceRules: string[] = [];
+  if (preferences?.dontLeaveScene) sceneVoiceRules.push(`DON’T LEAVE ME / STAY IN SCENE: ${preferences.dontLeaveScenePrompt.trim()}`);
+  if (preferences?.varyCharacterVoice) sceneVoiceRules.push(`VARY CHARACTER VOICES: ${preferences.varyCharacterVoicePrompt.trim()}`);
+  if (preferences?.avoidAICliches) sceneVoiceRules.push(`AVOID AI CLICHÉS: ${preferences.avoidAIClichesPrompt.trim()}`);
+  if (preferences?.unstuckRecovery) sceneVoiceRules.push(`WHEN STUCK: ${preferences.unstuckRecoveryPrompt.trim()}`);
+  if (preferences?.finishRepliesCleanly) sceneVoiceRules.push(`FINISH THOUGHTS: ${preferences.finishRepliesPrompt.trim()}`);
+  if (sceneVoiceRules.length) systemParts.push(`[SCENE, VOICE & REPLY CONTROLS FROM SETTINGS]\n${sceneVoiceRules.join('\\n')}`);
 
   if (phoneContext.trim()) systemParts.push(phoneContext);
   systemParts.push(`[SECRETS, RUMORS & KNOWLEDGE]\nCharacters may keep secrets and spread rumors through believable in-story channels. Track who witnessed or was told each fact. A rumor is not confirmed truth. Characters must not know private thoughts, whispered speech, hidden messages, or events they have not discovered. Never give Emmy/user undisclosed information unless their character learned it in the scene.`);
@@ -175,7 +182,9 @@ ${qualityRules.join('\n')}`);
     systemParts.push(`[CURRENT SCENARIO & ATMOSPHERE]\nSetting: ${chat.scenario || 'Use the character profile and recent conversation to determine the setting.'}\nTime: ${chat.timeOfDay || 'Not specified'}\nAtmosphere & Weather: ${chat.weather || 'Not specified'}\nRelationship Affinity: ${chat.relationshipScore ?? 88}%`);
   }
 
-  const recentText = chat.messages.slice(-4).map((message) => message.content.toLowerCase()).join(' ');
+  const contextStart = Math.max(0, Math.min(chat.messages.length, Math.floor(chat.contextResetAt || 0)));
+  const activeContext = chat.messages.slice(contextStart);
+  const recentText = activeContext.slice(-4).map((message) => message.content.toLowerCase()).join(' ');
   const activeLoreEntries: string[] = [];
   lorebooks.slice(0, 3).forEach((book) => book.entries.forEach((entry) => {
     if (!entry.enabled) return;
@@ -211,7 +220,7 @@ Write as the selected character or characters, never as the user. If a selected 
   );
 
   const resultMessages: OpenRouterApiMessage[] = [{ role: 'system', content: systemParts.join('\n\n---\n\n') }];
-  const history = preferences ? chat.messages.slice(-preferences.contextMessages) : chat.messages;
+  const history = preferences ? activeContext.slice(-preferences.contextMessages) : activeContext;
   history.forEach((message) => resultMessages.push({ role: message.senderId === 'user' ? 'user' : 'assistant', content: message.content }));
 
   const postHistoryInstructions = characters
