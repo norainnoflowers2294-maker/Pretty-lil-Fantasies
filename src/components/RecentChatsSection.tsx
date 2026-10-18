@@ -100,7 +100,7 @@ export const RecentChatsSection: React.FC<RecentChatsSectionProps> = ({
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none" />
 
                   <div className="relative p-2 flex justify-end z-10">
-                    <div className="flex items-center space-x-1 px-2 py-0.5 rounded-full bg-black/70 backdrop-blur-md border border-white/20 text-[10px] font-mono text-white shadow">
+                    <div className="flex items-center space-x-1 px-2 py-0.5 rounded-full bg-black/70 backdrop-blur-md border border-white/20 text-xs font-mono text-white shadow">
                       <MessageSquare className="w-3 h-3 text-[#ff66b2]" />
                       <span>{msgCount}</span>
                     </div>
@@ -108,12 +108,12 @@ export const RecentChatsSection: React.FC<RecentChatsSectionProps> = ({
 
                   <div className="relative p-3 z-10 space-y-0.5">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-bold text-white truncate drop-shadow group-hover:text-[#ff99cc] transition-colors">
+                      <h4 className="text-base font-bold text-white truncate drop-shadow group-hover:text-[#ff99cc] transition-colors">
                         {chat.title}
                       </h4>
                       <MoreHorizontal className="w-3.5 h-3.5 text-[#ffd6eb]/70" />
                     </div>
-                    <p className="text-[10px] text-[#ffd6eb]/80 truncate flex items-center gap-1">
+                    <p className="text-xs text-[#ffd6eb]/80 truncate flex items-center gap-1">
                       <Clock className="w-2.5 h-2.5 inline" />
                       <span>Last message {timeAgo}</span>
                     </p>
@@ -142,7 +142,7 @@ export const RecentChatsSection: React.FC<RecentChatsSectionProps> = ({
             <button
               onClick={onContinueLastChat}
               disabled={!latestChat}
-              className="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-gradient-to-r from-[#ff007f] to-[#ff3399] hover:from-[#ff1a8c] hover:to-[#ff4da6] text-white font-bold text-xs shadow-[0_0_20px_rgba(255,0,128,0.7)] hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-gradient-to-r from-[#ff007f] to-[#ff3399] hover:from-[#ff1a8c] hover:to-[#ff4da6] text-white font-bold text-sm shadow-[0_0_20px_rgba(255,0,128,0.7)] hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <div className="flex items-center space-x-2.5">
                 <MessageSquare className="w-4 h-4" />
@@ -153,7 +153,7 @@ export const RecentChatsSection: React.FC<RecentChatsSectionProps> = ({
 
             <button
               onClick={onGenerateSceneImage}
-              className="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-gradient-to-r from-[#00b4db] to-[#0083b0] hover:from-[#1ac6ea] hover:to-[#0098cc] text-white font-bold text-xs shadow-[0_0_20px_rgba(0,180,219,0.5)] hover:scale-[1.02] active:scale-[0.98] transition-all"
+              className="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-gradient-to-r from-[#00b4db] to-[#0083b0] hover:from-[#1ac6ea] hover:to-[#0098cc] text-white font-bold text-sm shadow-[0_0_20px_rgba(0,180,219,0.5)] hover:scale-[1.02] active:scale-[0.98] transition-all"
             >
               <div className="flex items-center space-x-2.5">
                 <Sparkles className="w-4 h-4" />
@@ -164,7 +164,7 @@ export const RecentChatsSection: React.FC<RecentChatsSectionProps> = ({
 
             <button
               onClick={onOpenStoryNotes}
-              className="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-gradient-to-r from-[#8e2de2] to-[#4a00e0] hover:from-[#9d44e8] hover:to-[#570fe6] text-white font-bold text-xs shadow-[0_0_20px_rgba(142,45,226,0.5)] hover:scale-[1.02] active:scale-[0.98] transition-all"
+              className="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-gradient-to-r from-[#8e2de2] to-[#4a00e0] hover:from-[#9d44e8] hover:to-[#570fe6] text-white font-bold text-sm shadow-[0_0_20px_rgba(142,45,226,0.5)] hover:scale-[1.02] active:scale-[0.98] transition-all"
             >
               <div className="flex items-center space-x-2.5">
                 <FileText className="w-4 h-4" />
@@ -175,7 +175,7 @@ export const RecentChatsSection: React.FC<RecentChatsSectionProps> = ({
 
             <button
               onClick={onOpenSavedMessages}
-              className="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-gradient-to-r from-[#0ba360] to-[#3cba92] hover:from-[#11b86e] hover:to-[#4ec9a2] text-white font-bold text-xs shadow-[0_0_20px_rgba(11,163,96,0.5)] hover:scale-[1.02] active:scale-[0.98] transition-all"
+              className="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-gradient-to-r from-[#0ba360] to-[#3cba92] hover:from-[#11b86e] hover:to-[#4ec9a2] text-white font-bold text-sm shadow-[0_0_20px_rgba(11,163,96,0.5)] hover:scale-[1.02] active:scale-[0.98] transition-all"
             >
               <div className="flex items-center space-x-2.5">
                 <Bookmark className="w-4 h-4" />
