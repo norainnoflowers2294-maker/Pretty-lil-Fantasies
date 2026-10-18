@@ -199,7 +199,7 @@ ${qualityRules.join('\n')}`);
       chat.messages.length >= 8 && chat.messages.length % 12 < 2 ? 'This is a good opportunity for one earned plot turn if an existing clue or unresolved thread supports it. Do not force a twist; ordinary scenes are welcome.' : '',
       'Record world facts through the story itself, without out-of-character lists or hidden metadata. Keep user agency intact: never decide the user’s speech, thoughts, feelings or actions.',
     ].filter(Boolean);
-    systemParts.push(`[LIVING WORLD SYSTEM]\n${worldLines.join('\\n')}`);
+    systemParts.push(`[LIVING WORLD SYSTEM]\n${worldLines.join('\n')}`);
   }
 
   const contextStart = Math.max(0, Math.min(chat.messages.length, Math.floor(chat.contextResetAt || 0)));
