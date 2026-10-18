@@ -39,6 +39,7 @@ import {
   ChevronUp,
   Wallet,
   DollarSign,
+  Music2,
 } from 'lucide-react';
 import {
   Chat,
@@ -170,6 +171,7 @@ interface ChatViewProps {
   onOpenGitHubSyncModal: () => void;
   onOpenSocialMedia: () => void;
   onOpenWallet: (view: 'dashboard' | 'activity') => void;
+  onOpenYouTubePlayer: () => void;
   onStartNewChat?: () => void;
   onUpdatePreferences: (value: AppPreferences) => void;
   onTogglePlugin: (pluginId: string) => void;
@@ -202,6 +204,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
   onOpenGitHubSyncModal,
   onOpenSocialMedia,
   onOpenWallet,
+  onOpenYouTubePlayer,
   onStartNewChat,
   onUpdatePreferences,
   onTogglePlugin,
@@ -1254,6 +1257,9 @@ export const ChatView: React.FC<ChatViewProps> = ({
             <Puzzle className="w-4 h-4 text-fuchsia-400" />
           </button>
 
+          <button type="button" onClick={onOpenYouTubePlayer} className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-pink-200 transition-colors" title="Open YouTube scrolling playlist" aria-label="Open YouTube playlist">
+            <Music2 className="w-4 h-4" />
+          </button>
           <button type="button" onClick={() => setIsChatSettingsOpen(true)} className="hidden sm:inline-flex p-2 rounded-xl bg-white/10 hover:bg-white/20 text-pink-200 transition-colors" title="Chat reply settings" aria-label="Chat reply settings">
             <SlidersHorizontal className="w-4 h-4" />
           </button>
