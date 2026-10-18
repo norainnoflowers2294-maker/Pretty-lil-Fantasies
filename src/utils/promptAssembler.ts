@@ -2,6 +2,7 @@ import type { AppPreferences } from '../lib/preferences';
 import type { StoryMemory } from '../types/roleplay';
 import type { Character, Persona, Lorebook, Plugin, Chat } from '../types/roleplay';
 import { buildEnabledPluginRules } from '../lib/pluginPrompts.ts';
+import { getLivingWorldState, isDailyStoryDue } from '../lib/livingWorld';
 
 interface AssembleParams {
   preferences?: AppPreferences;
@@ -180,6 +181,25 @@ ${qualityRules.join('\n')}`);
 
   if (chat.scenario || chat.weather || chat.timeOfDay) {
     systemParts.push(`[CURRENT SCENARIO & ATMOSPHERE]\nSetting: ${chat.scenario || 'Use the character profile and recent conversation to determine the setting.'}\nTime: ${chat.timeOfDay || 'Not specified'}\nAtmosphere & Weather: ${chat.weather || 'Not specified'}\nRelationship Affinity: ${chat.relationshipScore ?? 88}%`);
+  }
+
+  const world = getLivingWorldState(chat);
+  if (world.enabled) {
+    const worldLines = [
+      'Run this as a persistent living world. Character short-term memory follows the recent scene; important promises, gifts, anniversaries, betrayals, relationships and turning points become durable long-term canon. Refer to old memories naturally when relevant, and allow years and generations to inherit recorded history.',
+      'Keep each character’s private motives and knowledge distinct. Characters may lie when personality and goals support it; preserve an established lie consistently until evidence exposes it. Never reveal a secret just because the user asks OOC.',
+      'NPCs notice meaningful attention between other characters and react according to their bond, temperament and history. Jealousy can be quiet, protective, competitive or emotional, but must change dialogue or choices plausibly and never dictate the user’s actions.',
+      'Seed earned plot turns from existing clues, memories, rumors and unresolved goals. Build a searchable-feeling world encyclopedia through consistent recurring details about places, factions, people, history, politics, magic and technology. Rumors can vary by speaker and may be true, partial or false; preserve the known truth status.',
+      world.worldYear ? `World year: ${world.worldYear}. Let future generations inherit the consequences and stories of recorded history.` : '',
+      world.lies.length ? `Established lies (keep consistent): ${world.lies.filter((lie) => !lie.discovered).slice(-12).map((lie) => `${lie.characterName}: “${lie.claim}”${lie.motive ? ` (motive: ${lie.motive})` : ''}`).join(' | ')}` : '',
+      world.rumors.length ? `Rumor ledger: ${world.rumors.slice(-12).map((rumor) => `${rumor.text} [${rumor.truth}; believed by: ${rumor.believers.join(', ') || 'not yet attributed'}]`).join(' | ')}` : '',
+      world.lore.length ? `World encyclopedia: ${world.lore.slice(-20).map((entry) => `${entry.title} (${entry.category}): ${entry.entry}`).join(' | ')}` : '',
+      world.relationshipNotes.length ? `NPC relationship dynamics: ${world.relationshipNotes.slice(-12).map((item) => `${item.characterName} → ${item.toward}: affinity ${item.affinity}/100, jealousy ${item.jealousy}/100${item.note ? ` — ${item.note}` : ''}`).join(' | ')}` : '',
+      isDailyStoryDue(world) ? `A daily story is due (at most once per 24 real hours). Weave one specific, consequential world event into this reply—festival, case, weather, announcement, faction, creature, market or scandal—and connect it to existing details where possible. Let it create a future hook; do not mention the scheduling system.` : '',
+      chat.messages.length >= 8 && chat.messages.length % 12 < 2 ? 'This is a good opportunity for one earned plot turn if an existing clue or unresolved thread supports it. Do not force a twist; ordinary scenes are welcome.' : '',
+      'Record world facts through the story itself, without out-of-character lists or hidden metadata. Keep user agency intact: never decide the user’s speech, thoughts, feelings or actions.',
+    ].filter(Boolean);
+    systemParts.push(`[LIVING WORLD SYSTEM]\n${worldLines.join('\\n')}`);
   }
 
   const contextStart = Math.max(0, Math.min(chat.messages.length, Math.floor(chat.contextResetAt || 0)));
