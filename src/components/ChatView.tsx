@@ -55,16 +55,6 @@ import { ChatSettingsPanel } from './ChatSettingsPanel';
 import { addPhoneThreadMessage, type PhoneSystemState } from '../lib/phoneSystem';
 import { applyExplicitPreferences, makeStoryBibleEntry } from '../lib/storyFeatures';
 
-class GeneratedReplyRuleError extends Error {
-  suggestedFix: string;
-
-  constructor(message: string) {
-    super(message);
-    this.name = 'GeneratedReplyRuleError';
-    this.suggestedFix = 'Edit the character’s Post-History Instructions to state the point of view and user-agency rules clearly, then regenerate the reply.';
-  }
-}
-
 const ACTION_VERBS = 'says?|said|asks?|asked|replies?|replied|answers?|answered|whispers?|whispered|shouts?|shouted|laughs?|laughed|smiles?|smiled|nods?|nodded|shakes?|shook|looks?|looked|glances?|glanced|walks?|walked|moves?|moved|steps?|stepped|reaches?|reached|takes?|took|turns?|turned|stands?|stood|sits?|sat|leans?|leaned|runs?|ran|cries?|cried|thinks?|thought|feels?|felt|decides?|decided|chooses?|chose|opens?|opened|closes?|closed|grabs?|grabbed|holds?|held|pulls?|pulled|pushes?|pushed|follows?|followed|leaves?|left|enters?|entered|begins?|began|starts?|started|frowns?|frowned|blinks?|blinked|breathes?|breathed|watches?|watched|stares?|stared|tells?|told|murmurs?|murmured|sighs?|sighed|shrugs?|shrugged|kneels?|knelt|rolls?|rolled';
 
 function escapeRegex(value: string): string {
@@ -151,9 +141,8 @@ async function sendCheckedCharacterReply(
   reply = result.content;
   onResponseInfo?.(result.response);
   violations = checkGeneratedReply(reply, characters, persona, allowNarrator);
-  if (violations.length) {
-    throw new GeneratedReplyRuleError(`I blocked a reply because it still appears to break the character rules: ${violations.join(' ')}`);
-  }
+  // The heuristic can mistake ordinary references to Emmy for taking control of her.
+  // Keep the retry as a best effort, but never discard a generated reply or the user's message.
   return reply;
 }
 
