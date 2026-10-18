@@ -113,13 +113,13 @@ export function calculateAgeFromBirthYear(birthYearStr: string, birthdayStr?: st
 
 
 export function calculateBirthYearFromAge(ageStr: string, birthdayStr?: string): string {
-  if (!/^\\d{1,3}$/.test(ageStr.trim())) return '';
+  if (!/^\d{1,3}$/.test(ageStr.trim())) return '';
   const age = Number.parseInt(ageStr, 10);
   if (!Number.isInteger(age) || age < 0 || age > 150) return '';
 
   const now = new Date();
   let birthYear = now.getFullYear() - age;
-  const monthDayMatch = birthdayStr?.match(/^(\\d{1,2})[/-](\\d{1,2})/);
+  const monthDayMatch = birthdayStr?.match(/^(\d{1,2})[/-](\d{1,2})/);
   if (monthDayMatch) {
     const month = Number.parseInt(monthDayMatch[1], 10);
     const day = Number.parseInt(monthDayMatch[2], 10);
