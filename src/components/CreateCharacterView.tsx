@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   ArrowLeft,
-  ChevronLeft,
+  Menu,
   ChevronRight,
   Save,
   Upload,
@@ -631,9 +631,10 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
               borderColor: PALETTE.electricBlue,
               color: PALETTE.periwinkle,
             }}
-            title="Open Left Navigation Drawer"
+            title="Open navigation drawer"
+            aria-label="Open navigation drawer"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <Menu className="w-5 h-5" />
           </button>
 
           {/* Back Button */}
