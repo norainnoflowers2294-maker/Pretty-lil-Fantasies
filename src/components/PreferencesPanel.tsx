@@ -36,6 +36,16 @@ const groups = [
     ['relationshipContinuity', 'Preserve trust, conflict, friendship, and romance changes'],
     ['naturalSpeech', 'Use natural, character-specific speech'],
     ['reduceRepetition', 'Avoid repetitive phrases and emotional beats'],
+    ['dontLeaveScene', 'Don’t leave me: keep characters in the scene'],
+    ['dontLeaveScenePrompt', 'Don’t leave me prompt'],
+    ['varyCharacterVoice', 'Vary character voices and speech patterns'],
+    ['varyCharacterVoicePrompt', 'Voice variation prompt'],
+    ['avoidAICliches', 'Avoid AI clichés and stock phrases'],
+    ['avoidAIClichesPrompt', 'No clichés prompt'],
+    ['unstuckRecovery', 'Help the bot recover when it gets stuck'],
+    ['unstuckRecoveryPrompt', 'Get unstuck prompt'],
+    ['finishRepliesCleanly', 'Finish thoughts and sentences; don’t end the scene early'],
+    ['finishRepliesPrompt', 'Complete replies prompt'],
     ['realisticReactions', 'Use realistic reactions consistent with what characters know'],
     ['defaultPointOfView', 'Default point of view', ['character', 'first_person', 'third_person']],
     ['neverSpeakForUser', 'Never write dialogue, thoughts, or actions for {{user}} (including Emmy)'],
@@ -113,6 +123,7 @@ export function PreferencesPanel({ value, onSave, onClose, onExportData, onImpor
           if (key === 'customResponseWords' && draft.responseLengthTarget !== 'custom') return null;
           if (key === 'neverSpeakForUser') return <label className="cp-setting cp-setting-block" key={key}><span>{label}</span><div className="flex items-center gap-3"><input type="checkbox" checked disabled aria-label="Never speak for the user is always enabled" /><small>This rule is always enforced for Emmy and {'{{user}}'}; the setting cannot be disabled.</small></div></label>;
           if (key === 'chatSystemPrompt') return <label className="cp-setting cp-setting-block" key={key}><span>{label}</span><textarea value={String(current || '')} maxLength={6000} rows={7} placeholder="Example: Keep character voices distinct. Never write dialogue, thoughts, or actions for {{user}}." onChange={e => update(key, e.target.value)} /><small>{String(current || '').length}/6000 characters. Added to the global system prompt; character canon and non-negotiable user-agency rules remain higher priority.</small></label>;
+          if (String(key).endsWith('Prompt')) return <label className="cp-setting cp-setting-block" key={key}><span>{label}</span><textarea value={String(current || '')} maxLength={3000} rows={4} onChange={e => update(key, e.target.value)} /><small>{String(current || '').length}/3000 characters. This instruction is added to AI replies when its setting is enabled.</small></label>;
           return <label className="cp-setting" key={key}><span>{label}</span>{!spec ? <input type="checkbox" checked={Boolean(current)} onChange={e => update(key, e.target.checked)} />
             : spec === 'color' ? <input type="color" value={String(current)} onChange={e => update(key, e.target.value)} />
             : typeof (spec as any)[0] === 'number' ? <span className="cp-range"><input aria-label={String(label)} type="range" min={(spec as number[])[0]} max={(spec as number[])[1]} step={(spec as number[])[2]} value={Number(current)} onChange={e => update(key, Number(e.target.value))} /><output>{current}</output></span>
