@@ -27,6 +27,17 @@ describe('mergeDefaultCharacters', () => {
     expect(result.some((character) => character.id === 'char_lucious')).toBe(true);
   });
 
+  it('keeps same-name characters as separate records', () => {
+    const bundled = INITIAL_CHARACTERS[0]!;
+    const custom = { ...bundled, id: `custom_${bundled.id}` };
+    const result = mergeDefaultCharacters([custom]);
+    const sameName = result.filter((character) => character.name === bundled.name);
+
+    expect(sameName.map((character) => character.id)).toContain(custom.id);
+    expect(sameName.map((character) => character.id)).toContain(bundled.id);
+    expect(new Set(sameName.map((character) => character.id)).size).toBe(2);
+  });
+
   it('replaces only the old bundled portrait with the photoreal default', () => {
     const ryker = INITIAL_CHARACTERS.find((character) => character.id === 'char_ryker_alexander_wilhelm')!;
     const previousPlaceholder = ADDITIONAL_CHARACTER_PLACEHOLDER_AVATARS[ryker.id];
