@@ -1,4 +1,10 @@
 {
+  "firestore": [
+    {
+      "database": "ai-studio-githubconnecthub-2454e99a-1a95-4b9f-9cd4-6a2965f634bd",
+      "rules": "firestore.rules"
+    }
+  ],
   "storage": {
     "rules": "storage.rules"
   }
