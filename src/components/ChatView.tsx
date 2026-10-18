@@ -70,6 +70,7 @@ function checkGeneratedReply(
   reply: string,
   characters: Character[],
   persona: Persona | null,
+  allowNarrator = false,
 ): string[] {
   const violations: string[] = [];
   const response = reply.trim();
@@ -100,6 +101,7 @@ function checkGeneratedReply(
   // Point of view is a writing preference handled by the prompt. It must not
   // reject an otherwise valid reply; this guard is solely for user agency.
   void characters;
+  void allowNarrator;
   return violations;
 }
 
