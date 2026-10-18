@@ -83,10 +83,12 @@ function checkGeneratedReply(
 
   for (const name of userNames) {
     const escapedName = escapeRegex(name);
-    const dialogueLabel = new RegExp('(?:^|\\n)\\s*(?:[*_]*' + escapedName + '[*_]*|\\[?' + escapedName + '\\]?)\\s*[:—-]', 'i');
-    // Explicit user-labeled dialogue is the only strong signal for this retry heuristic.
-    if (dialogueLabel.test(response)) {
-      violations.push('The reply appears to speak or act for ' + name + '.');
+    // A mention or vocative such as “Emmy, look at me” is not Emmy speaking.
+    // Flag only an explicit dialogue label or speech attributed to the user's name.
+    const dialogueLabel = new RegExp('(?:^|\\n)\\s*(?:[*_]*' + escapedName + '[*_]*|\\[?' + escapedName + '\\]?)\\s*:\\s*\\S', 'i');
+    const attributedSpeech = new RegExp('\\b' + escapedName + '\\s+(?:says?|said|asks?|asked|replies?|replied|answers?|answered|whispers?|whispered|shouts?|shouted|murmurs?|murmured)\\b', 'i');
+    if (dialogueLabel.test(response) || attributedSpeech.test(response)) {
+      violations.push('The reply appears to speak for ' + name + '.');
     }
   }
 
