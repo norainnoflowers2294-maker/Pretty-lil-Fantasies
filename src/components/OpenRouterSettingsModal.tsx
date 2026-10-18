@@ -19,7 +19,7 @@ import {
   LogOut,
 } from 'lucide-react';
 import { OpenRouterConfig, ConnectionDiagnostic, Chat } from '../types/roleplay';
-import { signInWithGoogle, signInWithGoogleDrive, logOutFirebase } from '../lib/firebase';
+import { prepareFirebaseGoogleSignIn, signInWithGoogle, signInWithGoogleDrive, logOutFirebase } from '../lib/firebase';
 import { saveBackupToGoogleDrive } from '../utils/googleDriveBackup';
 import { User } from 'firebase/auth';
 import { saveGitHubDataBackup } from '../utils/githubBackup';
@@ -83,7 +83,23 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
   useEffect(() => { tabRefs.current[activeTab]?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' }); }, [activeTab]);
   const [testing, setTesting] = useState(false);
   const [firebaseSigningIn, setFirebaseSigningIn] = useState(false);
+  const [firebaseSignInPreparing, setFirebaseSignInPreparing] = useState(false);
+  const [firebaseSignInReady, setFirebaseSignInReady] = useState(false);
   const [firebaseSignInError, setFirebaseSignInError] = useState('');
+
+  useEffect(() => {
+    if (!isOpen) return;
+    let active = true;
+    setFirebaseSignInPreparing(true);
+    setFirebaseSignInReady(false);
+    prepareFirebaseGoogleSignIn()
+      .then(() => { if (active) setFirebaseSignInReady(true); })
+      .catch((error) => {
+        if (active) setFirebaseSignInError(error instanceof Error ? error.message : 'Google sign-in could not load.');
+      })
+      .finally(() => { if (active) setFirebaseSignInPreparing(false); });
+    return () => { active = false; };
+  }, [isOpen]);
   const [firebaseSyncing, setFirebaseSyncing] = useState(false);
   const [driveBackupSaving, setDriveBackupSaving] = useState(false);
   const [driveBackupResult, setDriveBackupResult] = useState<{ success: boolean; message: string; url?: string } | null>(null);
@@ -655,12 +671,12 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
                     <button
                       type="button"
                       onClick={() => void handleFirebaseSignIn()}
-                      disabled={firebaseSigningIn}
-                      aria-busy={firebaseSigningIn}
+                      disabled={firebaseSigningIn || firebaseSignInPreparing || !firebaseSignInReady}
+                      aria-busy={firebaseSigningIn || firebaseSignInPreparing}
                       className="w-full py-2.5 bg-white text-black hover:bg-white/90 disabled:opacity-60 disabled:cursor-wait rounded-xl font-bold flex items-center justify-center space-x-2 shadow-lg"
                     >
-                      {firebaseSigningIn && <Loader2 className="w-4 h-4 animate-spin" />}
-                      <span>{firebaseSigningIn ? 'Opening Google sign-in…' : 'Sign in with Google'}</span>
+                      {(firebaseSigningIn || firebaseSignInPreparing) && <Loader2 className="w-4 h-4 animate-spin" />}
+                      <span>{firebaseSignInPreparing ? 'Loading Google sign-in…' : firebaseSigningIn ? 'Signing in with Google…' : 'Sign in with Google'}</span>
                     </button>
                   </div>
                 )}

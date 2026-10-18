@@ -1179,6 +1179,7 @@ export default function App() {
         onTestConnection={testOpenRouter}
         firebaseUser={firebaseUser}
         firebaseSyncMessage={firebaseSyncMessage}
+        onSyncFirebase={handleFirebaseSyncNow}
       />
 
       <StoryNotesModal
