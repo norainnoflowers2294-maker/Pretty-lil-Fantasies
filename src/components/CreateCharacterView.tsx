@@ -29,8 +29,9 @@ import {
   FileText,
   RotateCcw,
 } from 'lucide-react';
-import { Character, FeatureMark, FamilyMember, CharacterSpouse } from '../types/roleplay';
+import { Character, FeatureMark, FamilyMember, CharacterSpouse, OpenRouterConfig } from '../types/roleplay';
 import { parseBirthdayToZodiac, calculateAgeFromBirthYear } from '../utils/zodiac';
+import { sendOpenRouterChat } from '../lib/openrouter';
 import { parseCharacterFile, exportCharacterJson } from '../utils/pngParser';
 import { resolveImageUrl } from '../utils/imageUrl';
 
@@ -113,6 +114,7 @@ const RELATIONSHIP_OPTIONS = [
 interface CreateCharacterViewProps {
   existingCharacter?: Character | null;
   existingCharactersList: Character[];
+  openRouterConfig: OpenRouterConfig;
   onSaveCharacter: (character: Character) => Promise<boolean> | boolean;
   onBack: () => void;
   onStartChat?: (character: Character) => void;
@@ -128,6 +130,7 @@ const DRAFT_KEY = 'colorpop_create_character_draft_v1';
 export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
   existingCharacter,
   existingCharactersList,
+  openRouterConfig,
   onSaveCharacter,
   onBack,
   onStartChat,
@@ -220,6 +223,9 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
   const [validationError, setValidationError] = useState<string | null>(null);
   const [createdSuccessChar, setCreatedSuccessChar] = useState<Character | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [showAiCreator, setShowAiCreator] = useState(false);
+  const [aiDescription, setAiDescription] = useState('');
+  const [isGeneratingCharacter, setIsGeneratingCharacter] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const importInputRef = useRef<HTMLInputElement>(null);
@@ -502,6 +508,107 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
     }
   };
 
+  const handleGenerateCharacter = async () => {
+    const seed = aiDescription.trim();
+    if (!seed) {
+      setValidationError('Add a short character description first.');
+      return;
+    }
+    if (!openRouterConfig.apiKey.trim()) {
+      setValidationError('Add your OpenRouter API key in Settings before using Create with AI.');
+      return;
+    }
+
+    setIsGeneratingCharacter(true);
+    setValidationError(null);
+    try {
+      const result = await sendOpenRouterChat(
+        { ...openRouterConfig, maxTokens: Math.max(openRouterConfig.maxTokens || 1024, 2400), temperature: 0.7 },
+        [
+          {
+            role: 'system',
+            content: 'You create complete, original roleplay character cards. Return only one valid JSON object, with no Markdown fences or commentary. Fill every requested field with useful, internally consistent details. Never write dialogue, thoughts, feelings, decisions, or actions for {{user}}. Use this schema: name (string), nicknames (string[]), age (string), ethnicity (string), birthday (string), birthYear (string), height (string), bodyType (string), scars/birthmarks/tattoos (arrays of {location,description}), hairColor (string), eyeColor (string), description (physical description), voiceDescription (string), voiceTags (string[]), personality (detailed traits, habits, flaws, motives), learnedPreferences ({likes:string[],dislikes:string[]}), backstory (detailed history), spouse ({name,relationshipStatus} or null), familyMembers (array of {name,relationship,age,description,status}), scenario (immersive starting situation), first_mes (opening message in character voice), pov (first_person or third_person), summary (short card summary), mes_example (short voice example), system_prompt (character-specific rules), post_history_instructions (continuity guidance), alternate_greetings (string[]), creator_notes (string), tags (string[]), customFields (object). Use empty strings or empty arrays only when a field truly does not apply. Make the card feel specific to the user's description instead of generic.'
+          },
+          { role: 'user', content: `Create a complete character card from this short description. Fill in the rest with creative but plausible details. Keep the character's core identity faithful to the description.\n\nDescription: ${seed}` },
+        ],
+      );
+      const jsonText = result.replace(/^\s*```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '').trim();
+      const parsed = JSON.parse(jsonText) as Partial<Character>;
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+        throw new Error('The model did not return a character card. Please try again.');
+      }
+      const id = () => `mark_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+      const toStrings = (value: unknown): string[] => Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string').map((item) => item.trim()).filter(Boolean) : [];
+      const toMarks = (value: unknown): FeatureMark[] => Array.isArray(value) ? value.filter((item) => item && typeof item === 'object').map((item: any) => ({ id: typeof item.id === 'string' ? item.id : id(), location: String(item.location || ''), description: String(item.description || '') })) : [];
+      const generated: Partial<Character> = {
+        ...parsed,
+        id: existingCharacter?.id,
+        name: String(parsed.name || ''),
+        nicknames: toStrings(parsed.nicknames),
+        age: String(parsed.age || ''),
+        ethnicity: String(parsed.ethnicity || ''),
+        birthday: String(parsed.birthday || ''),
+        birthYear: String(parsed.birthYear || ''),
+        avatar: existingCharacter?.avatar || '/lucious.jpg',
+        height: String(parsed.height || ''),
+        bodyType: String(parsed.bodyType || ''),
+        scars: toMarks(parsed.scars),
+        birthmarks: toMarks(parsed.birthmarks),
+        tattoos: toMarks(parsed.tattoos),
+        hairColor: String(parsed.hairColor || ''),
+        eyeColor: String(parsed.eyeColor || ''),
+        description: String(parsed.description || ''),
+        voiceDescription: String(parsed.voiceDescription || ''),
+        voiceTags: toStrings(parsed.voiceTags),
+        personality: String(parsed.personality || ''),
+        learnedPreferences: {
+          likes: toStrings(parsed.learnedPreferences?.likes),
+          dislikes: toStrings(parsed.learnedPreferences?.dislikes),
+          evidence: [],
+        },
+        backstory: String(parsed.backstory || ''),
+        spouse: parsed.spouse && typeof parsed.spouse === 'object' ? {
+          name: String(parsed.spouse.name || ''),
+          relationshipStatus: String(parsed.spouse.relationshipStatus || 'Married'),
+          characterId: parsed.spouse.characterId,
+        } : undefined,
+        familyMembers: Array.isArray(parsed.familyMembers) ? parsed.familyMembers.map((member: any) => ({
+          id: typeof member?.id === 'string' ? member.id : id(),
+          name: String(member?.name || ''),
+          relationship: String(member?.relationship || 'Other'),
+          age: String(member?.age || ''),
+          description: String(member?.description || ''),
+          status: String(member?.status || 'Alive'),
+          characterId: member?.characterId,
+        })) : [],
+        scenario: String(parsed.scenario || ''),
+        first_mes: String(parsed.first_mes || ''),
+        pov: parsed.pov === 'first_person' ? 'first_person' : 'third_person',
+        summary: String(parsed.summary || parsed.description || ''),
+        mes_example: String(parsed.mes_example || ''),
+        system_prompt: String(parsed.system_prompt || ''),
+        post_history_instructions: String(parsed.post_history_instructions || ''),
+        alternate_greetings: toStrings(parsed.alternate_greetings),
+        creator_notes: String(parsed.creator_notes || ''),
+        tags: toStrings(parsed.tags),
+        customFields: parsed.customFields && typeof parsed.customFields === 'object' ? parsed.customFields : {},
+      };
+      if (!generated.name.trim() || !generated.personality?.trim()) {
+        throw new Error('The model left out the character name or personality. Try again with more detail.');
+      }
+      populateFromCharacter(generated);
+      setOpenSections({ basic: true, physical: true, speech: true, personality: true, family: true, story: true, metadata: false });
+      setDraftStatus('unsaved');
+      setShowAiCreator(false);
+      showToast('Character card filled in. Review it, then tap Create Character to save.');
+    } catch (error) {
+      console.error('AI character generation failed:', error);
+      setValidationError(`Could not create the character with AI: ${error instanceof Error ? error.message : String(error)}`);
+    } finally {
+      setIsGeneratingCharacter(false);
+    }
+  };
+
   const handleCreateCharacter = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (isSaving) return;
@@ -759,6 +866,35 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
           </button>
         </div>
       </header>
+
+      <section className="mx-auto w-full max-w-4xl px-4 py-3">
+        <div className="rounded-2xl border border-[#FF007E]/60 bg-[#070f36]/90 p-3 shadow-[0_0_18px_rgba(255,0,126,.18)]">
+          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-[#FF7EB0]">Choose how to start</p>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+            <button type="button" onClick={() => { setShowAiCreator((open) => !open); setValidationError(null); }} className="rounded-xl border border-[#FF7EB0]/70 bg-[#FF007E]/20 px-3 py-2.5 text-xs font-bold text-white hover:bg-[#FF007E]/35">
+              ✨ Create with AI
+            </button>
+            <button type="button" onClick={() => importInputRef.current?.click()} className="rounded-xl border border-[#8DB2F6]/70 bg-[#020E8B]/30 px-3 py-2.5 text-xs font-bold text-white hover:bg-[#020E8B]/50">
+              Import JSON/PNG
+            </button>
+            <button type="button" onClick={() => document.getElementById('character-basic-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="col-span-2 rounded-xl border border-white/20 bg-white/5 px-3 py-2.5 text-xs font-bold text-white hover:bg-white/10 sm:col-span-1">
+              Create Manually
+            </button>
+          </div>
+          {showAiCreator && (
+            <div className="mt-3 rounded-xl border border-[#FF7EB0]/40 bg-black/20 p-3">
+              <label htmlFor="ai-character-description" className="mb-1 block text-xs font-bold text-white">Describe your character</label>
+              <textarea id="ai-character-description" rows={3} maxLength={1200} value={aiDescription} onChange={(event) => setAiDescription(event.target.value)} placeholder="Example: A guarded 27-year-old paramedic from New Orleans, funny under pressure, fiercely loyal, with a complicated family history." className="w-full resize-y rounded-xl border border-[#FF7EB0]/40 bg-[#010925] p-3 text-sm text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#FF007E]" />
+              <div className="mt-2 flex items-center justify-between gap-3">
+                <p className="text-[11px] text-white/60">AI fills the whole card. Review and edit it before saving.</p>
+                <button type="button" onClick={() => void handleGenerateCharacter()} disabled={isGeneratingCharacter} className="shrink-0 rounded-xl bg-[#FF007E] px-4 py-2.5 text-xs font-bold text-white disabled:cursor-wait disabled:opacity-60">
+                  {isGeneratingCharacter ? 'Creating…' : 'Create with AI'}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* ----------------------------------------------------------------------- */}
       {/* 9. LEFT SLIDING APP DRAWER (Navy, Electric Blue, Periwinkle) */}
@@ -1225,7 +1361,8 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
         {/* SECTION 1: BASIC INFORMATION */}
         {/* ==================================================================== */}
         <section
-          className="rounded-3xl border-2 overflow-hidden transition-all shadow-xl"
+          id="character-basic-section"
+          className="rounded-3xl border-2 overflow-hidden transition-all shadow-xl scroll-mt-24"
           style={{
             backgroundColor: '#070f36',
             borderColor: PALETTE.electricBlue,
