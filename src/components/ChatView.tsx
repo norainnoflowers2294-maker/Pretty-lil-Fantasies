@@ -1243,7 +1243,19 @@ export const ChatView: React.FC<ChatViewProps> = ({
         </div>
       </header>
 
-      {isChatSettingsOpen && <ChatSettingsPanel chat={chat} characters={characters} personas={personas} onClose={() => setIsChatSettingsOpen(false)} onSave={(updatedChat) => { onUpdateChat(updatedChat); setIsChatSettingsOpen(false); }} />}
+      {isChatSettingsOpen && <ChatSettingsPanel
+        chat={chat}
+        characters={characters}
+        personas={personas}
+        onClose={() => setIsChatSettingsOpen(false)}
+        onSave={(updatedChat) => { onUpdateChat(updatedChat); setIsChatSettingsOpen(false); }}
+        onClearContext={() => {
+          onUpdateChat({ ...chat, contextResetAt: chat.messages.length, updatedAt: new Date().toISOString() });
+          setIsChatSettingsOpen(false);
+          setCommandNotice('AI context cleared. Earlier messages remain visible.');
+          setTimeout(() => setCommandNotice(null), 4000);
+        }}
+      />}
 
       {/* Scenario / Lore / Atmosphere Bar */}
       <div className="relative z-20 px-4 py-1.5 bg-[#1b0516]/85 border-b border-[#ff3399]/20 flex items-center justify-between text-[11px] text-[#ffd6eb]/80">
