@@ -70,7 +70,6 @@ function checkGeneratedReply(
   reply: string,
   characters: Character[],
   persona: Persona | null,
-  allowNarrator = false,
 ): string[] {
   const violations: string[] = [];
   const response = reply.trim();
@@ -80,42 +79,27 @@ function checkGeneratedReply(
     '{{user}}',
     persona?.name || '',
     persona?.display_name || '',
-    persona?.name?.split(/\s+/)[0] || '',
+    persona?.name?.split(/\\s+/)[0] || '',
   ].map((name) => name.trim()).filter((name) => Boolean(name) && !genericUserNames.has(name.toLowerCase()))));
 
   for (const name of userNames) {
     const escapedName = escapeRegex(name);
-    // A mention or vocative such as “Emmy, look at me” is not Emmy speaking.
-    // Flag only an explicit dialogue label or speech attributed to the user's name.
+    // Only flag direct dialogue attribution or a clear action clause with the
+    // user's name as its subject. A character speaking to/about Emmy is allowed.
     const dialogueLabel = new RegExp('(?:^|\\n)\\s*(?:[*_]*' + escapedName + '[*_]*|\\[?' + escapedName + '\\]?)\\s*:\\s*\\S', 'i');
     const attributedSpeech = new RegExp('\\b' + escapedName + '\\s+(?:says?|said|asks?|asked|replies?|replied|answers?|answered|whispers?|whispered|shouts?|shouted|murmurs?|murmured)\\b', 'i');
-    const userAction = new RegExp('\\b' + escapedName + '\\s+(?:' + ACTION_VERBS + ')\\b', 'i');
-    if (dialogueLabel.test(response) || attributedSpeech.test(response) || userAction.test(response)) {
-      violations.push('The reply appears to write dialogue or actions for ' + name + '.');
-    }
-  }
-
-  const firstPersonRequired = characters.some((character) =>
-    /lucious|lucius/i.test(character.name) ||
-    character.pov === 'first_person' ||
-    /first[- ]person/i.test(character.post_history_instructions || '')
-  );
-  if (firstPersonRequired && !allowNarrator) {
-    const respondingNames = characters
-      .map((character) => character.name)
-      .filter((name) => /lucious|lucius/i.test(name) || characters.some((item) => item.pov === 'first_person'));
-    const namePattern = respondingNames.length
-      ? respondingNames.map(escapeRegex).join('|')
-      : 'Lucious|Lucius';
-    const thirdPersonLead = new RegExp(
-      '(?:^|[.!?\\n]\\s*)[*_>"“”\\s]*(?:he|(?:' + namePattern + '))\\s+(?:' + ACTION_VERBS + ')\\b',
+    const userAction = new RegExp(
+      '(?:^|[.!?;\\n]\\s*|\\b(?:and|but|then)\\s+|,\\s*)[*_>"“”\\s]*(?:' + escapedName + ')\\s+(?:' + ACTION_VERBS + ')\\b',
       'i',
     );
-    if (thirdPersonLead.test(response)) {
-      violations.push('The reply appears to narrate the responding character in third person instead of first person.');
+    if (dialogueLabel.test(response) || attributedSpeech.test(response) || userAction.test(response)) {
+      violations.push('The reply appears to write dialogue or an action for ' + name + '.');
     }
   }
 
+  // Point of view is a writing preference handled by the prompt. It must not
+  // reject an otherwise valid reply; this guard is solely for user agency.
+  void characters;
   return violations;
 }
 
