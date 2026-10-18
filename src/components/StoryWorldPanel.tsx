@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Clock3, GitBranch, CloudSun, X, Plus, Minus, Sparkles } from 'lucide-react';
-import type { Chat } from '../types/roleplay';
+import type { Chat, LivingWorldState } from '../types/roleplay';
+import { getLivingWorldState } from '../lib/livingWorld';
 
 interface Props {
   chat: Chat;
@@ -27,6 +28,22 @@ export const StoryWorldPanel: React.FC<Props> = ({ chat, onSave, onCreateBranch,
   const [direction, setDirection] = useState('');
   const [autoCycle, setAutoCycle] = useState(Boolean(chat.timeCycleEnabled));
   const [branching, setBranching] = useState(false);
+  const world = getLivingWorldState(chat);
+  const [loreTitle, setLoreTitle] = useState('');
+  const [loreEntry, setLoreEntry] = useState('');
+  const [rumorDraft, setRumorDraft] = useState('');
+  const saveWorldState = (next: LivingWorldState) => onSave({ ...chat, livingWorld: next, updatedAt: new Date().toISOString() });
+  const addLore = () => {
+    if (!loreTitle.trim() || !loreEntry.trim()) return;
+    saveWorldState({ ...world, lore: [...world.lore, { id: `lore:${Date.now()}`, title: loreTitle.trim(), category: 'other', entry: loreEntry.trim(), updatedAt: new Date().toISOString() }].slice(-120) });
+    setLoreTitle('');
+    setLoreEntry('');
+  };
+  const addRumor = () => {
+    if (!rumorDraft.trim()) return;
+    saveWorldState({ ...world, rumors: [...world.rumors, { id: `rumor:${Date.now()}`, text: rumorDraft.trim(), truth: 'unknown', believers: [], createdAt: new Date().toISOString() }].slice(-120) });
+    setRumorDraft('');
+  };
   const weatherLabel = useMemo(() => weather === 'Clear' ? 'Clear skies' : `${intensity} ${weather.toLowerCase()}`, [weather, intensity]);
 
   const saveWorld = (nextHour = hour, nextWeather = weatherLabel) => {
@@ -77,6 +94,38 @@ export const StoryWorldPanel: React.FC<Props> = ({ chat, onSave, onCreateBranch,
               <button type="button" onClick={() => advance(-1)} className="inline-flex flex-1 items-center justify-center gap-1 rounded-xl border border-white/35 bg-white/10 px-3 py-2 text-xs hover:bg-white/20"><Minus className="h-3.5 w-3.5" />Back 1 hour</button>
               <button type="button" onClick={() => advance(1)} className="inline-flex flex-1 items-center justify-center gap-1 rounded-xl border border-white/35 bg-white/10 px-3 py-2 text-xs hover:bg-white/20"><Plus className="h-3.5 w-3.5" />Advance 1 hour</button>
             </div>
+          </section>
+
+          <section className="rounded-2xl border border-white/35 bg-white/10 p-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <div><h3 className="text-sm font-semibold">Living world</h3><p className="mt-1 text-[11px] text-white/60">Long memories, secrets, rumors and history persist with this chat.</p></div>
+              <label className="flex items-center gap-2 text-xs text-white/75"><input type="checkbox" checked={world.enabled} onChange={(event) => saveWorldState({ ...world, enabled: event.target.checked })} className="accent-pink-400" />On</label>
+            </div>
+            <label className="mb-3 block text-xs text-white/75">World year
+              <input type="number" value={world.worldYear ?? ''} placeholder="Optional" onChange={(event) => saveWorldState({ ...world, worldYear: event.target.value ? Number(event.target.value) : undefined })} className="mt-1 w-full rounded-xl border border-white/35 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/40" />
+            </label>
+            <div className="grid grid-cols-2 gap-2 text-center">
+              <div className="rounded-xl bg-white/10 p-2"><strong className="block text-sm">{world.events.length}</strong><span className="text-[10px] text-white/60">History events</span></div>
+              <div className="rounded-xl bg-white/10 p-2"><strong className="block text-sm">{world.lore.length}</strong><span className="text-[10px] text-white/60">Lore entries</span></div>
+              <div className="rounded-xl bg-white/10 p-2"><strong className="block text-sm">{world.rumors.length}</strong><span className="text-[10px] text-white/60">Rumors</span></div>
+              <div className="rounded-xl bg-white/10 p-2"><strong className="block text-sm">{world.lies.filter((lie) => !lie.discovered).length}</strong><span className="text-[10px] text-white/60">Unexposed secrets</span></div>
+            </div>
+            {world.events.length > 0 && <div className="mt-3 space-y-2"><p className="text-[10px] font-semibold uppercase tracking-wide text-white/55">Recent history</p>{world.events.slice(-3).reverse().map((event) => <article key={event.id} className="rounded-xl bg-black/15 p-2"><p className="text-xs font-semibold">{event.title}</p><p className="mt-1 line-clamp-2 text-[11px] text-white/65">{event.summary}</p></article>)}</div>}
+            <details className="mt-3 rounded-xl bg-black/15 p-3">
+              <summary className="cursor-pointer text-xs font-semibold">World encyclopedia and rumors</summary>
+              <div className="mt-3 space-y-2">
+                <input value={loreTitle} onChange={(event) => setLoreTitle(event.target.value)} placeholder="Lore title (place, faction, legend…)" className="w-full rounded-lg border border-white/25 bg-white/10 px-2.5 py-2 text-xs text-white placeholder:text-white/45" />
+                <textarea value={loreEntry} onChange={(event) => setLoreEntry(event.target.value)} placeholder="Add a world fact to preserve…" className="min-h-16 w-full rounded-lg border border-white/25 bg-white/10 p-2.5 text-xs text-white placeholder:text-white/45" />
+                <button type="button" onClick={addLore} disabled={!loreTitle.trim() || !loreEntry.trim()} className="rounded-lg bg-white/15 px-3 py-2 text-xs font-semibold disabled:opacity-40">Add lore</button>
+                {world.lore.slice(-5).reverse().map((item) => <p key={item.id} className="rounded-lg bg-white/5 p-2 text-[11px]"><b>{item.title}:</b> {item.entry}</p>)}
+                <div className="border-t border-white/10 pt-3">
+                  <input value={rumorDraft} onChange={(event) => setRumorDraft(event.target.value)} placeholder="A rumor circulating in the world…" className="w-full rounded-lg border border-white/25 bg-white/10 px-2.5 py-2 text-xs text-white placeholder:text-white/45" />
+                  <button type="button" onClick={addRumor} disabled={!rumorDraft.trim()} className="mt-2 rounded-lg bg-white/15 px-3 py-2 text-xs font-semibold disabled:opacity-40">Add unverified rumor</button>
+                  {world.rumors.slice(-5).reverse().map((rumor) => <p key={rumor.id} className="mt-2 rounded-lg bg-white/5 p-2 text-[11px]"><span className="mr-1 rounded bg-violet-300/20 px-1.5 py-0.5">{rumor.truth}</span>{rumor.text}</p>)}
+                </div>
+              </div>
+            </details>
+            <p className="mt-2 text-[10px] text-white/50">The next AI reply can introduce a consequential daily story after 24 hours. Saved events remain part of the world record.</p>
           </section>
 
           <section className="rounded-2xl border border-white/35 bg-white/10 p-4">
