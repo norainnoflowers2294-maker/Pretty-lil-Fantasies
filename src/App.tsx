@@ -17,6 +17,7 @@ import { RecentChatsSection } from './components/RecentChatsSection';
 import { ChatsLibraryView } from './components/ChatsLibraryView';
 import { SocialMediaView } from './components/SocialMediaView';
 import { ChatView } from './components/ChatView';
+import { YouTubePlaylistPlayer } from './components/YouTubePlaylistPlayer';
 import { CharacterModal } from './components/CharacterModal';
 import { CreateCharacterView } from './components/CreateCharacterView';
 import { LorebookModal } from './components/LorebookModal';
@@ -115,6 +116,7 @@ export default function App() {
   const [isGitSyncOpen, setIsGitSyncOpen] = useState(false);
   const [isWalletOpen, setIsWalletOpen] = useState(false);
   const [isPhoneOpen, setIsPhoneOpen] = useState(false);
+  const [isYouTubePlayerOpen, setIsYouTubePlayerOpen] = useState(false);
   const [walletView, setWalletView] = useState<'dashboard' | 'activity'>('dashboard');
 
   // Persona Page & Creator Mode
@@ -793,6 +795,7 @@ export default function App() {
           phoneSystem={data.phoneSystem}
           onUpdatePhoneSystem={(phoneSystem) => updateData({ ...dataRef.current, phoneSystem })}
           onOpenPhone={() => setIsPhoneOpen(true)}
+          onOpenYouTubePlayer={() => setIsYouTubePlayerOpen(true)}
           onUpdateChat={handleUpdateChat}
           onSaveMemory={handleSaveMemory}
           onUpdateCharacter={handleSaveCharacter}
@@ -913,6 +916,7 @@ export default function App() {
           onApplySceneBackground={handleApplySceneBackground}
         />
         <GitHubSyncModal isOpen={isGitSyncOpen} onClose={() => setIsGitSyncOpen(false)} />
+        <YouTubePlaylistPlayer isOpen={isYouTubePlayerOpen} onClose={() => setIsYouTubePlayerOpen(false)} />
         {activeWallet && activeWalletPersona && <WalletModal
           isOpen={isWalletOpen}
           onClose={() => setIsWalletOpen(false)}
@@ -942,6 +946,7 @@ export default function App() {
         onOpenSearch={() => setIsCharModalOpen(true)}
         onOpenFavorites={() => setIsSavedMessagesOpen(true)}
         onOpenGitPush={() => setIsGitSyncOpen(true)}
+        onOpenYouTubePlayer={() => setIsYouTubePlayerOpen(true)}
         userAvatar={(activeChat && data.personas.find((persona) => persona.id === activeChat.personaId)?.avatar) || firebaseUser?.photoURL || '/colorpop_hero.jpg'}
         userName={firebaseUser?.displayName || 'The Muse'}
       />
@@ -1288,6 +1293,7 @@ export default function App() {
       />
 
       <GitHubSyncModal isOpen={isGitSyncOpen} onClose={() => setIsGitSyncOpen(false)} />
+      <YouTubePlaylistPlayer isOpen={isYouTubePlayerOpen} onClose={() => setIsYouTubePlayerOpen(false)} />
     </div>
   );
 }
