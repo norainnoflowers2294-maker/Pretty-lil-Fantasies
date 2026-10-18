@@ -1206,7 +1206,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
             onClick={() => onStartNewChat?.()}
             aria-label="Start another chat with these characters"
             title="Start another chat with these characters"
-            className="hidden sm:inline-flex p-2 rounded-xl bg-[#ff007f]/20 hover:bg-[#ff007f]/40 border border-[#ff66b2]/50 text-[#ffd6eb] transition-colors" title="Start another chat"
+            className="hidden sm:inline-flex p-2 rounded-xl bg-[#ff007f]/20 hover:bg-[#ff007f]/40 border border-[#ff66b2]/50 text-[#ffd6eb] transition-colors"
           >
             <Plus className="w-4 h-4" />
           </button>
