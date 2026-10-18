@@ -16,6 +16,7 @@ import { CategoryPills, CategoryFilter } from './components/CategoryPills';
 import { RecentChatsSection } from './components/RecentChatsSection';
 import { ChatsLibraryView } from './components/ChatsLibraryView';
 import { CharacterMarketplaceView } from './components/CharacterMarketplaceView';
+import { StoryMemoryMapView } from './components/StoryMemoryMapView';
 import { SocialMediaView } from './components/SocialMediaView';
 import { ChatView } from './components/ChatView';
 import { YouTubePlaylistPlayer } from './components/YouTubePlaylistPlayer';
@@ -1027,6 +1028,16 @@ export default function App() {
             characters={data.characters}
             onInstall={handleSaveCharacter}
             onBack={() => setActiveTab('characters')}
+          />
+        ) : activeTab === 'memory-map' ? (
+          <StoryMemoryMapView
+            memories={(data.storyMemories || []).filter((memory) => !memory.deletedAt)}
+            characters={data.characters}
+            chats={data.chats}
+            onSaveMemory={handleSaveMemory}
+            onDeleteMemory={handleDeleteMemory}
+            onOpenChat={handleSelectChat}
+            onBack={() => setActiveTab('home')}
           />
         ) : activeTab === 'chats' ? (
           <ChatsLibraryView chats={data.chats} characters={data.characters} onOpenChat={handleSelectChat} />
