@@ -111,6 +111,13 @@ export const StoryWorldPanel: React.FC<Props> = ({ chat, onSave, onCreateBranch,
               <div className="rounded-xl bg-white/10 p-2"><strong className="block text-sm">{world.lies.filter((lie) => !lie.discovered).length}</strong><span className="text-[10px] text-white/60">Unexposed secrets</span></div>
             </div>
             {world.events.length > 0 && <div className="mt-3 space-y-2"><p className="text-[10px] font-semibold uppercase tracking-wide text-white/55">Recent history</p>{world.events.slice(-3).reverse().map((event) => <article key={event.id} className="rounded-xl bg-black/15 p-2"><p className="text-xs font-semibold">{event.title}</p><p className="mt-1 line-clamp-2 text-[11px] text-white/65">{event.summary}</p></article>)}</div>}
+            {(world.lies.length > 0 || world.relationshipNotes.length > 0) && <details className="mt-3 rounded-xl bg-black/15 p-3">
+              <summary className="cursor-pointer text-xs font-semibold">Secrets and relationship shifts</summary>
+              <div className="mt-3 space-y-2">
+                {world.lies.slice(-5).reverse().map((lie) => <p key={lie.createdAt + lie.characterId} className="rounded-lg bg-white/5 p-2 text-[11px]"><b>{lie.characterName} {lie.discovered ? '· discovered' : '· concealed'}:</b> {lie.claim}</p>)}
+                {world.relationshipNotes.slice(-5).reverse().map((note) => <p key={note.characterId + note.toward} className="rounded-lg bg-white/5 p-2 text-[11px]"><b>{note.characterName} → {note.toward}</b><span className="ml-2 text-white/60">bond {note.affinity}/100 · jealousy {note.jealousy}/100</span>{note.note && <span className="mt-1 block text-white/60">{note.note}</span>}</p>)}
+              </div>
+            </details>}
             <details className="mt-3 rounded-xl bg-black/15 p-3">
               <summary className="cursor-pointer text-xs font-semibold">World encyclopedia and rumors</summary>
               <div className="mt-3 space-y-2">
