@@ -146,6 +146,51 @@ export interface ChatMessage {
   tokens?: number;
 }
 
+export interface LivingWorldEvent {
+  id: string;
+  title: string;
+  summary: string;
+  occurredAt: string;
+  kind: 'daily' | 'history' | 'twist' | 'relationship' | 'discovery';
+  people?: string[];
+}
+
+export interface LivingWorldRumor {
+  id: string;
+  text: string;
+  truth: 'unknown' | 'true' | 'partial' | 'false';
+  believers: string[];
+  createdAt: string;
+}
+
+export interface LivingWorldLore {
+  id: string;
+  title: string;
+  category: 'place' | 'faction' | 'person' | 'history' | 'magic' | 'technology' | 'politics' | 'legend' | 'other';
+  entry: string;
+  updatedAt: string;
+}
+
+export interface CharacterLie {
+  characterId: string;
+  characterName: string;
+  claim: string;
+  motive?: string;
+  discovered: boolean;
+  createdAt: string;
+}
+
+export interface LivingWorldState {
+  enabled: boolean;
+  worldYear?: number;
+  lastDailyStoryAt?: string;
+  events: LivingWorldEvent[];
+  rumors: LivingWorldRumor[];
+  lore: LivingWorldLore[];
+  lies: CharacterLie[];
+  relationshipNotes: Array<{ characterId: string; characterName: string; toward: string; affinity: number; jealousy: number; note?: string }>;
+}
+
 export interface Chat {
   id: string;
   userId?: string;
@@ -164,6 +209,7 @@ export interface Chat {
   weather?: string;
   timeOfDay?: string;
   timeCycleEnabled?: boolean;
+  livingWorld?: LivingWorldState;
   promptInstructions?: string;
   oocMode?: boolean;
   socialMediaEnabled?: boolean;
