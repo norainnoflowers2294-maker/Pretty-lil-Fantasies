@@ -1498,6 +1498,22 @@ export const ChatView: React.FC<ChatViewProps> = ({
         {lastModelUsed && <><style>{'@keyframes plf-model-name-scroll { to { transform: translateX(var(--plf-model-name-end)); } }'}</style><div ref={modelLineViewportRef} className="mx-auto mb-2 max-w-4xl overflow-hidden whitespace-nowrap text-[10px] text-[#ffd6eb]/55" aria-label={'Last reply routed through OpenRouter · ' + lastModelUsed.model + (lastModelUsed.provider ? ' · ' + lastModelUsed.provider : '')}><span ref={modelLineTextRef} className="block w-max whitespace-nowrap" style={modelLineScroll > 2 ? ({ '--plf-model-name-end': '-' + modelLineScroll + 'px', animation: 'plf-model-name-scroll 44s ease-in-out infinite alternate' } as React.CSSProperties) : undefined}>Last reply routed through OpenRouter · {lastModelUsed.model}{lastModelUsed.provider ? ` · ${lastModelUsed.provider}` : ''}</span></div></>}
       <div className="max-w-4xl mx-auto mb-2 flex items-center gap-1.5 overflow-x-auto whitespace-nowrap [scrollbar-width:none]">
           <span className="shrink-0 text-[9px] font-bold uppercase tracking-wider text-[#ffd6eb]/50">Quick</span>
+          <label className="flex min-h-10 shrink-0 items-center gap-1.5 rounded-full border border-[#FC76AA] bg-[#FE0088] px-3 text-[11px] font-bold text-white shadow-sm">
+            <User className="h-3.5 w-3.5" aria-hidden="true" />
+            <select
+              aria-label="Change persona for this chat"
+              title="Change persona"
+              value={chat.personaId || activePersona?.id || ''}
+              onChange={(event) => handlePersonaChange(event.target.value)}
+              className="max-w-28 appearance-none bg-transparent text-[11px] font-bold text-white outline-none"
+            >
+              {personas.map((persona) => (
+                <option key={persona.id} value={persona.id} className="bg-[#140410] text-white">
+                  {persona.display_name || persona.name}
+                </option>
+              ))}
+            </select>
+          </label>
           <button type="button" aria-pressed={textMode} title="Text mode saves messages in this chat’s phone thread" onClick={() => setTextMode((enabled) => !enabled)} className={`min-h-10 shrink-0 rounded-full border px-3 py-2 text-[11px] font-bold text-white shadow-sm transition-colors ${textMode ? 'bg-[#00877E] border-[#37B6A5] shadow-[0_0_14px_rgba(55,182,165,0.35)]' : 'bg-[#0B168C] border-[#8AABF4] hover:bg-[#079AF0]'}`}>
             Text{textMode ? ' ✓' : ''}
           </button>
