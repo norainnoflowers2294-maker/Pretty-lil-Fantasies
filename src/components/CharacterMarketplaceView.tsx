@@ -78,7 +78,7 @@ export const CharacterMarketplaceView: React.FC<Props> = ({ characters, onInstal
           <div><div className="flex items-center gap-2"><ShoppingBag className="h-5 w-5 text-pink-200" /><h1 className="text-2xl font-bold">Character Marketplace</h1></div><p className="mt-1 max-w-xl text-sm text-white/70">Browse saved cards, import community JSON or PNG cards, and export cards to share.</p></div>
           <div className="flex flex-wrap gap-2">
             <button type="button" onClick={() => fileRef.current?.click()} disabled={busy} className="inline-flex items-center gap-2 rounded-xl border border-white/45 bg-white/15 px-3 py-2 text-sm font-semibold hover:bg-white/25 disabled:opacity-50"><Upload className="h-4 w-4" />{busy ? 'Importing…' : 'Import card'}</button>
-            {characters.length > 0 && <button type="button" onClick={() => listCharacter(characters[0])} className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-pink-500/80 to-violet-500/70 px-3 py-2 text-sm font-semibold"><Share2 className="h-4 w-4" />List a character</button>}
+
             <input ref={fileRef} type="file" accept=".json,.png,application/json,image/png" className="hidden" onChange={(event) => void importCard(event.target.files?.[0])} />
           </div>
         </div>
@@ -100,7 +100,8 @@ export const CharacterMarketplaceView: React.FC<Props> = ({ characters, onInstal
               <div className="flex flex-wrap gap-1.5">{(character.tags || []).slice(0, 4).map((tag) => <span key={tag} className="rounded-full border border-white/25 bg-white/10 px-2 py-1 text-[10px] text-white/75">{tag}</span>)}</div>
               <div className="flex gap-2">
                 <button type="button" onClick={() => { onInstall(character); setNotice(`${character.name} added to your character library.`); }} disabled={installed} className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-pink-500/80 px-3 py-2 text-xs font-bold disabled:bg-white/15 disabled:text-white/55"><UserPlus className="h-3.5 w-3.5" />{installed ? 'In your library' : 'Add to library'}</button>
-                <button type="button" onClick={() => { exportCharacterJson(character); if (!listed) listCharacter(character); }} aria-label={`Export ${character.name} character card`} title="Export card to share" className="rounded-xl border border-white/40 bg-white/10 px-3 py-2"><Download className="h-4 w-4" /></button>
+            {characters.some((item) => item.id === character.id) && !listed && <button type="button" onClick={() => listCharacter(character)} className="rounded-xl border border-white/40 bg-white/10 px-3 py-2 text-xs font-semibold">List</button>}
+                <button type="button" onClick={() => exportCharacterJson(character)} aria-label={`Export ${character.name} character card`} title="Export card to share" className="rounded-xl border border-white/40 bg-white/10 px-3 py-2"><Download className="h-4 w-4" /></button>
               </div>
               {listed && <p className="text-[10px] text-white/45">Saved in this device’s catalog · Export to share with others</p>}
             </div>
