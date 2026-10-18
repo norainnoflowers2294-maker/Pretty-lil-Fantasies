@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Bot, Cake, ChevronRight, Compass, Sparkles, WandSparkles } from 'lucide-react';
 import type { Character, Persona } from '../types/roleplay';
 
@@ -21,12 +21,14 @@ interface Props {
   onOpenCreator: () => void;
 }
 export function DailyPromptHub({ characters, personas, onPlay, onStartBot, onOpenCreator }: Props) {
-  const prompt = useMemo(() => prompts[dayIndex(new Date())], []);
+  const [todayDate, setTodayDate] = useState(() => new Date());
+  useEffect(() => { const timer = window.setInterval(() => setTodayDate(new Date()), 60_000); return () => window.clearInterval(timer); }, []);
+  const prompt = prompts[dayIndex(todayDate)];
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<string[]>(characters[0] ? [characters[0].id] : []);
   const [personaId, setPersonaId] = useState(personas.find((p) => p.is_default)?.id || personas[0]?.id || '');
   const [selectedBot, setSelectedBot] = useState<string | null>(null);
-  const today = new Intl.DateTimeFormat(undefined, { weekday: 'long', month: 'long', day: 'numeric' }).format(new Date());
+  const today = new Intl.DateTimeFormat(undefined, { weekday: 'long', month: 'long', day: 'numeric' }).format(todayDate);
   const toggle = (id: string) => setSelected((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
   const start = () => { if (!selected.length || !personaId) return; setOpen(false); onPlay(selected, personaId, prompt.scene, prompt.title); };
 
