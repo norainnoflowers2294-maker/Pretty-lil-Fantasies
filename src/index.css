@@ -173,3 +173,22 @@ body {
   background: linear-gradient(#ff53d2, #7f28eb);
   border-radius: 999px;
 }
+
+
+/* Let the shared Aether backdrop show through the existing page wrappers. */
+#root .cp-app-shell,
+#root .cp-chat {
+  background: transparent !important;
+}
+#root .cp-bubble-user {
+  background: linear-gradient(120deg, #e5009d, #ff29bf 56%, #dc08a9) !important;
+  border: 1px solid rgba(255, 225, 250, .86) !important;
+  box-shadow: 0 0 22px rgba(255, 17, 180, .56), inset 0 1px 0 rgba(255, 255, 255, .62) !important;
+}
+#root .cp-chat .cp-message-bubble:not(.cp-bubble-user) {
+  background: rgba(244, 237, 255, .25) !important;
+  border-color: rgba(255, 255, 255, .52) !important;
+  box-shadow: 0 10px 30px rgba(4, 0, 12, .28), inset 0 1px 0 rgba(255, 255, 255, .52) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  backdrop-filter: blur(20px) saturate(150%);
+}
