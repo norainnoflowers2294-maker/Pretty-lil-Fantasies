@@ -16,8 +16,21 @@ mock.module('../firebase', () => ({
 
 import { doc, getDoc } from 'firebase/firestore';
 import { auth } from '../firebase';
-import { loadFromFirebase, loadLocalData, mergeDefaultCharacters, DEFAULT_OPENROUTER_CONFIG, DEFAULT_SUPABASE_CONFIG, DEFAULT_MEMORIES, DEFAULT_SAVED_MSGS } from '../storage';
+import { loadFromFirebase, loadLocalData, mergeDefaultCharacters, DEFAULT_OPENROUTER_CONFIG, DEFAULT_SUPABASE_CONFIG, DEFAULT_MEMORIES, DEFAULT_SAVED_MSGS, sanitizeFirestoreValue } from '../storage';
 import { ADDITIONAL_CHARACTER_PLACEHOLDER_AVATARS, INITIAL_CHARACTERS, INITIAL_LOREBOOKS, INITIAL_PERSONAS, INITIAL_PLUGINS, INITIAL_CHATS, mergeDefaultPlugins } from '../defaultData';
+
+describe('sanitizeFirestoreValue', () => {
+  it('removes undefined fields at every object depth before Firestore writes', () => {
+    expect(sanitizeFirestoreValue({
+      user: { name: 'Jasmine', optionalValue: undefined },
+      absent: undefined,
+    })).toEqual({ user: { name: 'Jasmine' } });
+  });
+
+  it('preserves array positions by converting undefined entries to null', () => {
+    expect(sanitizeFirestoreValue([1, undefined, { optionalValue: undefined }])).toEqual([1, null, {}]);
+  });
+});
 
 describe('mergeDefaultCharacters', () => {
   it('keeps deleted default characters removed across normalization merges', () => {
