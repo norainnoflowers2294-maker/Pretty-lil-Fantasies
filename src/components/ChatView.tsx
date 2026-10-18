@@ -87,8 +87,9 @@ function checkGeneratedReply(
     // Flag only an explicit dialogue label or speech attributed to the user's name.
     const dialogueLabel = new RegExp('(?:^|\\n)\\s*(?:[*_]*' + escapedName + '[*_]*|\\[?' + escapedName + '\\]?)\\s*:\\s*\\S', 'i');
     const attributedSpeech = new RegExp('\\b' + escapedName + '\\s+(?:says?|said|asks?|asked|replies?|replied|answers?|answered|whispers?|whispered|shouts?|shouted|murmurs?|murmured)\\b', 'i');
-    if (dialogueLabel.test(response) || attributedSpeech.test(response)) {
-      violations.push('The reply appears to speak for ' + name + '.');
+    const userAction = new RegExp('\\b' + escapedName + '\\s+(?:' + ACTION_VERBS + ')\\b', 'i');
+    if (dialogueLabel.test(response) || attributedSpeech.test(response) || userAction.test(response)) {
+      violations.push('The reply appears to write dialogue or actions for ' + name + '.');
     }
   }
 
@@ -136,14 +137,16 @@ async function sendCheckedCharacterReply(
     ...messages,
     {
       role: 'system',
-      content: `The previous draft was rejected by the app’s response check: ${violations.join(' ')} Rewrite the reply from scratch. Write only as the selected character, preserve the required point of view, and do not give Emmy or the user any words, thoughts, feelings, reactions, decisions, or actions.`,
+      content: `The previous draft was rejected because it may write dialogue or actions for the user. Rewrite from scratch as the selected character only. Do not assign the user/Emmy dialogue, thoughts, feelings, choices, or physical actions. Mentions of Emmy, and other characters speaking to or about her, are allowed. Preserve the required point of view.`,
     },
   ];
   result = await sendOpenRouterChatDetailed(config, retryMessages);
   reply = result.content;
   onResponseInfo?.(result.response);
-  // The heuristic can mistake ordinary references to Emmy for taking control of her.
-  // Keep the retry as a best effort, but never discard a generated reply or the user's message.
+  const retryViolations = checkGeneratedReply(reply, characters, persona, allowNarrator);
+  if (retryViolations.length) {
+    throw new Error('Reply blocked because it still writes dialogue or actions for Emmy/user. Regenerate or adjust the prompt.');
+  }
   return reply;
 }
 
