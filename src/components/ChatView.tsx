@@ -80,7 +80,7 @@ function checkGeneratedReply(
     '{{user}}',
     persona?.name || '',
     persona?.display_name || '',
-    persona?.name?.split(/\\s+/)[0] || '',
+    persona?.name?.split(/\s+/)[0] || '',
   ].map((name) => name.trim()).filter((name) => Boolean(name) && !genericUserNames.has(name.toLowerCase()))));
 
   for (const name of userNames) {
