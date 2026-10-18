@@ -441,8 +441,19 @@ export default function App() {
       naturalSpeech: currentData.appPreferences.naturalSpeech,
       reduceRepetition: currentData.appPreferences.reduceRepetition,
       realisticReactions: currentData.appPreferences.realisticReactions,
-      messages: [],
-      openingPending: true,
+      // Show the character card's authored first message immediately.
+      // Only ask the AI to generate an opening when no greeting was provided.
+      messages: selectedCharacters[0].first_mes?.trim() ? [{
+        id: `msg_opening_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+        senderId: selectedCharacters[0].id,
+        senderName: selectedCharacters[0].name,
+        avatar: selectedCharacters[0].avatar,
+        content: selectedCharacters[0].first_mes.trim(),
+        timestamp: Date.now(),
+        swipes: [selectedCharacters[0].first_mes.trim()],
+        currentSwipeIndex: 0,
+      }] : [],
+      openingPending: !selectedCharacters[0].first_mes?.trim(),
       createdAt: now,
       updatedAt: now,
     };
