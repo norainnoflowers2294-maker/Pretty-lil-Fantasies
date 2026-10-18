@@ -239,6 +239,24 @@ export const ChatView: React.FC<ChatViewProps> = ({
   });
   const [errorDetails, setErrorDetails] = useState<{ message: string; suggestedFix?: string } | null>(null);
   const [lastModelUsed, setLastModelUsed] = useState<OpenRouterResponseInfo | null>(null);
+  const modelLineViewportRef = useRef<HTMLDivElement>(null);
+  const modelLineTextRef = useRef<HTMLSpanElement>(null);
+  const [modelLineScroll, setModelLineScroll] = useState(0);
+  useEffect(() => {
+    const viewport = modelLineViewportRef.current;
+    const text = modelLineTextRef.current;
+    if (!viewport || !text) { setModelLineScroll(0); return; }
+    const measure = () => {
+      const distance = Math.max(0, text.scrollWidth - viewport.clientWidth);
+      setModelLineScroll((current) => current === distance ? current : distance);
+    };
+    measure();
+    const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null;
+    observer?.observe(viewport);
+    observer?.observe(text);
+    window.addEventListener('resize', measure);
+    return () => { observer?.disconnect(); window.removeEventListener('resize', measure); };
+  }, [lastModelUsed?.model, lastModelUsed?.provider]);
   const recordModelUsed = (info: OpenRouterResponseInfo) => {
     setLastModelUsed(info);
     setErrorDetails(null);
@@ -1477,7 +1495,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
 
       {/* Chat Input Bar */}
       <div className="relative z-20 p-3 sm:p-4 bg-[#140410]/95 backdrop-blur-md border-t border-[#ff3399]/40">
-        {lastModelUsed && <div className="mx-auto mb-2 max-w-4xl overflow-hidden whitespace-nowrap text-[10px] text-[#ffd6eb]/55" aria-label={`Last reply routed through OpenRouter · ${lastModelUsed.model}${lastModelUsed.provider ? ` · ${lastModelUsed.provider}` : ''}`}><marquee scrollAmount={1} scrollDelay={50}>Last reply routed through OpenRouter · {lastModelUsed.model}{lastModelUsed.provider ? ` · ${lastModelUsed.provider}` : ''}</marquee></div>}
+        {lastModelUsed && <><style>{'@keyframes plf-model-name-scroll { to { transform: translateX(var(--plf-model-name-end)); } }'}</style><div ref={modelLineViewportRef} className="mx-auto mb-2 max-w-4xl overflow-hidden whitespace-nowrap text-[10px] text-[#ffd6eb]/55" aria-label={'Last reply routed through OpenRouter · ' + lastModelUsed.model + (lastModelUsed.provider ? ' · ' + lastModelUsed.provider : '')}><span ref={modelLineTextRef} className="block w-max whitespace-nowrap" style={modelLineScroll > 2 ? ({ '--plf-model-name-end': '-' + modelLineScroll + 'px', animation: 'plf-model-name-scroll 44s ease-in-out infinite alternate' } as React.CSSProperties) : undefined}>Last reply routed through OpenRouter · {lastModelUsed.model}{lastModelUsed.provider ? ` · ${lastModelUsed.provider}` : ''}</span></div></>}
       <div className="max-w-4xl mx-auto mb-2 flex items-center gap-1.5 overflow-x-auto whitespace-nowrap [scrollbar-width:none]">
           <span className="shrink-0 text-[9px] font-bold uppercase tracking-wider text-[#ffd6eb]/50">Quick</span>
           <button type="button" aria-pressed={textMode} title="Text mode saves messages in this chat’s phone thread" onClick={() => setTextMode((enabled) => !enabled)} className={`min-h-10 shrink-0 rounded-full border px-3 py-2 text-[11px] font-bold text-white shadow-sm transition-colors ${textMode ? 'bg-[#00877E] border-[#37B6A5] shadow-[0_0_14px_rgba(55,182,165,0.35)]' : 'bg-[#0B168C] border-[#8AABF4] hover:bg-[#079AF0]'}`}>
