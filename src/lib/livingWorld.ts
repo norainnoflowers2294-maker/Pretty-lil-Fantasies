@@ -22,7 +22,7 @@ export function isDailyStoryDue(state: LivingWorldState, now = Date.now()): bool
 
 const summarize = (text: string, max = 420) => text.trim().replace(/\s+/g, ' ').slice(0, max);
 
-export function applyLivingWorldReply(chat: Chat, reply: string, now = new Date()): Chat {
+export function applyLivingWorldReply(chat: Chat, reply: string, responder?: { id: string; name: string }, now = new Date()): Chat {
   const current = getLivingWorldState(chat);
   if (!current.enabled) return chat;
   const timestamp = now.toISOString();
@@ -56,7 +56,7 @@ export function applyLivingWorldReply(chat: Chat, reply: string, now = new Date(
     createdAt: timestamp,
   }));
   const lieMatch = reply.match(/\b(?:lied|lie|false story|wasn't true|was not true)\b/i);
-  const speaker = chat.characterIds[0] || 'unknown';
+  const speaker = responder?.id || chat.characterIds[0] || 'unknown';
   const lieAlreadyTracked = current.lies.some((lie) => lie.characterId === speaker && !lie.discovered && lieMatch && lie.claim.toLowerCase().includes(lieMatch[0].toLowerCase()));
   const dailyLore = due && reply.trim() ? [{
     id: `lore:daily:${now.toISOString().slice(0, 10)}`,
@@ -72,7 +72,7 @@ export function applyLivingWorldReply(chat: Chat, reply: string, now = new Date(
     if (existing >= 0) {
       relationshipNotes[existing] = { ...relationshipNotes[existing], jealousy: Math.min(100, relationshipNotes[existing].jealousy + 12), note: summarize(reply, 160) };
     } else {
-      relationshipNotes.push({ characterId, characterName: characterId, toward: '{{user}}', affinity: chat.relationshipScore ?? 50, jealousy: 18, note: summarize(reply, 160) });
+      relationshipNotes.push({ characterId, characterName: responder?.name || characterId, toward: '{{user}}', affinity: chat.relationshipScore ?? 50, jealousy: 18, note: summarize(reply, 160) });
     }
   }
   const nextState: LivingWorldState = {
@@ -86,7 +86,7 @@ export function applyLivingWorldReply(chat: Chat, reply: string, now = new Date(
   if (lieMatch && !lieAlreadyTracked) {
     nextState.lies = [...current.lies, {
       characterId: speaker,
-      characterName: speaker,
+      characterName: responder?.name || speaker,
       claim: summarize(reply, 220),
       discovered: false,
       createdAt: timestamp,
