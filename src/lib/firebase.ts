@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithCredential, signOut } from 'firebase/auth';
 import { getFirestore, doc, getDocFromServer } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import firebaseConfig from '../../firebase-applet-config.json';
@@ -77,12 +77,27 @@ export async function testConnection(): Promise<boolean> {
 }
 
 export async function signInWithGoogle() {
-  const provider = new GoogleAuthProvider();
-  provider.setCustomParameters({ prompt: 'select_account' });
-  // This app is hosted on GitHub Pages. Firebase redirect auth on non-Firebase
-  // hosts needs additional hosting/proxy setup, so use its popup flow and
-  // surface blocked-popup errors to the user instead of silently redirecting.
-  return signInWithPopup(auth, provider);
+  if (!firebaseGoogleTokenClient) {
+    throw new Error('Google sign-in is still loading. Wait a moment and try again.');
+  }
+
+  // Use Google Identity Services directly, then exchange its Google access
+  // token with Firebase. This avoids the Firebase auth-domain popup/iframe
+  // flow that can show a blank page in iOS Safari and installed web apps.
+  const accessToken = await new Promise<string>((resolve, reject) => {
+    if (pendingFirebaseGoogleSignIn) {
+      reject(new Error('A Google sign-in is already in progress.'));
+      return;
+    }
+    pendingFirebaseGoogleSignIn = { resolve, reject };
+    try {
+      firebaseGoogleTokenClient!.requestAccessToken({ prompt: 'select_account' });
+    } catch (error) {
+      pendingFirebaseGoogleSignIn = null;
+      reject(error);
+    }
+  });
+  return signInWithCredential(auth, GoogleAuthProvider.credential(null, accessToken));
 }
 
 interface GoogleDriveTokenResponse {
@@ -104,6 +119,37 @@ interface GoogleIdentityServices {
       }) => GoogleDriveTokenClient;
     };
   };
+}
+
+type FirebaseGoogleSignInPending = {
+  resolve: (accessToken: string) => void;
+  reject: (error: Error) => void;
+};
+let firebaseGoogleTokenClient: GoogleDriveTokenClient | null = null;
+let pendingFirebaseGoogleSignIn: FirebaseGoogleSignInPending | null = null;
+
+export async function prepareFirebaseGoogleSignIn(): Promise<void> {
+  if (firebaseGoogleTokenClient) return;
+  const services = await loadGoogleIdentityServices();
+  firebaseGoogleTokenClient = services.accounts!.oauth2!.initTokenClient({
+    client_id: firebaseConfig.oAuthClientId,
+    scope: 'openid email profile',
+    callback: (response) => {
+      const pending = pendingFirebaseGoogleSignIn;
+      pendingFirebaseGoogleSignIn = null;
+      if (!pending) return;
+      if (response.error || !response.access_token) {
+        pending.reject(new Error(response.error_description || response.error || 'Google sign-in did not finish.'));
+        return;
+      }
+      pending.resolve(response.access_token);
+    },
+    error_callback: (error) => {
+      const pending = pendingFirebaseGoogleSignIn;
+      pendingFirebaseGoogleSignIn = null;
+      pending?.reject(new Error(error.message || 'Google sign-in did not finish.'));
+    },
+  });
 }
 
 async function loadGoogleIdentityServices(): Promise<GoogleIdentityServices> {
