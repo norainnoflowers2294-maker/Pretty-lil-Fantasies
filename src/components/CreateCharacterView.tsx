@@ -593,7 +593,7 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
         tags: toStrings(parsed.tags),
         customFields: parsed.customFields && typeof parsed.customFields === 'object' ? parsed.customFields : {},
       };
-      if (!generated.name.trim() || !generated.personality?.trim()) {
+      if (!generated.name?.trim() || !generated.personality?.trim()) {
         throw new Error('The model left out the character name or personality. Try again with more detail.');
       }
       populateFromCharacter(generated);
