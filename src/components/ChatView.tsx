@@ -300,6 +300,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
   const messagesViewportRef = useRef<HTMLDivElement>(null);
   const shouldAutoScrollRef = useRef(true);
   const openingGenerationStartedRef = useRef(new Set<string>());
+  const chatResetGenerationRef = useRef<Record<string, number>>({});
   const currentChatIdRef = useRef(chat.id);
   const activePersonaIdRef = useRef(chat.personaId || '');
   currentChatIdRef.current = chat.id;
@@ -343,6 +344,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
 
   const handleContinueStory = async () => {
     if (loading) return;
+    const resetGeneration = chatResetGenerationRef.current[chat.id] || 0;
     setErrorDetails(null);
     beginChatRequest(chat.id);
     try {
@@ -370,6 +372,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
         temperature: chat.creativity ?? openRouterConfig.temperature,
         maxTokens,
       }, apiMessages, activeCharacters, activePersona, Boolean(chat.oocMode), false, recordModelUsed);
+      if ((chatResetGenerationRef.current[chat.id] || 0) !== resetGeneration) return;
       const responder = activeCharacters[0] || { id: 'char_bot', name: 'Roleplay' };
       const replyTimestamp = Date.now();
       const formattedReply = textMode ? responder.name + ' - ' + botReply : botReply;
@@ -402,6 +405,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
   const handleGenerateChatOpening = async () => {
     const openingChat = chat;
     if (!openingChat.openingPending || openingChat.messages.length > 0) return;
+    const resetGeneration = chatResetGenerationRef.current[openingChat.id] || 0;
     beginChatRequest(openingChat.id);
     setErrorDetails(null);
     try {
@@ -429,6 +433,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
         temperature: openingChat.creativity ?? openRouterConfig.temperature,
         maxTokens,
       }, apiMessages, activeCharacters, activePersona, Boolean(openingChat.oocMode), false, recordModelUsed);
+      if ((chatResetGenerationRef.current[openingChat.id] || 0) !== resetGeneration) return;
       const responder = activeCharacters[0] || { id: 'char_bot', name: 'Roleplay' };
       const openingMessage: ChatMessage = {
         id: `msg_opening_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
@@ -447,6 +452,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
         updatedAt: new Date().toISOString(),
       });
     } catch (err: any) {
+      if ((chatResetGenerationRef.current[openingChat.id] || 0) !== resetGeneration) return;
       onUpdateChat({
         ...openingChat,
         openingPending: false,
@@ -570,6 +576,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
   const handleSendMessage = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!inputText.trim() || loading) return;
+    const resetGeneration = chatResetGenerationRef.current[chat.id] || 0;
 
     setErrorDetails(null);
     const command = parseSlashCommand(inputText.trim());
@@ -651,6 +658,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
         false,
         recordModelUsed,
       );
+      if ((chatResetGenerationRef.current[chat.id] || 0) !== resetGeneration) return;
       const responder = assistantWasTagged
         ? { id: 'assistant', name: 'Pretty Little Fantasies Assistant', avatar: '/colorpop_hero.jpg' }
         : activeCharacters[0] || { id: 'char_bot', name: 'Roleplay' };
@@ -717,12 +725,14 @@ export const ChatView: React.FC<ChatViewProps> = ({
 
   const generateStoryToolReply = async (instruction: string): Promise<string | null> => {
     if (loading) return null;
+    const resetGeneration = chatResetGenerationRef.current[chat.id] || 0;
     beginChatRequest(chat.id);
     setErrorDetails(null);
     try {
       const apiMessages = buildOpenRouterMessages({ characters: activeCharacters, persona: activePersona, lorebooks: activeLorebooks, plugins: activePlugins, chat, preferences, storyMemories, socialMediaContext, phoneContext });
       apiMessages.push({ role: 'user', content: instruction });
-      return await sendCheckedCharacterReply({ ...openRouterConfig, temperature: chat.creativity ?? openRouterConfig.temperature }, apiMessages, activeCharacters, activePersona, false, false, recordModelUsed);
+      const reply = await sendCheckedCharacterReply({ ...openRouterConfig, temperature: chat.creativity ?? openRouterConfig.temperature }, apiMessages, activeCharacters, activePersona, false, false, recordModelUsed);
+      return (chatResetGenerationRef.current[chat.id] || 0) === resetGeneration ? reply : null;
     } catch (error: any) {
       setErrorDetails({ message: error.message || 'Could not generate this story tool result.', suggestedFix: error.suggestedFix || 'Check your OpenRouter connection and try again.' });
       return null;
@@ -785,7 +795,11 @@ export const ChatView: React.FC<ChatViewProps> = ({
 
     if (action === 'Restart') {
       if (!window.confirm('Restart this chat from the beginning? This clears its current messages.')) return;
+      chatResetGenerationRef.current[chat.id] = (chatResetGenerationRef.current[chat.id] || 0) + 1;
       openingGenerationStartedRef.current.delete(chat.id);
+      setInputText('');
+      setErrorDetails(null);
+      setCommandNotice('Chat restarted. Creating a fresh opening…');
       onUpdateChat({ ...chat, messages: [], openingPending: true, updatedAt: new Date().toISOString() });
       return;
     }
@@ -1046,6 +1060,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
 
   const handleRegenerateMessage = async (msg: ChatMessage) => {
     if (loading) return;
+    const resetGeneration = chatResetGenerationRef.current[chat.id] || 0;
     const messageIndex = chat.messages.findIndex((message) => message.id === msg.id);
     if (messageIndex < 0) return;
 
@@ -1074,6 +1089,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
         temperature: chat.creativity ?? openRouterConfig.temperature,
         maxTokens,
       }, apiMessages, activeCharacters, activePersona, Boolean(chat.oocMode) || msg.senderId === 'assistant', false, recordModelUsed);
+      if ((chatResetGenerationRef.current[chat.id] || 0) !== resetGeneration) return;
 
       const versions = msg.swipes?.length ? [...msg.swipes] : [msg.content];
       const activeIndex = Math.min(msg.currentSwipeIndex ?? versions.length - 1, versions.length - 1);
