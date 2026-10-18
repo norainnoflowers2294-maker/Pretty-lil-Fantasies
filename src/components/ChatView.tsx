@@ -87,7 +87,7 @@ function checkGeneratedReply(
     const escapedName = escapeRegex(name);
     // Only flag direct dialogue attribution or a clear action clause with the
     // user's name as its subject. A character speaking to/about Emmy is allowed.
-    const dialogueLabel = new RegExp('(?:^|\\n)\\s*(?:[*_]*' + escapedName + '[*_]*|\\[?' + escapedName + '\\]?)\\s*:\\s*\\S', 'i');
+    const dialogueLabel = new RegExp('(?:^|\\n)\\s*(?:[*_]*' + escapedName + '[*_]*|\\[?' + escapedName + '\\]?)\\s*(?::|[-–—])\\s*\\S', 'i');
     const attributedSpeech = new RegExp('\\b' + escapedName + '\\s+(?:says?|said|asks?|asked|replies?|replied|answers?|answered|whispers?|whispered|shouts?|shouted|murmurs?|murmured)\\b', 'i');
     const userAction = new RegExp(
       '(?:^|[.!?;\\n]\\s*|\\b(?:and|but|then)\\s+|,\\s*)[*_>"“”\\s]*(?:' + escapedName + ')\\s+(?:' + ACTION_VERBS + ')\\b',
