@@ -89,7 +89,7 @@ export function buildOpenRouterMessages(params: AssembleParams): OpenRouterApiMe
   if (preferences?.avoidAICliches) sceneVoiceRules.push(`AVOID AI CLICHÉS: ${preferences.avoidAIClichesPrompt.trim()}`);
   if (preferences?.unstuckRecovery) sceneVoiceRules.push(`WHEN STUCK: ${preferences.unstuckRecoveryPrompt.trim()}`);
   if (preferences?.finishRepliesCleanly) sceneVoiceRules.push(`FINISH THOUGHTS: ${preferences.finishRepliesPrompt.trim()}`);
-  if (sceneVoiceRules.length) systemParts.push(`[SCENE, VOICE & REPLY CONTROLS FROM SETTINGS]\n${sceneVoiceRules.join('\\n')}`);
+  if (sceneVoiceRules.length) systemParts.push(`[SCENE, VOICE & REPLY CONTROLS FROM SETTINGS]\n${sceneVoiceRules.join('\n')}`);
 
   if (phoneContext.trim()) systemParts.push(phoneContext);
   systemParts.push(`[SECRETS, RUMORS & KNOWLEDGE]\nCharacters may keep secrets and spread rumors through believable in-story channels. Track who witnessed or was told each fact. A rumor is not confirmed truth. Characters must not know private thoughts, whispered speech, hidden messages, or events they have not discovered. Never give Emmy/user undisclosed information unless their character learned it in the scene.`);
