@@ -1,4 +1,5 @@
 import { DEFAULT_PREFERENCES, normalizePreferences, type AppPreferences } from './preferences';
+import type { JournalPage } from '../types/journal';
 import { Character, Lorebook, Persona, Plugin, Chat, OpenRouterConfig, SupabaseConfig, StoryMemory } from '../types/roleplay';
 import { ADDITIONAL_CHARACTER_PLACEHOLDER_AVATARS, INITIAL_CHARACTERS, INITIAL_LOREBOOKS, INITIAL_PERSONAS, INITIAL_PLUGINS, INITIAL_CHATS, mergeDefaultPlugins } from './defaultData';
 import { db, auth, storage } from './firebase';
@@ -10,6 +11,7 @@ import { DEFAULT_PHONE_SYSTEM, type PhoneSystemState } from './phoneSystem';
 
 export interface StorageData {
   appPreferences: AppPreferences;
+  journalPages: JournalPage[];
   characters: Character[];
   deletedCharacterIds?: string[];
   lorebooks: Lorebook[];
@@ -120,6 +122,7 @@ interface LocalDataSnapshot {
 function defaultLocalData(): StorageData {
   return {
     appPreferences: { ...DEFAULT_PREFERENCES },
+    journalPages: [],
     characters: INITIAL_CHARACTERS,
     deletedCharacterIds: [],
     lorebooks: INITIAL_LOREBOOKS,
@@ -143,6 +146,7 @@ function normalizeStoredData(parsed: any): StorageData {
     : [];
   return {
     appPreferences: normalizePreferences(parsed.appPreferences),
+    journalPages: Array.isArray(parsed.journalPages) ? parsed.journalPages : [],
     deletedCharacterIds,
     characters: mergeDefaultCharacters(parsed.characters?.length ? parsed.characters : INITIAL_CHARACTERS, deletedCharacterIds),
     lorebooks: parsed.lorebooks?.length ? parsed.lorebooks : INITIAL_LOREBOOKS,
@@ -331,7 +335,8 @@ export async function syncToFirebase(data: StorageData): Promise<void> {
       wallets: data.wallets || DEFAULT_WALLETS,
       socialWorld: data.socialWorld || DEFAULT_SOCIAL_WORLD,
       phoneSystem: data.phoneSystem || DEFAULT_PHONE_SYSTEM,
-      openRouterConfig: data.openRouterConfig || DEFAULT_OPENROUTER_CONFIG,
+      journalPages: data.journalPages || [],
+      openRouterConfig, data.openRouterConfig || DEFAULT_OPENROUTER_CONFIG,
       supabaseConfig: data.supabaseConfig || DEFAULT_SUPABASE_CONFIG,
       updatedAt: new Date().toISOString(),
     }, user.uid)) as Record<string, unknown>;
