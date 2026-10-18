@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SlidersHorizontal, X } from 'lucide-react';
+import { RotateCcw, SlidersHorizontal, X } from 'lucide-react';
 import type { Chat, Character, Persona } from '../types/roleplay';
 
 interface Props {
@@ -7,13 +7,14 @@ interface Props {
   characters: Character[];
   personas: Persona[];
   onSave: (chat: Chat) => void;
+  onClearContext: () => void;
   onClose: () => void;
 }
 
 const fieldClass = 'mt-1 w-full rounded-lg border border-white/15 bg-[#1b0817] px-3 py-2 text-sm text-white outline-none focus:border-pink-400';
 const labelClass = 'block text-xs font-semibold uppercase tracking-wide text-pink-100/75';
 
-export const ChatSettingsPanel: React.FC<Props> = ({ chat, characters, personas, onSave, onClose }) => {
+export const ChatSettingsPanel: React.FC<Props> = ({ chat, characters, personas, onSave, onClearContext, onClose }) => {
   const [draft, setDraft] = useState<Chat>({ ...chat, characterIds: [...chat.characterIds] });
   const toggleCharacter = (id: string) => setDraft((current) => ({
     ...current,
@@ -101,6 +102,20 @@ export const ChatSettingsPanel: React.FC<Props> = ({ chat, characters, personas,
             <span className="mt-1 block text-right text-[10px] font-normal normal-case text-white/45">{(draft.promptInstructions || '').length}/3000</span>
           </label>
         </div>
+
+        <section className="rounded-xl border border-pink-300/20 bg-black/20 p-3">
+          <h3 className="text-sm font-semibold text-white">AI context</h3>
+          <p className="mt-1 text-xs text-white/60">Start fresh context for the bot. Your existing messages stay visible, but won’t be included in future prompts. Character cards, chat settings, and saved story notes remain.</p>
+          <button
+            type="button"
+            onClick={() => {
+              if (window.confirm('Clear this chat’s AI context? Earlier messages will stay visible but will no longer be sent to the AI.')) onClearContext();
+            }}
+            className="mt-3 inline-flex items-center gap-2 rounded-lg border border-rose-400/40 bg-rose-950/40 px-3 py-2 text-xs font-semibold text-rose-100 hover:bg-rose-900/60"
+          >
+            <RotateCcw className="h-4 w-4" /> Clear AI context
+          </button>
+        </section>
 
         <footer className="mt-6 flex justify-end gap-2 border-t border-white/10 pt-4">
           <button type="button" onClick={onClose} className="rounded-lg px-4 py-2 text-sm text-white/70 hover:bg-white/10">Cancel</button>
