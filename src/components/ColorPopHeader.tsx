@@ -9,6 +9,7 @@ import {
   WifiOff,
   Cloud,
   GitBranch,
+  Music2,
 } from 'lucide-react';
 import { ConnectionDiagnostic } from '../types/roleplay';
 
@@ -19,6 +20,7 @@ interface ColorPopHeaderProps {
   onOpenSearch: () => void;
   onOpenFavorites: () => void;
   onOpenGitPush: () => void;
+  onOpenYouTubePlayer: () => void;
   userAvatar?: string;
   userName?: string;
 }
@@ -30,6 +32,7 @@ export const ColorPopHeader: React.FC<ColorPopHeaderProps> = ({
   onOpenSearch,
   onOpenFavorites,
   onOpenGitPush,
+  onOpenYouTubePlayer,
   userAvatar = '/colorpop_hero.jpg',
   userName = 'Siren',
 }) => {
@@ -114,6 +117,14 @@ export const ColorPopHeader: React.FC<ColorPopHeaderProps> = ({
           </span>
         </button>
 
+        <button
+          onClick={onOpenYouTubePlayer}
+          className="w-10 h-10 rounded-full bg-[#1e0818]/80 border border-[#ff4d94]/40 hover:border-[#ff4d94] flex items-center justify-center text-[#ff66b2] shadow-[0_0_15px_rgba(255,77,148,0.25)] hover:shadow-[0_0_20px_rgba(255,77,148,0.5)] transition-all group"
+          title="Open YouTube scrolling playlist"
+          aria-label="Open YouTube playlist"
+        >
+          <Music2 className="w-4 h-4 group-hover:scale-110 transition-transform" />
+        </button>
         <button
           onClick={onOpenSearch}
           className="w-10 h-10 rounded-full bg-[#1e0818]/80 border border-[#ff4d94]/40 hover:border-[#ff4d94] flex items-center justify-center text-[#ff66b2] shadow-[0_0_15px_rgba(255,77,148,0.25)] hover:shadow-[0_0_20px_rgba(255,77,148,0.5)] transition-all group"
