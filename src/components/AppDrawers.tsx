@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   BookOpen, FileText, FolderOpen, Home, Image, MessageSquare,
-  PanelLeft, PanelRight, Puzzle, Settings, Sparkles, Users, UserRound, WalletCards, X, ShoppingBag,
+  PanelLeft, PanelRight, Puzzle, Settings, Sparkles, Users, UserRound, WalletCards, X, ShoppingBag, Clock3,
   Bookmark, GitBranch, AtSign,
 } from 'lucide-react';
 import type { Chat } from '../types/roleplay';
@@ -41,6 +41,7 @@ const navItems: Array<{ id: NavTab; label: string; icon: React.ReactNode; color:
   { id: 'perchance', label: 'Perchance AI', icon: <Sparkles className="h-4 w-4" />, color: '#FF9086' },
   { id: 'social', label: 'Social Media', icon: <AtSign className="h-4 w-4" />, color: '#E60960' },
   { id: 'marketplace', label: 'Character Marketplace', icon: <ShoppingBag className="h-4 w-4" />, color: '#B12FA7' },
+  { id: 'memory-map', label: '3D Memory Map', icon: <Clock3 className="h-4 w-4" />, color: '#7f28eb' },
 ];
 
 export const AppDrawers: React.FC<AppDrawersProps> = (props) => {
