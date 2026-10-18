@@ -140,7 +140,6 @@ async function sendCheckedCharacterReply(
   result = await sendOpenRouterChatDetailed(config, retryMessages);
   reply = result.content;
   onResponseInfo?.(result.response);
-  violations = checkGeneratedReply(reply, characters, persona, allowNarrator);
   // The heuristic can mistake ordinary references to Emmy for taking control of her.
   // Keep the retry as a best effort, but never discard a generated reply or the user's message.
   return reply;
