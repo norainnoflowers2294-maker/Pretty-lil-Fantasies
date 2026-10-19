@@ -305,7 +305,7 @@ function unwrapPersona(parsed: any): Record<string, any> {
   return data;
 }
 
-function normalizePersonaCard(parsed: any, fallbackName: string, avatar?: string): Partial<Persona> {
+export function normalizePersonaJson(parsed: any, fallbackName = 'Imported Persona', avatar?: string): Partial<Persona> {
   const data = unwrapPersona(parsed);
   const name = asString(firstDefined(data, 'name', 'full_name', 'username', 'display_name'), fallbackName);
   const nicknamesRaw = firstDefined(data, 'nicknames', 'nickname', 'aliases');
@@ -316,25 +316,28 @@ function normalizePersonaCard(parsed: any, fallbackName: string, avatar?: string
   const traits = Array.isArray(traitRaw)
     ? traitRaw.map((v: unknown) => asString(v)).filter(Boolean)
     : typeof traitRaw === 'string' ? traitRaw.split(/[,;|]/).map((v: string) => v.trim()).filter(Boolean) : [];
+  const defaultValue = firstDefined(data, 'is_default', 'isDefault');
   return {
+    id: asString(data.id) || undefined,
     name,
     display_name: asString(firstDefined(data, 'display_name', 'nickname', 'name', 'full_name'), name),
     nicknames,
-    occupation: asString(firstDefined(data, 'occupation', 'job', 'role')),
-    avatar: avatar || asString(firstDefined(data, 'avatar', 'avatar_url', 'image')),
-    description: asString(firstDefined(data, 'description', 'personality_description', 'persona', 'personality')),
+    occupation: asString(firstDefined(data, 'occupation', 'job', 'role', 'title')),
+    avatar: avatar || asString(firstDefined(data, 'avatar', 'avatar_url', 'image', 'persona_image')),
+    description: asString(firstDefined(data, 'persona_description', 'description', 'personality_description', 'persona', 'personality')),
     appearance: asString(firstDefined(data, 'appearance', 'physical_description', 'looks')),
-    backstory: asString(firstDefined(data, 'backstory', 'history', 'background', 'lore')),
+    backstory: asString(firstDefined(data, 'backstory', 'history', 'background', 'lore', 'scenario')),
     speaking_style: asString(firstDefined(data, 'speaking_style', 'speakingStyle', 'voice_description', 'voice', 'style')),
     traits,
-    is_default: Boolean(firstDefined(data, 'is_default', 'isDefault')),
+    is_default: defaultValue === true || defaultValue === 'true',
+    favorite: data.favorite === true || data.favorite === 'true',
   };
 }
 
 export async function parsePersonaFile(file: File): Promise<Partial<Persona>> {
   const fallbackName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ') || 'Unnamed Persona';
   if (file.name.toLowerCase().endsWith('.json')) {
-    return normalizePersonaCard(JSON.parse(await file.text()), fallbackName);
+    return normalizePersonaJson(JSON.parse(await file.text()), fallbackName);
   }
   if (!file.name.toLowerCase().endsWith('.png')) throw new Error('Choose a persona JSON or PNG card.');
   const { textChunks, base64Image } = await parsePngMetadata(file);
@@ -343,70 +346,70 @@ export async function parsePersonaFile(file: File): Promise<Partial<Persona>> {
     const embedded = Object.entries(textChunks).find(([key]) => key.toLowerCase() === preferredKey)?.[1];
     if (!embedded) continue;
     try {
-      return normalizePersonaCard(decodeCardPayload(embedded), fallbackName, base64Image);
+      return normalizePersonaJson(decodeCardPayload(embedded), fallbackName, base64Image);
     } catch (error) {
       console.warn(`Could not read embedded ${preferredKey} persona card data:`, error);
     }
   }
-  return normalizePersonaCard({}, fallbackName, base64Image);
+  return normalizePersonaJson({}, fallbackName, base64Image);
+}
+
+function normalizeLorebookJson(parsed: any, fallbackName: string, avatar?: string): Partial<Lorebook> {
+  const data = parsed?.data || parsed?.world_info || parsed?.worldInfo || parsed;
+  if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Lorebook JSON must contain an object.');
+  const rawEntries = data.entries ?? data.world_info?.entries ?? [];
+  const entriesList: any[] = Array.isArray(rawEntries) ? rawEntries : Object.values(rawEntries || {});
+  const entries = entriesList.map((entry: any, index: number) => {
+    const keysRaw = entry?.keys ?? entry?.key ?? entry?.keywords ?? [];
+    const secondaryRaw = entry?.secondary_keys ?? entry?.keysecondary ?? entry?.key_secondary ?? [];
+    const toList = (value: unknown): string[] => Array.isArray(value)
+      ? value.map((item) => asString(item)).filter(Boolean)
+      : typeof value === 'string' ? value.split(',').map((item) => item.trim()).filter(Boolean) : [];
+    const rawPosition = entry?.position;
+    const position = rawPosition === 'after_char' || rawPosition === 1 || rawPosition === '1' || rawPosition === 'after_character'
+      ? 'after_char' : 'before_char';
+    return {
+      id: asString(entry?.id ?? entry?.uid, `entry_${index}`),
+      keys: toList(keysRaw),
+      secondary_keys: toList(secondaryRaw),
+      comment: asString(entry?.comment ?? entry?.name ?? entry?.title),
+      content: asString(entry?.content ?? entry?.text),
+      constant: entry?.constant === true || entry?.constant === 'true',
+      selective: entry?.selective === true || entry?.selective === 'true',
+      insertion_order: Number(entry?.insertion_order ?? entry?.insertionOrder ?? entry?.order ?? index) || index,
+      position: position as 'before_char' | 'after_char',
+      enabled: entry?.enabled !== false,
+    };
+  });
+  return {
+    name: asString(data.name ?? data.title, fallbackName),
+    description: asString(data.description ?? data.comment),
+    avatar,
+    scan_depth: Number(data.scan_depth ?? data.scanDepth ?? 4) || 4,
+    token_budget: Number(data.token_budget ?? data.tokenBudget ?? 1500) || 1500,
+    recursive_scanning: data.recursive_scanning === true || data.recursive_scanning === 'true' || data.recursiveScanning === true,
+    entries,
+  };
 }
 
 export async function parseLorebookFile(file: File): Promise<Partial<Lorebook>> {
-  if (file.name.endsWith('.json')) {
-    const text = await file.text();
-    const parsed = JSON.parse(text);
-    const data = parsed.data || parsed;
-
-    const rawEntries = data.entries || data;
-    const entriesList = Array.isArray(rawEntries)
-      ? rawEntries
-      : Object.values(rawEntries);
-
-    const entries = entriesList.map((e: any, idx: number) => ({
-      id: e.id || `entry_${idx}`,
-      keys: Array.isArray(e.keys) ? e.keys : (e.key || '').split(',').map((k: string) => k.trim()).filter(Boolean),
-      secondary_keys: Array.isArray(e.secondary_keys) ? e.secondary_keys : [],
-      comment: e.comment || e.name || '',
-      content: e.content || '',
-      constant: Boolean(e.constant),
-      selective: Boolean(e.selective),
-      insertion_order: e.insertion_order || e.order || idx,
-      position: (e.position === 'after_char' ? 'after_char' : 'before_char') as 'before_char' | 'after_char',
-      enabled: e.enabled !== false,
-    }));
-
-    return {
-      name: data.name || file.name.replace(/\.[^/.]+$/, ''),
-      description: data.description || '',
-      scan_depth: data.scan_depth || 4,
-      token_budget: data.token_budget || 1500,
-      recursive_scanning: Boolean(data.recursive_scanning),
-      entries,
-    };
+  const fallbackName = file.name.replace(/\\.[^/.]+$/, '').replace(/[-_]/g, ' ') || 'Imported Lorebook';
+  if (file.name.toLowerCase().endsWith('.json')) {
+    return normalizeLorebookJson(JSON.parse(await file.text()), fallbackName);
   }
-
+  if (!file.name.toLowerCase().endsWith('.png')) throw new Error('Choose a lorebook PNG or JSON file.');
   const { textChunks, base64Image } = await parsePngMetadata(file);
   const rawLore = textChunks['lorebook'] || textChunks['world_info'] || textChunks['chara'];
-
   if (rawLore) {
     try {
-      let jsonStr = rawLore;
-      try {
-        jsonStr = decodeURIComponent(escape(atob(rawLore)));
-      } catch {}
-      const parsed = JSON.parse(jsonStr);
-      const data = parsed.data || parsed;
-      return {
-        name: data.name || file.name.replace(/\.[^/.]+$/, ''),
-        description: data.description || '',
-        avatar: base64Image,
-        entries: Array.isArray(data.entries) ? data.entries : [],
-      };
-    } catch {}
+      const parsed = decodeCardPayload(rawLore);
+      return normalizeLorebookJson(parsed, fallbackName, base64Image);
+    } catch (error) {
+      console.warn('Could not read embedded lorebook data:', error);
+    }
   }
-
   return {
-    name: file.name.replace(/\.[^/.]+$/, ''),
+    name: fallbackName,
     description: 'Imported Lorebook',
     avatar: base64Image,
     entries: [],
