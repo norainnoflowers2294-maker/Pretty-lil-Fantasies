@@ -1089,3 +1089,230 @@ body {
   color: #190d17 !important;
   background: rgba(255,255,255,.8) !important;
 }
+
+
+/* Pretty Little Fantasies full-app blush jelly reskin */
+:root {
+  --plf-ink: #190d17;
+  --plf-ink-soft: #49313e;
+  --plf-blush: rgba(255, 228, 241, .78);
+  --plf-blush-strong: rgba(255, 240, 248, .9);
+  --plf-pink: #f21b91;
+  --plf-pink-deep: #78153f;
+  --plf-rim: rgba(255,255,255,.94);
+  --plf-glow: rgba(255, 76, 170, .42);
+}
+
+#root .cp-app-shell {
+  color: var(--plf-ink) !important;
+  background: transparent !important;
+  font-family: "Nunito", "Avenir Next", system-ui, sans-serif !important;
+}
+#root .cp-app-shell::before {
+  filter: saturate(1.18) brightness(1.08);
+}
+#root .cp-app-shell :is(h1,h2,h3,h4,h5,h6) {
+  color: var(--plf-ink) !important;
+  text-shadow: none !important;
+}
+#root .cp-app-shell > header h1,
+#root .cp-app-shell [data-screen-title] {
+  font-family: "Snell Roundhand", "Brush Script MT", cursive !important;
+  font-weight: 700 !important;
+  color: #4c1234 !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,.8), 0 0 14px rgba(255,255,255,.5) !important;
+}
+#root .cp-app-shell :is(p,label,small,strong) {
+  text-shadow: none !important;
+}
+
+/* Screen cards become pale, translucent jelly glass. */
+#root .cp-app-shell :is(div,section,article,form)[class*="rounded-"][class*="border"],
+#root .cp-app-shell :is(section,article)[class*="rounded-"] {
+  background-color: var(--plf-blush) !important;
+  background-image:
+    linear-gradient(145deg, rgba(255,255,255,.78), rgba(255,244,249,.32) 34%, rgba(255,191,222,.28) 72%, rgba(255,255,255,.48)),
+    linear-gradient(110deg, rgba(255,93,177,.11), rgba(180,151,255,.12) 54%, rgba(115,223,255,.1)) !important;
+  background-blend-mode: screen, normal !important;
+  border-color: var(--plf-rim) !important;
+  box-shadow:
+    0 12px 30px rgba(72, 12, 47, .18),
+    0 0 18px rgba(255, 255, 255, .18),
+    inset 0 2px 0 rgba(255,255,255,.94),
+    inset 0 -1px 0 rgba(194,74,132,.18) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(165%) !important;
+  backdrop-filter: blur(24px) saturate(165%) !important;
+}
+
+/* Shared controls: clear pink glass, black labels and floating icon buttons. */
+#root .cp-app-shell :is(button,a,[role="button"],[role="tab"]) {
+  color: var(--plf-ink) !important;
+  background-color: rgba(255,239,247,.74) !important;
+  background-image:
+    linear-gradient(150deg, rgba(255,255,255,.84), rgba(255,226,240,.44) 48%, rgba(255,255,255,.64)),
+    linear-gradient(110deg, rgba(255,100,182,.12), rgba(183,153,255,.12) 55%, rgba(115,222,255,.1)) !important;
+  border: 1px solid var(--plf-rim) !important;
+  border-radius: 1rem;
+  box-shadow:
+    0 6px 18px rgba(62, 10, 40, .17),
+    0 0 12px rgba(255,255,255,.22),
+    inset 0 1.5px 0 rgba(255,255,255,.96),
+    inset 0 -1px 0 rgba(192,73,128,.16) !important;
+  text-shadow: none !important;
+  -webkit-backdrop-filter: blur(18px) saturate(165%) !important;
+  backdrop-filter: blur(18px) saturate(165%) !important;
+}
+#root .cp-app-shell :is(button,a,[role="button"],[role="tab"]) svg,
+#root .cp-app-shell button * {
+  color: inherit !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+#root .cp-app-shell :is(button,a,[role="button"],[role="tab"]):is(:hover,:focus-visible) {
+  background-color: rgba(255,225,240,.92) !important;
+  border-color: #fff !important;
+  box-shadow: 0 0 18px var(--plf-glow), inset 0 1.5px 0 #fff !important;
+}
+#root .cp-app-shell :is(button,a,[role="button"],[role="tab"]):is([aria-current="page"],[aria-pressed="true"],[aria-selected="true"]) {
+  color: #180a13 !important;
+  background-color: rgba(255,199,226,.9) !important;
+  background-image: linear-gradient(145deg, rgba(255,255,255,.8), rgba(255,115,187,.58) 55%, rgba(255,223,240,.8)) !important;
+  border-color: #fff !important;
+  box-shadow: 0 0 20px var(--plf-glow), inset 0 1.5px 0 #fff !important;
+}
+#root .cp-app-shell :is(button[type="submit"],.cp-primary),
+#root .cp-app-shell button[class*="from-[#ff"],
+#root .cp-app-shell button[class*="bg-[#ff1493"],
+#root .cp-app-shell button[class*="bg-[#ff007f"] {
+  color: #fff !important;
+  background-color: #cf176e !important;
+  background-image:
+    linear-gradient(155deg, rgba(255,255,255,.54), rgba(255,255,255,.12) 20%, transparent 50%),
+    linear-gradient(115deg, #7c153f, #ed2b8c 52%, #a31668) !important;
+  border-color: rgba(255,255,255,.94) !important;
+  box-shadow: 0 0 22px rgba(226,32,126,.38), 0 8px 20px rgba(63,6,37,.22), inset 0 1.5px 0 rgba(255,255,255,.84) !important;
+}
+#root .cp-app-shell :is(button[type="submit"],.cp-primary) * ,
+#root .cp-app-shell button[class*="from-[#ff"] * {
+  color: #fff !important;
+}
+#root .cp-app-shell button:disabled {
+  opacity: .48 !important;
+}
+
+/* Forms across creators, settings, search, and chat use blush fills with black text. */
+#root .cp-app-shell input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]),
+#root .cp-app-shell textarea,
+#root .cp-app-shell select {
+  color: var(--plf-ink) !important;
+  background-color: rgba(255,231,243,.88) !important;
+  background-image: linear-gradient(145deg, rgba(255,255,255,.8), rgba(255,224,239,.58)) !important;
+  border-color: rgba(255,255,255,.96) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.98), 0 5px 16px rgba(71,12,45,.12) !important;
+  -webkit-text-fill-color: var(--plf-ink) !important;
+  caret-color: var(--plf-ink) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(150%) !important;
+  backdrop-filter: blur(16px) saturate(150%) !important;
+}
+#root .cp-app-shell input::placeholder,
+#root .cp-app-shell textarea::placeholder {
+  color: var(--plf-ink-soft) !important;
+  -webkit-text-fill-color: var(--plf-ink-soft) !important;
+  opacity: 1 !important;
+}
+#root .cp-app-shell input[type="checkbox"],
+#root .cp-app-shell input[type="radio"] {
+  accent-color: var(--plf-pink) !important;
+}
+#root .cp-app-shell option {
+  color: var(--plf-ink) !important;
+  background: #ffe5f0 !important;
+}
+
+/* Persistent app header and floating bottom navigation. */
+#root .cp-app-shell > header {
+  background-color: rgba(255,237,247,.78) !important;
+  background-image: linear-gradient(145deg, rgba(255,255,255,.86), rgba(255,219,237,.54), rgba(255,255,255,.7)) !important;
+  border: 1px solid var(--plf-rim) !important;
+  box-shadow: 0 12px 30px rgba(73,12,48,.18), inset 0 2px 0 #fff !important;
+  -webkit-backdrop-filter: blur(28px) saturate(175%) !important;
+  backdrop-filter: blur(28px) saturate(175%) !important;
+}
+#root .cp-app-shell .cp-bottom-toolbar {
+  background: linear-gradient(120deg, rgba(51,12,36,.92), rgba(91,16,60,.9) 55%, rgba(46,13,43,.93)) !important;
+  border: 1px solid rgba(255,255,255,.82) !important;
+  box-shadow: 0 12px 34px rgba(35,4,26,.34), 0 0 22px rgba(255,61,159,.24), inset 0 1.5px 0 rgba(255,255,255,.62) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(165%) !important;
+  backdrop-filter: blur(28px) saturate(165%) !important;
+}
+#root .cp-app-shell .cp-bottom-toolbar button {
+  color: #fff !important;
+  background: rgba(255,255,255,.12) !important;
+  border-color: rgba(255,255,255,.7) !important;
+}
+#root .cp-app-shell .cp-bottom-toolbar button:is([aria-current="page"],[aria-pressed="true"]) {
+  color: #180a13 !important;
+  background: linear-gradient(145deg, #fff0f8, #ff77bb 56%, #ffe8f3) !important;
+  border-color: #fff !important;
+}
+
+/* Keep chat content distinct and legible over the floral wallpaper. */
+#root .cp-chat,
+#root .cp-app-shell .cp-chat {
+  color: #fff !important;
+  background: transparent !important;
+}
+#root .cp-chat > div.absolute.inset-0.bg-gradient-to-b {
+  background-image: linear-gradient(180deg, rgba(255,177,216,.12), rgba(42,8,31,.16) 52%, rgba(73,8,44,.3)) !important;
+}
+#root .cp-chat .cp-message-bubble:not(.cp-bubble-user) {
+  color: #fff !important;
+  background-color: rgba(39,17,35,.77) !important;
+  background-image: linear-gradient(145deg, rgba(255,255,255,.22), rgba(255,255,255,.04) 26%, rgba(117,18,71,.28)) !important;
+  border-color: rgba(255,255,255,.8) !important;
+  box-shadow: 0 10px 30px rgba(20,3,16,.3), 0 0 16px rgba(255,255,255,.12), inset 0 1.5px 0 rgba(255,255,255,.55) !important;
+}
+#root .cp-chat .cp-bubble-user {
+  color: #fff !important;
+  background-color: rgba(224,17,128,.84) !important;
+  background-image: linear-gradient(145deg, rgba(255,255,255,.44), rgba(255,255,255,.08) 25%, rgba(137,9,79,.3)) !important;
+  border-color: rgba(255,255,255,.88) !important;
+}
+#root .cp-chat textarea[placeholder^="Reply to"] {
+  color: var(--plf-ink) !important;
+  background: linear-gradient(145deg, rgba(255,244,250,.94), rgba(255,216,235,.84) 58%, rgba(255,246,251,.94)) !important;
+  border-color: #fff !important;
+  -webkit-text-fill-color: var(--plf-ink) !important;
+}
+
+/* Drawers and modal panels share the pink-glass finish across every screen. */
+#root aside[role="dialog"],
+#root [role="dialog"]:not(aside) {
+  color: var(--plf-ink) !important;
+  background: linear-gradient(145deg, rgba(255,248,252,.96), rgba(255,220,238,.91) 52%, rgba(242,205,235,.88)) !important;
+  border-color: rgba(255,255,255,.96) !important;
+  box-shadow: 0 18px 60px rgba(63,8,42,.3), 0 0 28px rgba(255,69,159,.22), inset 0 2px 0 #fff !important;
+  -webkit-backdrop-filter: blur(30px) saturate(170%) !important;
+  backdrop-filter: blur(30px) saturate(170%) !important;
+}
+#root aside[role="dialog"] :is(h1,h2,h3,h4,p,span,small,strong,label),
+#root [role="dialog"]:not(aside) :is(h1,h2,h3,h4,p,span,small,strong,label) {
+  color: var(--plf-ink) !important;
+  text-shadow: none !important;
+}
+#root aside[role="dialog"] textarea[placeholder="What are they wearing today?"] {
+  color: #fff !important;
+  background: rgba(76,27,55,.88) !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+/* Chips and badges use the same pale glass as the screenshots. */
+#root .cp-app-shell [data-tag],
+#root .cp-app-shell [class*="badge"],
+#root .cp-app-shell [class*="chip"] {
+  color: var(--plf-ink) !important;
+  background-color: rgba(255,239,247,.72) !important;
+  background-image: linear-gradient(145deg, rgba(255,255,255,.8), rgba(255,222,238,.48)) !important;
+  border-color: rgba(255,255,255,.92) !important;
+  text-shadow: none !important;
+}
