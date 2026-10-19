@@ -3079,3 +3079,35 @@ body {
   color: #211019 !important;
   stroke: #211019 !important;
 }
+
+
+/* Category tiles need visible ink and icons above the app's generic glass-card rules. */
+#root .cp-app-shell main button.plf-category-pill[class*="group"][aria-pressed] {
+  color: #211019 !important;
+  background: linear-gradient(135deg, #fff6fa, #ffd1e4 58%, #e5d6f4) !important;
+  border: 1px solid rgba(255,255,255,.98) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 4px 12px rgba(104,39,75,.12), inset 0 1px 0 #fff !important;
+}
+#root .cp-app-shell main button.plf-category-pill[aria-pressed="true"] {
+  background: linear-gradient(135deg, #ffd2e5, #f5a7cb 60%, #e4c7f3) !important;
+}
+#root .cp-app-shell main button.plf-category-pill[class*="group"] .plf-category-icon-ring,
+#root .cp-app-shell main button.plf-category-pill[class*="group"] .plf-category-icon {
+  background: linear-gradient(135deg, #fffafd, #ffd0e4 58%, #e3d2f3) !important;
+  border-color: #fff !important;
+  box-shadow: 0 3px 9px rgba(104,39,75,.12), inset 0 1px 0 #fff !important;
+}
+#root .cp-app-shell main button.plf-category-pill[class*="group"] svg {
+  color: #211019 !important;
+  stroke: #211019 !important;
+  opacity: 1 !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+#root .cp-app-shell .plf-top-row {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+  padding-bottom: 0 !important;
+}
+#root .cp-app-shell .plf-top-row::-webkit-scrollbar { display: none !important; }
