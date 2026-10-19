@@ -3,6 +3,7 @@ export type SlashCommand =
   | { type: 'wallet'; view: 'dashboard' | 'activity' }
   | { type: 'narrator'; enabled?: boolean; frequency?: NarratorFrequency }
   | { type: 'ooc'; enabled?: boolean }
+  | { type: 'ooc-message'; content: string }
   | { type: 'roll' }
   | { type: 'continue' }
   | { type: 'rewind' }
@@ -50,7 +51,7 @@ export function parseSlashCommand(input: string): SlashCommand | null {
     if (!argument || argument === 'toggle') return { type: 'ooc' };
     if (argument === 'on' || argument === 'enable' || argument === 'enabled') return { type: 'ooc', enabled: true };
     if (argument === 'off' || argument === 'disable' || argument === 'disabled') return { type: 'ooc', enabled: false };
-    return null;
+    return { type: 'ooc-message', content: (match[2] || '').trim() };
   }
   if ((name === 'continue' || name === 'cont') && !argument) return { type: 'continue' };
   if ((name === 'rewind' || name === 'undo') && !argument) return { type: 'rewind' };
