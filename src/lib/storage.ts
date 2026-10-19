@@ -353,7 +353,20 @@ export async function syncToFirebase(data: StorageData): Promise<void> {
       updatedAt: new Date().toISOString(),
     }, user.uid)) as Record<string, unknown>;
 
-    await setDoc(doc(db, 'users', user.uid), cloudData, { merge: true });
+    // Retry temporary connection failures without discarding the local snapshot.
+    // Permission and validation errors require intervention and must not loop.
+    const retryableCodes = new Set(['unavailable', 'deadline-exceeded', 'aborted', 'resource-exhausted']);
+    for (let attempt = 0; attempt < 4; attempt += 1) {
+      if (auth.currentUser?.uid !== user.uid) throw new Error('Account changed during cloud save.');
+      try {
+        await setDoc(doc(db, 'users', user.uid), cloudData, { merge: true });
+        break;
+      } catch (error) {
+        const code = String((error as { code?: string })?.code || '').replace(/^firestore\//, '');
+        if (!retryableCodes.has(code) || attempt === 3) throw error;
+        await new Promise<void>((resolve) => setTimeout(resolve, 500 * 2 ** attempt));
+      }
+    }
   } catch (err) {
     console.warn('Could not sync to Firebase Firestore:', err);
     throw err;
