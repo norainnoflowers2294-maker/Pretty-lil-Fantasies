@@ -3552,3 +3552,9 @@ body {
 #root .cp-brand-header {
   text-transform: none !important;
 }
+
+
+/* Keep character creator page and section headings in title case as well. */
+#root .cp-create-character :is(h1,h2,h3,h4,h5,h6) {
+  text-transform: none !important;
+}
