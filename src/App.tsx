@@ -380,11 +380,11 @@ export default function App() {
         setData(readyData);
         if (readyData.appPreferences.homeImage) setHomeImage(readyData.appPreferences.homeImage);
         setActiveChat(readyData.chats.find((chat) => chat.id === activeChatId) || null);
-        await saveLocalData(readyData);
         if (!useCloudSnapshot && localAccountId && localAccountId !== user.uid && !remote) {
           // Never upload another account's local data into a new Firebase account.
           throw new Error('This device contains data from another Google account. Sign back into that account to recover its backup.');
         }
+        await saveLocalData(readyData);
         if (!useCloudSnapshot) await enqueueFirebaseSync(readyData);
         try { localStorage.setItem(lastAccountKey, user.uid); } catch { /* IndexedDB remains available */ }
         firebaseCloudReadyRef.current = true;
