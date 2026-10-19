@@ -587,8 +587,11 @@ export default function App() {
       const characterIdMap = new Map<string, string>();
       importedCharacters.forEach((character, index) => characterIdMap.set(character.id, `char_import_${Date.now()}_${index}_${Math.random().toString(36).slice(2, 7)}`));
       parsed.chat.characterIds.forEach((id) => {
-        if (!characterIdMap.has(id)) characterIdMap.set(id, current.characters.some((character) => character.id === id) ? id : id);
+        if (!characterIdMap.has(id) && current.characters.some((character) => character.id === id)) characterIdMap.set(id, id);
       });
+      if (parsed.chat.characterIds.some((id) => !characterIdMap.has(id))) {
+        throw new Error('This bundle is missing a linked character card. Export the chat bundle again from the original app.');
+      }
       const remapCharacterReferences = (value: unknown): unknown => {
         if (Array.isArray(value)) return value.map(remapCharacterReferences);
         if (value && typeof value === 'object') {
@@ -634,6 +637,9 @@ export default function App() {
         chats: [importedChat, ...current.chats],
         activeChatId: importedChat.id,
       });
+      setActiveChat(importedChat);
+      setActiveTab('chats');
+      setInChatMode(true);
       const cloudStatus = result?.firebaseSaved
         ? ' It was backed up to Firebase.'
         : ` It is on this device for now: ${result?.message || 'Firebase sync is not available.'}`;
