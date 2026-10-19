@@ -375,6 +375,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
         persona: activePersona,
         lorebooks: activeLorebooks,
         plugins: activePlugins,
+        chats: allChats,
         chat,
         preferences,
         storyMemories,
@@ -437,6 +438,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
         persona: activePersona,
         lorebooks: activeLorebooks,
         plugins: activePlugins,
+        chats: allChats,
         chat: openingChat,
         preferences,
         storyMemories,
@@ -754,7 +756,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
     beginChatRequest(chat.id);
     setErrorDetails(null);
     try {
-      const apiMessages = buildOpenRouterMessages({ characters: activeCharacters, persona: activePersona, lorebooks: activeLorebooks, plugins: activePlugins, chat, preferences, storyMemories, socialMediaContext, phoneContext });
+      const apiMessages = buildOpenRouterMessages({ characters: activeCharacters, persona: activePersona, lorebooks: activeLorebooks, plugins: activePlugins, chats: allChats, chat, preferences, storyMemories, socialMediaContext, phoneContext });
       apiMessages.push({ role: 'user', content: instruction });
       const reply = await sendCheckedCharacterReply({ ...openRouterConfig, temperature: chat.creativity ?? openRouterConfig.temperature }, apiMessages, activeCharacters, activePersona, false, false, recordModelUsed);
       return (chatResetGenerationRef.current[chat.id] || 0) === resetGeneration ? reply : null;
