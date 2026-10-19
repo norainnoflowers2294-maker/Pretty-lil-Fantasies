@@ -130,10 +130,10 @@ export const AppDrawers: React.FC<AppDrawersProps> = (props) => {
 
           <aside role="dialog" aria-modal={rightOpen} aria-hidden={!rightOpen} aria-label="App tools drawer"
             onClick={(event) => event.stopPropagation()}
-            className={`cp-app-drawer-panel cp-app-drawer-right absolute inset-y-0 right-0 flex w-[min(88vw,22rem)] flex-col border-l border-[#ff66b2]/60 bg-[#140410] shadow-[-10px_0_40px_rgba(255,0,128,0.35)] transition-transform duration-300 ${rightOpen ? 'pointer-events-auto translate-x-0' : 'pointer-events-none translate-x-full'}`}>
+            className={`cp-app-drawer-panel cp-app-drawer-right absolute inset-y-0 right-0 z-[2] flex w-[min(88vw,22rem)] flex-col border-l border-[#ff66b2]/60 bg-[#140410] shadow-[-10px_0_40px_rgba(255,0,128,0.35)] transition-transform duration-300 ${rightOpen ? 'pointer-events-auto translate-x-0' : 'pointer-events-none translate-x-full'}`}>
             <div className="flex items-center justify-between border-b border-[#ff3399]/30 p-4">
               <div><h2 className="font-bold text-white">App tools</h2><p className="text-xs text-[#ffd6eb]/65">Your story systems and settings</p></div>
-              <button type="button" aria-label="Close tools drawer" onClick={() => setRightOpen(false)} className="rounded-xl border border-[#B879C2]/60 bg-[#B879C2]/20 p-2 text-white hover:brightness-125"><X className="h-4 w-4" /></button>
+              <button type="button" aria-label="Close tools drawer" onClick={(event) => { event.stopPropagation(); close(); }} className="relative z-10 grid min-h-11 min-w-11 place-items-center rounded-full border border-white/90 bg-white/85 p-2 text-[#211019] shadow-lg hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pink-500"><X className="h-5 w-5" /></button>
             </div>
             <div className="min-h-0 flex-1 space-y-2 overflow-y-auto overscroll-contain touch-pan-y p-3 [-webkit-overflow-scrolling:touch]">
               <button type="button" onClick={() => run(props.onOpenSocialMedia)} style={{ backgroundColor: '#FE008833', borderColor: '#FE008899' }} className="flex w-full items-center gap-3 rounded-xl border p-3 text-left text-sm text-white transition hover:brightness-125"><AtSign className="h-4 w-4 text-pink-300" />Social Media world</button>
