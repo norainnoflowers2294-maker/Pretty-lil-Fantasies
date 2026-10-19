@@ -42,7 +42,7 @@ export const ChatsLibraryView: React.FC<ChatsLibraryViewProps> = ({ chats, chara
   });
 
   return (
-    <section className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6">
+    <section className="cp-chats-library mx-auto w-full max-w-6xl px-4 py-6 sm:px-6">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.28em] text-[#ff66b2]">Your story library</p>
@@ -68,7 +68,7 @@ export const ChatsLibraryView: React.FC<ChatsLibraryViewProps> = ({ chats, chara
             const cover = chat.bgImage || participants[0]?.avatar || '/penthouse.jpg';
             return (
               <div key={chat.id} className="relative">
-              <button type="button" onClick={() => onOpenChat(chat.id)} className="group block w-full overflow-hidden rounded-3xl border border-[#ff66b2]/25 bg-[#180713]/90 text-left shadow-[0_12px_32px_rgba(0,0,0,0.28)] transition duration-200 hover:-translate-y-1 hover:border-[#ff66b2]/70 hover:shadow-[0_0_25px_rgba(255,0,128,0.2)] focus:outline-none focus:ring-2 focus:ring-[#ff66b2]">
+              <button type="button" onClick={() => onOpenChat(chat.id)} className="cp-chats-library-card group block w-full overflow-hidden rounded-3xl border border-[#ff66b2]/25 bg-[#180713]/90 text-left shadow-[0_12px_32px_rgba(0,0,0,0.28)] transition duration-200 hover:-translate-y-1 hover:border-[#ff66b2]/70 hover:shadow-[0_0_25px_rgba(255,0,128,0.2)] focus:outline-none focus:ring-2 focus:ring-[#ff66b2]">
                 <div className="relative h-36 overflow-hidden bg-gradient-to-br from-[#4a1038] to-[#170411]">
                   <img src={resolveImageUrl(cover)} alt="" className="h-full w-full object-cover opacity-70 transition duration-300 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#180713] via-transparent to-black/10" />
@@ -97,7 +97,7 @@ export const ChatsLibraryView: React.FC<ChatsLibraryViewProps> = ({ chats, chara
           })}
         </div>
       ) : (
-        <div className="rounded-3xl border border-dashed border-[#ff66b2]/30 bg-[#180713]/60 px-5 py-14 text-center">
+        <div className="cp-chats-library-empty rounded-3xl border border-dashed border-[#ff66b2]/30 bg-[#180713]/60 px-5 py-14 text-center">
           <MessageCircle className="mx-auto mb-3 h-8 w-8 text-[#ff66b2]" />
           <h2 className="text-lg font-bold text-white">{chats.length ? 'No chats match that search' : 'No chats yet'}</h2>
           <p className="mt-1 text-sm text-[#ffd6eb]/55">{chats.length ? 'Try a different chat or character name.' : 'Start a conversation from a character profile and it will appear here.'}</p>
