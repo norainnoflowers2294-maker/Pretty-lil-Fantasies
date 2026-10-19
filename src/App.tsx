@@ -76,40 +76,30 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 
 
 const FloatingBubbles: React.FC = () => {
-  const bubbles = [
-    { size: 28, left: '1.5%', top: '18%', delay: '-3s', duration: '21s' },
-    { size: 24, left: '95%', top: '24%', delay: '-12s', duration: '25s' },
-    { size: 18, left: '2.5%', top: '45%', delay: '-8s', duration: '19s' },
-    { size: 30, left: '94%', top: '52%', delay: '-5s', duration: '23s' },
-    { size: 22, left: '1%', top: '70%', delay: '-15s', duration: '27s' },
-    { size: 34, left: '94%', top: '82%', delay: '-10s', duration: '24s' },
-    { size: 16, left: '4%', top: '89%', delay: '-6s', duration: '20s' },
-    { size: 20, left: '96%', top: '8%', delay: '-17s', duration: '26s' },
-    { size: 12, left: '7%', top: '31%', delay: '-9s', duration: '18s' },
-    { size: 14, left: '91%', top: '38%', delay: '-14s', duration: '22s' },
-    { size: 10, left: '5%', top: '58%', delay: '-2s', duration: '17s' },
-    { size: 15, left: '89%', top: '65%', delay: '-11s', duration: '24s' },
-    { size: 11, left: '8%', top: '78%', delay: '-5s', duration: '20s' },
-    { size: 13, left: '92%', top: '91%', delay: '-16s', duration: '23s' },
-    { size: 9, left: '14%', top: '13%', delay: '-7s', duration: '19s' },
-    { size: 12, left: '84%', top: '16%', delay: '-4s', duration: '21s' },
-    { size: 10, left: '12%', top: '94%', delay: '-13s', duration: '25s' },
-    { size: 14, left: '86%', top: '47%', delay: '-18s', duration: '26s' },
+  const particles = [
+    { kind: 'bubble', path: 'a', size: 34, left: '8%', top: '18%', delay: '-3s', duration: '23s' },
+    { kind: 'pearl', path: 'b', size: 13, left: '21%', top: '76%', delay: '-11s', duration: '29s' },
+    { kind: 'bubble', path: 'c', size: 24, left: '89%', top: '27%', delay: '-12s', duration: '26s' },
+    { kind: 'pearl', path: 'd', size: 17, left: '78%', top: '62%', delay: '-6s', duration: '31s' },
+    { kind: 'bubble', path: 'b', size: 28, left: '14%', top: '57%', delay: '-8s', duration: '25s' },
+    { kind: 'pearl', path: 'a', size: 11, left: '93%', top: '83%', delay: '-15s', duration: '28s' },
+    { kind: 'bubble', path: 'd', size: 20, left: '72%', top: '88%', delay: '-5s', duration: '24s' },
+    { kind: 'pearl', path: 'c', size: 15, left: '4%', top: '38%', delay: '-17s', duration: '32s' },
   ];
 
   return (
     <div className="plf-bubbles-layer" aria-hidden="true">
-      {bubbles.map((bubble, index) => (
+      {particles.map((particle, index) => (
         <span
           key={index}
-          className="plf-floating-bubble"
+          className={`plf-floating-${particle.kind} plf-drift-${particle.path}`}
           style={{
-            left: bubble.left,
-            top: bubble.top,
-            width: bubble.size,
-            height: bubble.size,
-            animationDelay: bubble.delay,
-            animationDuration: bubble.duration,
+            left: particle.left,
+            top: particle.top,
+            width: particle.size,
+            height: particle.size,
+            animationDelay: particle.delay,
+            animationDuration: particle.duration,
           }}
         />
       ))}
