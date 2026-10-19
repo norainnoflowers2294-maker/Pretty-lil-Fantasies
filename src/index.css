@@ -1744,3 +1744,181 @@ body {
 #root .cp-chat .cp-message-menu button:hover {
   background: rgba(238,168,199,.3) !important;
 }
+
+
+/* Unified light rose reskin: remove leftover dark plum panels across every app surface. */
+:root {
+  --plf-light-ink: #211019;
+  --plf-light-ink-soft: #543645;
+  --plf-light-surface: rgba(255, 242, 248, .94);
+  --plf-light-surface-strong: rgba(255, 232, 242, .96);
+  --plf-light-pink: #f3a9c6;
+  --plf-light-edge: rgba(190, 90, 132, .34);
+}
+html, body, #root {
+  background-color: #f7d8e5 !important;
+  color: var(--plf-light-ink) !important;
+}
+body {
+  background-image:
+    linear-gradient(rgba(255, 236, 245, .28), rgba(255, 236, 245, .28)),
+    url("/Pretty-lil-Fantasies/backgrounds/line-art-flowers.webp") !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+}
+#root,
+#root .cp-app-shell,
+#root .cp-chat {
+  color: var(--plf-light-ink) !important;
+}
+#root .cp-app-shell,
+#root .cp-chat,
+#root .cp-app-shell main,
+#root .cp-chat > div.absolute.inset-0.bg-gradient-to-b {
+  background-color: transparent !important;
+}
+#root .cp-chat > div.absolute.inset-0.bg-gradient-to-b {
+  background-image: linear-gradient(180deg, rgba(255,237,246,.34), rgba(255,224,238,.26) 48%, rgba(255,238,246,.38)) !important;
+}
+#root .cp-app-shell > header,
+#root .cp-app-shell nav:not(.cp-bottom-toolbar) > div,
+#root .cp-app-shell .cp-bottom-toolbar,
+#root .cp-chat-header,
+#root .cp-chat [class*="rounded-"][class*="border"],
+#root .cp-app-shell main :is(section,article,form),
+#root .cp-app-shell main [class*="rounded-"][class*="border"],
+#root aside[role="dialog"],
+#root [role="dialog"]:not(aside),
+#root .cp-preferences-card {
+  color: var(--plf-light-ink) !important;
+  background-color: var(--plf-light-surface) !important;
+  background-image: linear-gradient(145deg, rgba(255,255,255,.94), rgba(255,224,238,.9) 56%, rgba(255,242,248,.94)) !important;
+  border-color: var(--plf-light-edge) !important;
+  box-shadow: 0 10px 26px rgba(115, 44, 74, .14), inset 0 1px 0 rgba(255,255,255,.98) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(150%) !important;
+  backdrop-filter: blur(22px) saturate(150%) !important;
+}
+#root .cp-app-shell .cp-bottom-toolbar {
+  background-image: linear-gradient(145deg, rgba(255,249,252,.98), rgba(255,222,238,.96) 58%, rgba(250,229,241,.98)) !important;
+  border-color: rgba(255,255,255,.98) !important;
+}
+#root .cp-app-shell .cp-bottom-toolbar button,
+#root .cp-app-shell .cp-bottom-toolbar button * {
+  color: var(--plf-light-ink) !important;
+  -webkit-text-fill-color: var(--plf-light-ink) !important;
+}
+#root .cp-app-shell .cp-bottom-toolbar button[aria-current="page"] {
+  background: linear-gradient(135deg, #ffd7e7, #f5a9c7) !important;
+  border-color: rgba(255,255,255,.98) !important;
+}
+#root .cp-app-shell button,
+#root .cp-app-shell a[role="button"],
+#root .cp-chat button,
+#root .cp-preferences button,
+#root aside[role="dialog"] button,
+#root [role="dialog"]:not(aside) button {
+  color: var(--plf-light-ink) !important;
+  -webkit-text-fill-color: var(--plf-light-ink) !important;
+  background-color: rgba(255, 241, 247, .94) !important;
+  background-image: linear-gradient(145deg, rgba(255,255,255,.96), rgba(255,219,235,.9)) !important;
+  border-color: var(--plf-light-edge) !important;
+  box-shadow: 0 5px 14px rgba(115,44,74,.12), inset 0 1px 0 #fff !important;
+}
+#root .cp-app-shell button[aria-current="page"],
+#root .cp-app-shell button[aria-pressed="true"],
+#root .cp-app-shell .cp-bottom-toolbar button[aria-current="page"],
+#root .cp-chat button[aria-pressed="true"],
+#root .cp-chat button[type="submit"],
+#root .cp-preferences button[aria-pressed="true"],
+#root aside[role="dialog"] button[aria-pressed="true"],
+#root [role="dialog"]:not(aside) button[aria-pressed="true"] {
+  color: var(--plf-light-ink) !important;
+  -webkit-text-fill-color: var(--plf-light-ink) !important;
+  background-color: #f4b2cd !important;
+  background-image: linear-gradient(135deg, #ffd9e8, #f0a2c1) !important;
+  border-color: rgba(255,255,255,.98) !important;
+  box-shadow: 0 5px 18px rgba(174,65,112,.18), inset 0 1px 0 #fff !important;
+}
+#root .cp-app-shell :is(p,h1,h2,h3,h4,h5,h6,span,small,strong,label),
+#root .cp-chat :is(p,h1,h2,h3,h4,h5,h6,span,small,strong,label),
+#root aside[role="dialog"] :is(p,h1,h2,h3,h4,h5,h6,span,small,strong,label),
+#root [role="dialog"]:not(aside) :is(p,h1,h2,h3,h4,h5,h6,span,small,strong,label) {
+  color: var(--plf-light-ink) !important;
+  -webkit-text-fill-color: var(--plf-light-ink) !important;
+  text-shadow: none !important;
+}
+#root .cp-chat .cp-message-bubble,
+#root .cp-chat .cp-message-bubble *,
+#root .cp-chat .cp-message-bubble:not(.cp-bubble-user) {
+  color: var(--plf-light-ink) !important;
+  -webkit-text-fill-color: var(--plf-light-ink) !important;
+  background-color: rgba(255, 235, 244, .95) !important;
+  background-image: linear-gradient(145deg, #fff7fa, #ffe2ee 58%, #fff0f6) !important;
+  border-color: rgba(196, 105, 146, .36) !important;
+  box-shadow: 0 8px 22px rgba(106, 39, 69, .12), inset 0 1px 0 #fff !important;
+}
+#root .cp-chat .cp-bubble-user,
+#root .cp-chat .cp-bubble-user * {
+  color: var(--plf-light-ink) !important;
+  -webkit-text-fill-color: var(--plf-light-ink) !important;
+  background-color: #f6bfd5 !important;
+  background-image: linear-gradient(135deg, #ffe1ed, #f2adca) !important;
+  border-color: rgba(255,255,255,.92) !important;
+  box-shadow: 0 8px 20px rgba(143,47,88,.14), inset 0 1px 0 rgba(255,255,255,.96) !important;
+}
+#root input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+#root textarea,
+#root select,
+#root .cp-chat textarea[placeholder^="Reply to"] {
+  color: #111 !important;
+  -webkit-text-fill-color: #111 !important;
+  caret-color: #111 !important;
+  background-color: #ffe5f0 !important;
+  background-image: linear-gradient(145deg, #fff7fa, #ffe0ed 58%, #fff2f7) !important;
+  border-color: rgba(193, 104, 145, .42) !important;
+  box-shadow: inset 0 1px 0 #fff, 0 4px 12px rgba(106,39,69,.1) !important;
+}
+#root input::placeholder,
+#root textarea::placeholder {
+  color: #654552 !important;
+  -webkit-text-fill-color: #654552 !important;
+  opacity: 1 !important;
+}
+#root option {
+  color: var(--plf-light-ink) !important;
+  background: #fff0f6 !important;
+}
+#root .cp-chat .cp-message-menu {
+  color: var(--plf-light-ink) !important;
+  background: linear-gradient(145deg, #fff9fb, #ffe4ef) !important;
+  border-color: var(--plf-light-edge) !important;
+}
+#root .cp-message-menu button,
+#root .cp-wallet-card,
+#root .cp-wallet-modal,
+#root .cp-money-alert {
+  color: var(--plf-light-ink) !important;
+  background-color: var(--plf-light-surface-strong) !important;
+  background-image: linear-gradient(145deg, #fff9fb, #ffe1ed 58%, #fff2f7) !important;
+}
+#root .cp-wallet-card *,
+#root .cp-wallet-modal *,
+#root .cp-money-alert * {
+  color: var(--plf-light-ink) !important;
+  -webkit-text-fill-color: var(--plf-light-ink) !important;
+}
+#root aside[role="dialog"][aria-label="App navigation drawer"] nav button,
+#root aside[role="dialog"][aria-label="App tools drawer"] button {
+  color: var(--plf-light-ink) !important;
+  -webkit-text-fill-color: var(--plf-light-ink) !important;
+  background: linear-gradient(145deg, #fff8fb, #ffe1ed) !important;
+}
+#root .cp-preferences,
+#root div.fixed.inset-0[class*="z-[80]"] > div.absolute.inset-0 {
+  background-color: rgba(116, 53, 79, .18) !important;
+  background-image: none !important;
+}
+#root .cp-app-shell .opacity-0 { opacity: 0 !important; }
+#root .cp-app-shell .opacity-100 { opacity: 1 !important; }
