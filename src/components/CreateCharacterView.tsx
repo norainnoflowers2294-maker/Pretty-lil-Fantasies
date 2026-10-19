@@ -2449,7 +2449,7 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
                   className="w-full py-3 rounded-2xl font-bold text-xs text-white shadow-lg"
                   style={{ backgroundColor: PALETTE.hotPink }}
                 >
-                  Start Roleplay Chat
+                  Chat Now
                 </button>
               )}
 
