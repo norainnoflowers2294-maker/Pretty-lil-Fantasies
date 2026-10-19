@@ -1508,3 +1508,16 @@ body {
   font-weight: 400 !important;
   letter-spacing: .01em !important;
 }
+
+/* User supplied typewriter face for chat messages only. */
+@font-face {
+  font-family: "Another Typewriter";
+  src: url("/Pretty-lil-Fantasies/fonts/atwriter.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+#root .cp-chat .cp-message-bubble,
+#root .cp-chat .cp-message-bubble * {
+  font-family: "Another Typewriter", "Courier New", monospace !important;
+}
