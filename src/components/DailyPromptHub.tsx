@@ -49,7 +49,7 @@ export function DailyPromptHub({ characters, personas, onPlay, onStartBot, onOpe
         <button type="button" onClick={() => setOpen(true)} className="flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#ff007f] to-[#b12fa7] px-6 py-3 font-bold text-white shadow-lg shadow-pink-950/50 transition hover:brightness-110"><Compass className="h-4 w-4" />Play now<ChevronRight className="h-4 w-4" /></button>
       </div>
     </section>
-    <section className="mx-4 sm:mx-6">
+    <section className="cp-dedicated-bots mx-4 sm:mx-6">
       <div className="mb-3 flex items-end justify-between"><div><h3 className="text-lg font-bold text-white">Your dedicated bots</h3><p className="text-xs text-[#ffd6eb]/60">Swipe to explore your story companions</p></div><span className="text-[10px] text-[#ffd6eb]/50">SCROLL →</span></div>
       <div className="flex snap-x gap-3 overflow-x-auto pb-2 [scrollbar-width:thin]">
         {bots.map((bot) => <button type="button" key={bot.id} onClick={() => bot.id === 'creator' ? onOpenCreator() : onStartBot(bot.id as 'horoscope' | 'chatgpt')} className={`min-w-[245px] snap-start rounded-2xl border border-white/15 bg-gradient-to-br ${bot.color} p-4 text-left text-white shadow-lg transition hover:-translate-y-0.5 hover:border-[#ff99cc]/60`}>
