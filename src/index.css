@@ -648,3 +648,16 @@ body {
   .cp-app-shell a[role="button"] { transition: none; }
   .cp-app-shell .plf-jelly-tapped { animation: none; }
 }
+
+/* iPhone safe area: keep the entire dashboard header below Dynamic Island. */
+@media (max-width: 640px) {
+  #root .cp-app-shell > header {
+    box-sizing: border-box;
+    margin-top: max(1rem, env(safe-area-inset-top, 0px)) !important;
+    padding-top: 1rem !important;
+    overflow: visible;
+  }
+  #root .cp-app-shell > header button {
+    touch-action: manipulation;
+  }
+}
