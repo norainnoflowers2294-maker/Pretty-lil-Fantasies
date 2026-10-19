@@ -1618,17 +1618,17 @@ export const ChatView: React.FC<ChatViewProps> = ({
         </div>
         {!quickActionsCollapsed && <div id="chat-quick-actions" className="mt-2 flex items-center gap-1.5 overflow-x-auto whitespace-nowrap [scrollbar-width:none]">
           <span className="shrink-0 text-[9px] font-bold uppercase tracking-wider text-[#ffd6eb]/50">Quick</span>
-          <label className="flex min-h-10 shrink-0 items-center gap-1.5 rounded-full border border-[#FC76AA] bg-[#FE0088] px-3 text-[11px] font-bold text-white shadow-sm">
+          <label className="flex min-h-10 shrink-0 items-center gap-1.5 rounded-full border border-[#d987a7] bg-[#ffe0ed] px-3 text-[11px] font-bold text-[#211019] shadow-sm">
             <User className="h-3.5 w-3.5" aria-hidden="true" />
             <select
               aria-label="Change persona for this chat"
               title="Change persona"
               value={chat.personaId || activePersona?.id || ''}
               onChange={(event) => handlePersonaChange(event.target.value)}
-              className="max-w-28 appearance-none bg-transparent text-[11px] font-bold text-white outline-none"
+              className="max-w-28 appearance-none bg-transparent text-[11px] font-bold text-[#211019] outline-none"
             >
               {personas.map((persona) => (
-                <option key={persona.id} value={persona.id} className="bg-[#140410] text-white">
+                <option key={persona.id} value={persona.id} className="bg-[#ffe0ed] text-[#211019]">
                   {persona.display_name || persona.name}
                 </option>
               ))}
