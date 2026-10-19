@@ -1415,3 +1415,38 @@ body {
 @media (max-width: 700px) {
   #root .cp-app-shell :is(p,label,small) { font-size: max(1rem, 1em) !important; }
 }
+
+
+/* Replace the old hot-pink gradient canvas with the selected iridescent floral wallpaper. */
+html, body, #root {
+  background: #f8d2e3 !important;
+}
+body {
+  background-color: #f8d2e3 !important;
+  background-image: none !important;
+}
+#root .cp-app-shell {
+  background-color: #f7c6dc !important;
+  background-image:
+    linear-gradient(rgba(255,236,246,.12), rgba(255,226,240,.12)),
+    var(--plf-screen-background) !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-attachment: fixed !important;
+}
+#root .cp-app-shell nav:not(.cp-bottom-toolbar) button,
+#root .cp-app-shell nav:not(.cp-bottom-toolbar) button * {
+  color: #1b1018 !important;
+  -webkit-text-fill-color: #1b1018 !important;
+  opacity: 1 !important;
+  background-color: rgba(255,239,247,.9) !important;
+  background-image: linear-gradient(145deg, rgba(255,255,255,.92), rgba(255,217,236,.82)) !important;
+}
+#root .cp-app-shell button:not(.cp-bottom-toolbar button) *,
+#root .cp-app-shell button:not(.cp-bottom-toolbar button) > span {
+  opacity: 1 !important;
+}
+#root .cp-app-shell button:not(.cp-bottom-toolbar button) {
+  color: #1b1018 !important;
+  -webkit-text-fill-color: #1b1018 !important;
+}
