@@ -1316,3 +1316,102 @@ body {
   border-color: rgba(255,255,255,.92) !important;
   text-shadow: none !important;
 }
+
+
+/* Final contrast and floral pass: enforce the reference palette through Tailwind utilities. */
+#root .cp-app-shell {
+  --plf-ink: #1b1018 !important;
+  --plf-ink-soft: #49313e !important;
+  color: #1b1018 !important;
+  background-color: #f8b9d5 !important;
+}
+#root .cp-app-shell * {
+  color: #1b1018 !important;
+  -webkit-text-fill-color: #1b1018 !important;
+  text-shadow: none !important;
+}
+#root .cp-app-shell :is(button,a,[role="button"],[role="tab"]) {
+  background-color: rgba(255,239,247,.86) !important;
+  border-color: rgba(255,255,255,.98) !important;
+  box-shadow: 0 7px 20px rgba(104,34,73,.18), inset 0 1.5px 0 rgba(255,255,255,.98), inset 0 -1px 0 rgba(197,68,130,.15) !important;
+}
+#root .cp-app-shell :is(button,a,[role="button"],[role="tab"]) * {
+  color: #1b1018 !important;
+  -webkit-text-fill-color: #1b1018 !important;
+}
+#root .cp-app-shell nav:not(.cp-bottom-toolbar) {
+  background: linear-gradient(145deg, rgba(255,248,252,.92), rgba(255,207,230,.83)) !important;
+  border: 1px solid rgba(255,255,255,.98) !important;
+  box-shadow: 0 12px 28px rgba(97,24,63,.2), inset 0 2px 0 #fff !important;
+  -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+  backdrop-filter: blur(24px) saturate(160%) !important;
+}
+#root .cp-app-shell :is(section,article,form,div)[class*="rounded-"][class*="border"] {
+  background-color: rgba(255,235,245,.78) !important;
+  border-color: rgba(255,255,255,.96) !important;
+}
+#root .cp-app-shell .cp-bottom-toolbar {
+  background: linear-gradient(125deg, rgba(70,18,49,.96), rgba(105,24,73,.96) 56%, rgba(59,20,58,.97)) !important;
+}
+#root .cp-app-shell .cp-bottom-toolbar button,
+#root .cp-app-shell .cp-bottom-toolbar button * {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+#root .cp-app-shell .cp-bottom-toolbar button[aria-current="page"],
+#root .cp-app-shell .cp-bottom-toolbar button[aria-current="page"] * {
+  color: #1b1018 !important;
+  -webkit-text-fill-color: #1b1018 !important;
+}
+#root .cp-app-shell button[type="submit"],
+#root .cp-app-shell button.cp-primary,
+#root .cp-app-shell button[class*="from-[#ff"] {
+  color: #fff !important;
+  background-image: linear-gradient(125deg, #8d174e, #ed348d 55%, #a61a69) !important;
+}
+#root .cp-app-shell button[type="submit"] *,
+#root .cp-app-shell button.cp-primary *,
+#root .cp-app-shell button[class*="from-[#ff"] * {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+#root .cp-chat {
+  color: #1b1018 !important;
+}
+#root .cp-chat .cp-message-bubble:not(.cp-bubble-user),
+#root .cp-chat .cp-message-bubble:not(.cp-bubble-user) *,
+#root .cp-chat .cp-bubble-user,
+#root .cp-chat .cp-bubble-user * {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+#root .cp-chat textarea[placeholder^="Reply to"] {
+  color: #1b1018 !important;
+  -webkit-text-fill-color: #1b1018 !important;
+  background: linear-gradient(145deg, #fff4f9, #ffd6e9 58%, #fff7fb) !important;
+}
+#root .cp-chat textarea[placeholder^="Reply to"]::placeholder {
+  color: #49313e !important;
+  -webkit-text-fill-color: #49313e !important;
+  opacity: 1 !important;
+}
+#root aside[role="dialog"],
+#root [role="dialog"]:not(aside),
+#root aside[role="dialog"] * ,
+#root [role="dialog"]:not(aside) * {
+  color: #1b1018 !important;
+  -webkit-text-fill-color: #1b1018 !important;
+}
+#root aside[role="dialog"] textarea[placeholder="What are they wearing today?"] {
+  color: #1b1018 !important;
+  background: #ffe5f0 !important;
+  -webkit-text-fill-color: #1b1018 !important;
+}
+#root aside[role="dialog"] button[type="submit"],
+#root aside[role="dialog"] button[type="submit"] * {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+@media (max-width: 700px) {
+  #root .cp-app-shell :is(p,label,small) { font-size: max(1rem, 1em) !important; }
+}
