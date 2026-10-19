@@ -20,6 +20,14 @@ export function BotStudioModal({ isOpen, config, onClose, onSaved, onSaveCharact
   if (!isOpen) return null;
   const generate = async () => {
     if (!idea.trim() || busy) return;
+    const command = idea.trim().match(/^@(character|lorebook|persona)\\b\\s*/i);
+    const selectedTarget = (command?.[1]?.toLowerCase() as Target | undefined) || target;
+    const promptIdea = idea.trim().replace(/^@(character|lorebook|persona)\\b\\s*/i, '').trim();
+    if (!promptIdea) {
+      setError('Add your idea after @character, @persona, or @lorebook.');
+      return;
+    }
+    setTarget(selectedTarget);
     const schemas: Record<Target,string> = {
       character: '{"name":"...","age":"...","description":"...","personality":"...","backstory":"...","scenario":"...","first_mes":"...","summary":"...","mes_example":"...","tags":["..."]}',
       lorebook: '{"name":"...","description":"...","entries":[{"keys":["..."],"content":"..."}]}',
@@ -29,7 +37,7 @@ export function BotStudioModal({ isOpen, config, onClose, onSaved, onSaveCharact
     try {
       const result = await sendOpenRouterChatDetailed(config, [
         { role: 'system', content: 'You are a creative writing studio for a roleplay app. Return only valid JSON matching the requested schema. Make original, internally consistent content. Do not include markdown fences.' },
-        { role: 'user', content: `Create one ${target} for this idea: ${idea.trim()}\nRequired JSON schema: ${schemas[target]}\nKeep every value as a string except arrays. For a lorebook, entries must include keys and content.` },
+        { role: 'user', content: `Create one ${selectedTarget} for this idea: ${promptIdea}\nRequired JSON schema: ${schemas[selectedTarget]}\nKeep every value as a string except arrays. For a lorebook, entries must include keys and content.` },
       ]);
       setDraft(jsonFrom(result.content));
     } catch (e: any) { setError(e.message || 'Could not generate a draft. Check the OpenRouter setup and try again.'); }
