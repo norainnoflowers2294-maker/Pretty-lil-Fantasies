@@ -1268,7 +1268,7 @@ export default function App() {
         active={activeTab === 'characters' ? 'characters' : activeTab === 'home' ? 'home' : undefined}
         onCharacters={() => { setIsCreateCharacterOpen(false); setCharacterToEdit(null); setInChatMode(false); setActiveTab('characters'); }}
         onCreate={() => handleOpenCreateCharacterPage(null)}
-        onHome={() => { setIsCreateCharacterOpen(false); setCharacterToEdit(null); setInChatMode(false); setActiveTab('home'); }}
+        onHome={() => { setIsCreateCharacterOpen(false); setCharacterToEdit(null); setInChatMode(false); setIsSettingsOpen(false); setIsCharModalOpen(false); setIsLoreModalOpen(false); setIsPersonaModalOpen(false); setIsPluginModalOpen(false); setIsSceneGeneratorOpen(false); setIsCreatorBotOpen(false); setActiveTab('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
         onRecent={handleOpenMostRecentChat}
         hasRecentChat={data.chats.length > 0}
       />
