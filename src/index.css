@@ -1998,3 +1998,120 @@ body {
 #root .cp-app-shell .cp-bottom-toolbar button[aria-current="page"] {
   background: linear-gradient(135deg, #ffd3e5, #f2a0c0) !important;
 }
+
+
+/* Stable logo bar and one continuous, touch-scrollable utility/navigation row. */
+#root .cp-app-shell > header.cp-brand-header {
+  box-sizing: border-box;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: min(100% - 1rem, 80rem) !important;
+  max-width: 80rem !important;
+  min-height: 3.7rem !important;
+  margin: .35rem auto .25rem !important;
+  padding: .35rem .8rem !important;
+  overflow: visible !important;
+  border: 1px solid rgba(255,255,255,.88) !important;
+  border-radius: 1.4rem !important;
+  background: linear-gradient(145deg, rgba(255,250,253,.94), rgba(255,222,237,.88)) !important;
+  box-shadow: 0 8px 22px rgba(112,40,72,.12), inset 0 1px 0 #fff !important;
+  -webkit-backdrop-filter: blur(22px) saturate(155%) !important;
+  backdrop-filter: blur(22px) saturate(155%) !important;
+}
+#root .cp-app-shell .cp-brand-logo h1 {
+  max-width: 100%;
+  margin: 0 !important;
+  overflow: visible;
+  font-family: "Helmida", Georgia, serif !important;
+  font-size: clamp(1.18rem, 5.2vw, 2.25rem) !important;
+  line-height: 1.1 !important;
+  letter-spacing: -.025em !important;
+  text-shadow: 0 1px 0 #fff, 0 3px 10px rgba(170,49,100,.18) !important;
+}
+#root .cp-app-shell .plf-top-row {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(219,94,146,.72) rgba(255,255,255,.55) !important;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+}
+#root .cp-app-shell .plf-top-row::-webkit-scrollbar { height: 5px; }
+#root .cp-app-shell .plf-top-row::-webkit-scrollbar-track { background: rgba(255,255,255,.45); border-radius: 999px; }
+#root .cp-app-shell .plf-top-row::-webkit-scrollbar-thumb { background: #dc82a7; border-radius: 999px; }
+#root .cp-app-shell .plf-top-navigation {
+  overflow: visible !important;
+  width: max-content !important;
+  max-width: none !important;
+  margin: 0 !important;
+  flex: 0 0 auto !important;
+}
+#root .cp-app-shell .plf-top-navigation-track {
+  width: max-content;
+  min-width: max-content;
+  justify-content: flex-start !important;
+  background: linear-gradient(145deg, rgba(255,250,253,.94), rgba(255,225,238,.9)) !important;
+  border-color: rgba(255,255,255,.92) !important;
+}
+#root .cp-app-shell .plf-top-navigation-track > button,
+#root .cp-app-shell .plf-top-actions .cp-top-action {
+  flex: 0 0 auto;
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  background: linear-gradient(145deg, #fffafd, #ffddeb 58%, #fff1f7) !important;
+  border: 1px solid rgba(217,135,169,.38) !important;
+  box-shadow: 0 4px 12px rgba(112,40,72,.1), inset 0 1px 0 #fff !important;
+}
+#root .cp-app-shell .plf-top-navigation-track > button[aria-current="page"] {
+  background: linear-gradient(135deg, #ffd3e5, #f2a0c0) !important;
+  border-color: rgba(255,255,255,.98) !important;
+}
+#root .cp-app-shell .plf-top-actions { gap: .35rem; }
+#root .cp-app-shell .plf-top-actions .cp-top-action {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.45rem;
+  height: 2.45rem;
+  padding: 0 !important;
+  border-radius: 999px !important;
+}
+#root .cp-app-shell .plf-top-actions .cp-top-action svg {
+  color: #211019 !important;
+  filter: none !important;
+}
+#root .cp-app-shell .plf-top-actions .cp-avatar-action { overflow: hidden; }
+#root .cp-app-shell .plf-top-actions .cp-cloud-indicator {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  color: #211019 !important;
+  background: #fff !important;
+}
+#root .cp-app-shell .plf-top-actions .cp-notification-dot {
+  position: absolute;
+  top: .32rem;
+  right: .32rem;
+  width: .42rem;
+  height: .42rem;
+  border-radius: 50%;
+  background: #e85b91;
+  box-shadow: 0 0 0 2px #fff;
+}
+#root .cp-app-shell .plf-top-row > div:first-child { flex: 0 0 auto; }
+#root .cp-app-shell .plf-top-row > div:first-child > button {
+  color: #211019 !important;
+  background: linear-gradient(145deg, #fffafd, #ffddeb) !important;
+  border-color: rgba(217,135,169,.42) !important;
+}
+@media (max-width: 640px) {
+  #root .cp-app-shell > header.cp-brand-header {
+    margin-top: max(.3rem, env(safe-area-inset-top, 0px)) !important;
+    padding-top: .4rem !important;
+  }
+  #root .cp-app-shell .plf-top-navigation-track > button {
+    min-height: 2.5rem;
+    padding: .45rem .75rem !important;
+  }
+}
