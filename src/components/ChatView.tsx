@@ -339,6 +339,23 @@ export const ChatView: React.FC<ChatViewProps> = ({
   };
   const activeLorebooks = lorebooks.filter((l) => chat.lorebookIds.includes(l.id)).slice(0, 3);
   const activePlugins = plugins.filter((plugin) => plugin.enabled);
+  const sendAssistantReply = (
+    config: OpenRouterConfig,
+    messages: Array<{ role: string; content: string }>,
+    selectedCharacters: Character[],
+    selectedPersona: Persona | null,
+    skipCheck = false,
+    allowNarrator = false,
+    onResponseInfo?: (info: OpenRouterResponseInfo) => void,
+  ) => sendAssistantReply(
+    { ...config, webSearch: chat.helperMode === 'internet' },
+    messages,
+    selectedCharacters,
+    selectedPersona,
+    skipCheck,
+    allowNarrator,
+    onResponseInfo,
+  );
   const slashSuggestions = getSlashCommandSuggestions(inputText);
 
   const scrollToBottom = () => {
@@ -390,7 +407,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
       const maxTokens = replyLength === 'short'
         ? Math.min(openRouterConfig.maxTokens, 512)
         : replyLength === 'long' ? Math.min(4096, Math.round(openRouterConfig.maxTokens * 1.5)) : openRouterConfig.maxTokens;
-      const botReply = await sendCheckedCharacterReply({
+      const botReply = await sendAssistantReply({
         ...openRouterConfig,
         temperature: chat.creativity ?? openRouterConfig.temperature,
         maxTokens,
@@ -453,7 +470,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
       const maxTokens = replyLength === 'short'
         ? Math.min(openRouterConfig.maxTokens, 512)
         : replyLength === 'long' ? Math.min(4096, Math.round(openRouterConfig.maxTokens * 1.5)) : openRouterConfig.maxTokens;
-      const openingText = await sendCheckedCharacterReply({
+      const openingText = await sendAssistantReply({
         ...openRouterConfig,
         temperature: openingChat.creativity ?? openRouterConfig.temperature,
         maxTokens,
@@ -675,7 +692,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
           content: 'The user explicitly tagged @assistant. Reply as the Pretty Little Fantasies in-chat assistant, a helpful out-of-character participant who can answer questions about the scene, offer ideas, and help the user steer the roleplay. Speak directly to the user, keep character actions and dialogue under the user’s control, and do not impersonate a roleplay character. Do not continue as the roleplay character in this reply.',
         });
       }
-      const botReply = await sendCheckedCharacterReply(
+      const botReply = await sendAssistantReply(
         { ...openRouterConfig, temperature: updatedChat.creativity ?? openRouterConfig.temperature, maxTokens },
         apiMessages,
         activeCharacters,
@@ -759,7 +776,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
     try {
       const apiMessages = buildOpenRouterMessages({ characters: activeCharacters, persona: activePersona, lorebooks: activeLorebooks, plugins: activePlugins, chats: allChats, chat, preferences, storyMemories, socialMediaContext, phoneContext });
       apiMessages.push({ role: 'user', content: instruction });
-      const reply = await sendCheckedCharacterReply({ ...openRouterConfig, temperature: chat.creativity ?? openRouterConfig.temperature }, apiMessages, activeCharacters, activePersona, false, false, recordModelUsed);
+      const reply = await sendAssistantReply({ ...openRouterConfig, temperature: chat.creativity ?? openRouterConfig.temperature }, apiMessages, activeCharacters, activePersona, false, false, recordModelUsed);
       return (chatResetGenerationRef.current[chat.id] || 0) === resetGeneration ? reply : null;
     } catch (error: any) {
       setErrorDetails({ message: error.message || 'Could not generate this story tool result.', suggestedFix: error.suggestedFix || 'Check your OpenRouter connection and try again.' });
@@ -919,7 +936,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
       const maxTokens = replyLength === 'short'
         ? Math.min(openRouterConfig.maxTokens, 512)
         : replyLength === 'long' ? Math.min(4096, Math.round(openRouterConfig.maxTokens * 1.5)) : openRouterConfig.maxTokens;
-      const reply = await sendCheckedCharacterReply({
+      const reply = await sendAssistantReply({
         ...openRouterConfig,
         temperature: chat.creativity ?? openRouterConfig.temperature,
         maxTokens,
@@ -1114,7 +1131,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
       const maxTokens = replyLength === 'short'
         ? Math.min(openRouterConfig.maxTokens, 512)
         : replyLength === 'long' ? Math.min(4096, Math.round(openRouterConfig.maxTokens * 1.5)) : openRouterConfig.maxTokens;
-      const replacement = await sendCheckedCharacterReply({
+      const replacement = await sendAssistantReply({
         ...openRouterConfig,
         temperature: chat.creativity ?? openRouterConfig.temperature,
         maxTokens,
