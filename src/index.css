@@ -1011,3 +1011,81 @@ body {
   -webkit-text-fill-color: #4b303d !important;
   opacity: 1 !important;
 }
+
+
+/* Reference pass: blush jelly composer and floral chat drawers. */
+#root .cp-chat textarea[placeholder^="Reply to"] {
+  background-color: rgba(255, 229, 242, .9) !important;
+  background-image: linear-gradient(145deg, rgba(255,255,255,.64), rgba(255,242,248,.24) 48%, rgba(255,202,226,.26)) !important;
+  color: #171016 !important;
+  border-color: rgba(255,255,255,.88) !important;
+  caret-color: #171016 !important;
+  -webkit-text-fill-color: #171016 !important;
+  box-shadow: 0 8px 24px rgba(68, 13, 46, .2), inset 0 1px 0 rgba(255,255,255,.9), inset 0 -1px 0 rgba(199,65,127,.16) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(160%) !important;
+  backdrop-filter: blur(22px) saturate(160%) !important;
+}
+#root .cp-chat textarea[placeholder^="Reply to"]::placeholder {
+  color: #49313e !important;
+  -webkit-text-fill-color: #49313e !important;
+  opacity: 1 !important;
+}
+
+#root aside[role="dialog"][aria-label="App navigation drawer"],
+#root aside[role="dialog"][aria-label="App tools drawer"] {
+  color: #190d17 !important;
+  background:
+    linear-gradient(150deg, rgba(255,255,255,.88), rgba(255,231,242,.8) 45%, rgba(255,203,226,.76)),
+    rgba(255, 233, 243, .84) !important;
+  border-color: rgba(255,255,255,.94) !important;
+  box-shadow: 0 18px 60px rgba(73, 10, 46, .28), 0 0 28px rgba(255,70,158,.22), inset 0 2px 0 rgba(255,255,255,.96), inset 0 -1px 0 rgba(204,85,140,.2) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(165%) !important;
+  backdrop-filter: blur(30px) saturate(165%) !important;
+}
+#root aside[role="dialog"][aria-label="App navigation drawer"] :is(h1,h2,h3,h4,p,span,small,strong,label),
+#root aside[role="dialog"][aria-label="App tools drawer"] :is(h1,h2,h3,h4,p,span,small,strong,label) {
+  color: #190d17 !important;
+  text-shadow: none !important;
+}
+#root aside[role="dialog"][aria-label="App navigation drawer"] > div:first-child,
+#root aside[role="dialog"][aria-label="App tools drawer"] > div:first-child,
+#root aside[role="dialog"][aria-label="App tools drawer"] section,
+#root aside[role="dialog"][aria-label="App tools drawer"] [class*="rounded-"][class*="border"] {
+  background-color: rgba(255,247,251,.52) !important;
+  border-color: rgba(255,255,255,.84) !important;
+  box-shadow: 0 8px 24px rgba(92,30,63,.12), inset 0 1px 0 rgba(255,255,255,.88) !important;
+}
+#root aside[role="dialog"][aria-label="App navigation drawer"] nav button,
+#root aside[role="dialog"][aria-label="App tools drawer"] > div:nth-child(2) > button {
+  color: #190d17 !important;
+  background: rgba(255,244,249,.72) !important;
+  border-color: rgba(255,255,255,.9) !important;
+  box-shadow: 0 5px 16px rgba(92,30,63,.12), inset 0 1px 0 rgba(255,255,255,.94) !important;
+}
+#root aside[role="dialog"][aria-label="App navigation drawer"] nav button[aria-current="page"] {
+  color: #190d17 !important;
+  background: linear-gradient(125deg, rgba(255,195,225,.9), rgba(255,231,243,.88)) !important;
+  border-color: rgba(255,255,255,.98) !important;
+}
+#root aside[role="dialog"][aria-label="App tools drawer"] textarea {
+  background: rgba(76,27,55,.88) !important;
+  color: #fff !important;
+  border-color: #e879ad !important;
+  -webkit-text-fill-color: #fff !important;
+}
+#root aside[role="dialog"][aria-label="App tools drawer"] textarea::placeholder {
+  color: rgba(255,239,247,.68) !important;
+  -webkit-text-fill-color: rgba(255,239,247,.68) !important;
+}
+#root aside[role="dialog"][aria-label="App tools drawer"] button[class*="from-[#ff"],
+#root aside[role="dialog"][aria-label="App tools drawer"] button[type="submit"] {
+  color: #fff !important;
+  background-image: linear-gradient(120deg, #8d164d, #ef398d 54%, #b01972) !important;
+  border-color: rgba(255,255,255,.9) !important;
+  box-shadow: 0 0 18px rgba(226,35,127,.34), inset 0 1px 0 rgba(255,255,255,.72) !important;
+}
+#root aside[role="dialog"][aria-label="App navigation drawer"] button[aria-label^="Close"],
+#root aside[role="dialog"][aria-label="App tools drawer"] button[aria-label^="Close"] {
+  color: #190d17 !important;
+  background: rgba(255,255,255,.8) !important;
+}
