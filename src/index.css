@@ -1450,3 +1450,45 @@ body {
   color: #1b1018 !important;
   -webkit-text-fill-color: #1b1018 !important;
 }
+
+
+/* Use the actual floral image as the page canvas and keep card copy fully legible. */
+html, body, #root {
+  background-color: #f5bed5 !important;
+}
+body {
+  background-image: url("/Pretty-lil-Fantasies/backgrounds/line-art-flowers.webp") !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+}
+#root .cp-app-shell {
+  background: transparent !important;
+  background-image: none !important;
+}
+#root .cp-app-shell :is(main,section,article,form,header,nav,button,a,div,p,h1,h2,h3,h4,h5,h6,span,small,strong,label) {
+  opacity: 1 !important;
+  filter: none !important;
+}
+#root .cp-app-shell main :is(p,h1,h2,h3,h4,h5,h6,span,small,strong,label) {
+  color: #1b1018 !important;
+  -webkit-text-fill-color: #1b1018 !important;
+  text-shadow: none !important;
+}
+#root .cp-app-shell main button:not(.cp-bottom-toolbar button),
+#root .cp-app-shell main button:not(.cp-bottom-toolbar button) * {
+  color: #1b1018 !important;
+  -webkit-text-fill-color: #1b1018 !important;
+  opacity: 1 !important;
+}
+#root .cp-app-shell .cp-bottom-toolbar button,
+#root .cp-app-shell .cp-bottom-toolbar button * {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+#root .cp-app-shell .cp-bottom-toolbar button[aria-current="page"],
+#root .cp-app-shell .cp-bottom-toolbar button[aria-current="page"] * {
+  color: #1b1018 !important;
+  -webkit-text-fill-color: #1b1018 !important;
+}
