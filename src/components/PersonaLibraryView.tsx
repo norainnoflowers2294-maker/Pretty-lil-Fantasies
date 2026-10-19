@@ -17,7 +17,7 @@ import {
   Check,
 } from 'lucide-react';
 import { Persona } from '../types/roleplay';
-import { parsePersonaFile } from '../utils/pngParser';
+import { normalizePersonaJson, parsePersonaFile } from '../utils/pngParser';
 
 interface PersonaLibraryViewProps {
   personas: Persona[];
@@ -158,50 +158,47 @@ export const PersonaLibraryView: React.FC<PersonaLibraryViewProps> = ({
     }
   };
 
-  const handleImportJSON = (file: File) => {
+  const handleImportJSON = async (file: File) => {
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const data = JSON.parse(e.target?.result as string);
-        const importedArray = Array.isArray(data) ? data : [data];
-        let count = 0;
-
-        importedArray.forEach((item: any) => {
-          if (item && (item.name || item.full_name || item.display_name)) {
-            const newP: Persona = {
-              id: item.id || `persona_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
-              name: item.name || item.full_name || 'Imported Persona',
-              display_name: item.display_name || item.name || item.full_name,
-              nicknames: item.nicknames || '',
-              occupation: item.occupation || '',
-              avatar: item.avatar || item.avatar_url || '/colorpop_hero.jpg',
-              description: item.description || item.personality_description || '',
-              appearance: item.appearance || item.physical_description || '',
-              backstory: item.backstory || '',
-              speaking_style: item.speaking_style || '',
-              traits: Array.isArray(item.traits) ? item.traits : ['Alluring'],
-              is_default: false,
-              favorite: !!item.favorite,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-            };
-            onSavePersona(newP);
-            count++;
-          }
+    try {
+      const parsed = JSON.parse(await file.text());
+      const importedArray = Array.isArray(parsed) ? parsed : [parsed];
+      let count = 0;
+      const now = new Date().toISOString();
+      for (const item of importedArray) {
+        const fallbackName = file.name.replace(/\\.[^/.]+$/, '').replace(/[-_]/g, ' ').trim() || 'Imported Persona';
+        const card = normalizePersonaJson(item, fallbackName);
+        if (!card.name && !card.description && !card.backstory && !card.appearance) continue;
+        const existing = card.id ? personas.find((persona) => persona.id === card.id) : undefined;
+        const id = existing?.id || (card.id && !personas.some((persona) => persona.id === card.id) ? card.id : `persona_import_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`);
+        onSavePersona({
+          id,
+          name: String(card.name || fallbackName),
+          display_name: String(card.display_name || card.name || fallbackName),
+          nicknames: String(card.nicknames || ''),
+          occupation: String(card.occupation || ''),
+          avatar: String(card.avatar || '/colorpop_hero.jpg'),
+          description: String(card.description || ''),
+          appearance: String(card.appearance || ''),
+          backstory: String(card.backstory || ''),
+          speaking_style: String(card.speaking_style || ''),
+          traits: Array.isArray(card.traits) ? card.traits : [],
+          is_default: false,
+          favorite: Boolean(card.favorite),
+          createdAt: existing?.createdAt || now,
+          updatedAt: now,
         });
-
-        showToast(`Successfully imported ${count} persona(s)!`);
-      } catch {
-        showToast('Invalid JSON file.');
+        count++;
       }
-    };
-    reader.readAsText(file);
+      showToast(count ? `Successfully imported ${count} persona(s)!` : 'No persona profiles were found in that JSON file.');
+    } catch {
+      showToast('Invalid JSON file.');
+    }
   };
 
   const handleImportFile = (file: File) => {
     if (file.name.toLowerCase().endsWith('.png')) void handleImportPNG(file);
-    else handleImportJSON(file);
+    else void handleImportJSON(file);
   };
 
   return (
