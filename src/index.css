@@ -3567,3 +3567,177 @@ body {
 #root .cp-create-character :is(h1,h2,h3,h4,h5,h6) {
   text-transform: none !important;
 }
+
+
+/* My Chats: pastel rainbow pearl glass with the existing library layout preserved. */
+#root .cp-app-shell:has(.cp-chats-library) {
+  background-color: #f7dcea !important;
+  background-image:
+    radial-gradient(ellipse at 8% 4%, rgba(255, 138, 193, .46), transparent 28%),
+    radial-gradient(ellipse at 93% 12%, rgba(139, 217, 255, .44), transparent 30%),
+    radial-gradient(ellipse at 16% 47%, rgba(201, 162, 255, .4), transparent 34%),
+    radial-gradient(ellipse at 87% 68%, rgba(147, 240, 219, .35), transparent 34%),
+    radial-gradient(ellipse at 34% 96%, rgba(255, 210, 163, .38), transparent 31%),
+    linear-gradient(145deg, #f9d9e9 0%, #e5dcff 34%, #d7f3f2 66%, #ffe4d9 100%) !important;
+}
+#root .cp-chats-library {
+  position: relative;
+  isolation: isolate;
+  min-height: 100%;
+  color: #211019 !important;
+  border-radius: 30px;
+  background-color: rgba(255, 239, 248, .62) !important;
+  background-image:
+    radial-gradient(ellipse at 7% 0%, rgba(255, 172, 207, .55), transparent 30%),
+    radial-gradient(ellipse at 97% 16%, rgba(164, 220, 255, .48), transparent 32%),
+    radial-gradient(ellipse at 12% 67%, rgba(210, 174, 255, .4), transparent 34%),
+    radial-gradient(ellipse at 90% 90%, rgba(159, 238, 218, .44), transparent 32%),
+    linear-gradient(145deg, rgba(255, 246, 251, .86), rgba(244, 230, 255, .78) 38%, rgba(224, 246, 245, .8) 72%, rgba(255, 237, 222, .84)) !important;
+}
+#root .cp-chats-library::after {
+  content: "✿  ✧  ❀";
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  z-index: -1;
+  color: rgba(209, 95, 157, .24);
+  font-size: clamp(2.5rem, 9vw, 5rem);
+  letter-spacing: .3em;
+  pointer-events: none;
+}
+#root .cp-chats-library :is(h1,h2,h3,h4,h5,h6,p,span,label) {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  text-shadow: none !important;
+}
+#root .cp-chats-library :is(h1,h2,h3,h4,h5,h6) {
+  text-transform: none !important;
+}
+#root .cp-chats-library > div:first-child > div:first-child > p:first-child {
+  text-transform: none !important;
+  color: #9a376c !important;
+  -webkit-text-fill-color: #9a376c !important;
+}
+#root .cp-chats-library > div:first-child > div:first-child > p:last-child {
+  color: #553348 !important;
+  -webkit-text-fill-color: #553348 !important;
+}
+#root .cp-chats-library label {
+  border: 1px solid rgba(255,255,255,.96) !important;
+  background: linear-gradient(115deg, rgba(255,247,251,.94), rgba(255,220,237,.9) 34%, rgba(230,224,255,.9) 67%, rgba(218,246,242,.92)) !important;
+  box-shadow: 0 8px 22px rgba(121,61,94,.14), inset 0 1px 0 #fff !important;
+  backdrop-filter: blur(18px) saturate(145%);
+}
+#root .cp-chats-library label svg {
+  color: #923c70 !important;
+  stroke: #923c70 !important;
+}
+#root .cp-chats-library label input {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  caret-color: #211019 !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+#root .cp-chats-library label input::placeholder {
+  color: #75566a !important;
+  -webkit-text-fill-color: #75566a !important;
+  opacity: 1 !important;
+}
+#root .cp-chats-library > div:first-child button {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  border: 1px solid rgba(255,255,255,.98) !important;
+  background: linear-gradient(115deg, #fff8fb 0%, #ffd9eb 36%, #e5ddff 68%, #d9f5ef 100%) !important;
+  box-shadow: 0 7px 18px rgba(134,63,100,.16), inset 0 1px 0 #fff !important;
+  text-shadow: none !important;
+}
+#root .cp-chats-library > div:first-child button svg {
+  color: #49243a !important;
+  stroke: #49243a !important;
+}
+#root .cp-chats-library-card {
+  color: #211019 !important;
+  border: 1px solid rgba(255,255,255,.98) !important;
+  background: linear-gradient(145deg, rgba(255,247,251,.97) 0%, rgba(255,222,238,.94) 31%, rgba(231,222,255,.94) 62%, rgba(218,246,240,.95) 100%) !important;
+  box-shadow: 0 12px 28px rgba(111,54,90,.17), inset 0 1px 0 #fff, inset 0 -1px 0 rgba(200,154,183,.22) !important;
+  backdrop-filter: blur(20px) saturate(150%);
+}
+#root .cp-chats-library-card:hover {
+  border-color: rgba(233,122,177,.88) !important;
+  box-shadow: 0 16px 32px rgba(174,83,137,.2), 0 0 24px rgba(143,219,238,.22), inset 0 1px 0 #fff !important;
+}
+#root .cp-chats-library-card > div:first-child {
+  background: linear-gradient(125deg, #ffb7d2, #c7c1ff 46%, #aee8e3 76%, #ffd6bd) !important;
+}
+#root .cp-chats-library-card > div:first-child > img {
+  opacity: .82 !important;
+  mix-blend-mode: multiply;
+}
+#root .cp-chats-library-card > div:first-child > div:nth-child(2) {
+  background: linear-gradient(to top, rgba(255,229,241,.82), rgba(234,226,255,.1) 76%, rgba(255,255,255,.12)) !important;
+}
+#root .cp-chats-library-card > div:first-child > div:last-child span {
+  color: #211019 !important;
+  background: linear-gradient(120deg, rgba(255,250,253,.94), rgba(232,225,255,.92) 55%, rgba(218,246,241,.94)) !important;
+  border: 1px solid rgba(255,255,255,.98) !important;
+  box-shadow: 0 3px 10px rgba(58,32,51,.12) !important;
+}
+#root .cp-chats-library-card > div:nth-child(2) {
+  background: linear-gradient(135deg, rgba(255,250,253,.78), rgba(255,231,242,.76) 36%, rgba(239,230,255,.78) 68%, rgba(226,248,244,.82)) !important;
+}
+#root .cp-chats-library-card > div:nth-child(2) :is(h2,p,span,div) {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+}
+#root .cp-chats-library-card > div:nth-child(2) > div:first-child span,
+#root .cp-chats-library-card > div:nth-child(2) > div:last-child {
+  color: #74345f !important;
+  -webkit-text-fill-color: #74345f !important;
+}
+#root .cp-chats-library-card > div:nth-child(2) svg {
+  color: #9b4076 !important;
+  stroke: #9b4076 !important;
+}
+#root .cp-chats-library > div.relative > button[aria-label^="Export"] {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  background: linear-gradient(120deg, #fffafd, #ffd8eb 42%, #e2dcff 74%, #d8f3ed) !important;
+  border: 1px solid rgba(255,255,255,.98) !important;
+  box-shadow: 0 5px 14px rgba(65,32,55,.2), inset 0 1px 0 #fff !important;
+}
+#root .cp-chats-library > div.relative > button[aria-label^="Pin"],
+#root .cp-chats-library > div.relative > button[aria-label^="Unpin"] {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  background: linear-gradient(135deg, #fffafd, #ffd8eb 44%, #dedaff 78%, #d8f3ed) !important;
+  border: 1px solid rgba(255,255,255,.98) !important;
+}
+#root .cp-chats-library > div.relative > button[aria-label^="Pin"] svg,
+#root .cp-chats-library > div.relative > button[aria-label^="Unpin"] svg {
+  color: #66334f !important;
+  stroke: #66334f !important;
+}
+#root .cp-chats-library > div.relative > button[aria-label^="Unpin"] {
+  background: linear-gradient(135deg, #ffb7dc, #f48ecb 44%, #c8b9ff 78%, #aee8e3) !important;
+}
+#root .cp-chats-library-empty {
+  color: #211019 !important;
+  border: 1px dashed rgba(190,105,157,.58) !important;
+  background: linear-gradient(130deg, rgba(255,247,251,.96), rgba(255,220,237,.91) 33%, rgba(231,222,255,.92) 66%, rgba(218,246,240,.94)) !important;
+  box-shadow: 0 10px 26px rgba(111,54,90,.13), inset 0 1px 0 #fff !important;
+}
+#root .cp-chats-library-empty svg {
+  color: #b94c8c !important;
+  stroke: #b94c8c !important;
+}
+#root .cp-chats-library-empty :is(h2,p) {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+}
+@media (prefers-reduced-motion: no-preference) {
+  #root .cp-chats-library-card,
+  #root .cp-chats-library > div.relative > button {
+    transition: transform .24s ease, box-shadow .24s ease, border-color .24s ease, background .24s ease !important;
+  }
+}
