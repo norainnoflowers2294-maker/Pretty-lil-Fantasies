@@ -1168,8 +1168,8 @@ export const ChatView: React.FC<ChatViewProps> = ({
     <div data-compact={preferences.compactMode} data-bubble-motion={preferences.messageAnimations && !preferences.reducedMotion} className="cp-chat cp-page-transition relative w-full h-[100dvh] max-h-[100dvh] flex flex-col bg-[#0d020b] text-[#ffd6eb] overflow-hidden select-none">
       {/* Background Ambience with chat.bgImage */}
       <div
-        className="absolute inset-0 bg-cover bg-center opacity-15 pointer-events-none filter blur-sm transition-all duration-700"
-        style={{ backgroundImage: `url(${resolveImageUrl(chat.bgImage || '/penthouse.jpg')})` }}
+        className="absolute inset-0 bg-cover bg-center opacity-75 pointer-events-none transition-all duration-700"
+        style={{ backgroundImage: `url(${resolveImageUrl(chat.bgImage || `${import.meta.env.BASE_URL}backgrounds/pastel-blur.webp`)})` }}
       />
       <div className="absolute inset-0 bg-gradient-to-b from-[#0d020b]/95 via-[#0d020b]/80 to-[#0d020b]/95 pointer-events-none" />
 
