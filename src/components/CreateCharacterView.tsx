@@ -609,7 +609,7 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
   // RENDER UI
   // ---------------------------------------------------------------------------
   return (
-    <div className="cp-page-transition min-h-screen bg-[#010925] text-white flex flex-col font-sans selection:bg-[#FF007E]/40 relative overflow-x-hidden">
+    <div className="cp-page-transition cp-create-character min-h-screen bg-transparent text-[#211019] flex flex-col font-sans selection:bg-[#FF007E]/20 relative overflow-x-hidden">
       {/* Background Decorative Gloss Orbs with Palette Colors */}
       <div
         className="fixed top-0 left-1/4 w-[450px] h-[450px] rounded-full blur-[140px] pointer-events-none opacity-20"
@@ -649,9 +649,10 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
       <header
         className="sticky top-0 z-30 px-4 pb-3 border-b-2 backdrop-blur-xl flex items-center justify-between"
         style={{
-          backgroundColor: '#010925e6',
-          borderColor: PALETTE.hotPink,
-          boxShadow: '0 4px 20px rgba(255, 0, 126, 0.25)',
+          backgroundColor: 'rgba(255,247,251,.96)',
+          borderColor: 'rgba(196,104,145,.38)',
+          color: '#211019',
+          boxShadow: '0 4px 20px rgba(115,44,74,.12)',
           paddingTop: 'calc(env(safe-area-inset-top, 0px) + 0.75rem)',
         }}
       >
@@ -1082,7 +1083,7 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
       {/* ----------------------------------------------------------------------- */}
       {/* MAIN CONTAINER */}
       {/* ----------------------------------------------------------------------- */}
-      <main className="flex-1 max-w-4xl w-full mx-auto px-3 sm:px-6 py-6 space-y-6 pb-32">
+      <main className="flex-1 max-w-4xl w-full mx-auto px-3 sm:px-6 py-6 space-y-6 pb-[calc(12rem+env(safe-area-inset-bottom))]">
         {/* --------------------------------------------------------------------- */}
         {/* AVATAR SECTION BELOW HEADER */}
         {/* --------------------------------------------------------------------- */}
@@ -2389,11 +2390,11 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
       {/* 14. STICKY SAVE BUTTONS BAR AT BOTTOM */}
       {/* ----------------------------------------------------------------------- */}
       <footer
-        className="fixed bottom-0 left-0 right-0 z-30 p-3 sm:p-4 backdrop-blur-xl border-t-2"
+        className="fixed bottom-[calc(6rem+env(safe-area-inset-bottom))] left-0 right-0 z-50 p-3 sm:p-4 backdrop-blur-xl border-t"
         style={{
-          backgroundColor: '#010925f0',
-          borderColor: PALETTE.hotPink,
-          boxShadow: '0 -4px 25px rgba(255, 0, 126, 0.3)',
+          backgroundColor: 'rgba(255,247,251,.97)',
+          borderColor: 'rgba(196,104,145,.38)',
+          boxShadow: '0 -4px 20px rgba(115,44,74,.13)',
         }}
       >
         <div className="max-w-4xl mx-auto flex items-center justify-between gap-3">
