@@ -37,7 +37,7 @@ import { FileKeeperView } from './components/FileKeeperView';
 import { JournalView } from './components/JournalView';
 import { GitHubSyncModal } from './components/GitHubSyncModal';
 import { DualTrackOverlay } from './components/DualTrackOverlay';
-import { Columns } from 'lucide-react';
+import { Columns, House, MessageCircle, Plus, UserRound } from 'lucide-react';
 import { WalletModal } from './components/WalletModal';
 import { CharacterPhoneModal } from './components/CharacterPhoneModal';
 import { getWalletForScope, type StoryWallet } from './lib/wallet';
@@ -71,6 +71,32 @@ import {
 } from './lib/storage';
 import { auth } from './lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
+
+
+
+const QuickBottomToolbar: React.FC<{
+  active?: 'characters' | 'create' | 'home' | 'recent';
+  onCharacters: () => void;
+  onCreate: () => void;
+  onHome: () => void;
+  onRecent: () => void;
+  hasRecentChat: boolean;
+}> = ({ active, onCharacters, onCreate, onHome, onRecent, hasRecentChat }) => (
+  <nav className="cp-bottom-toolbar" aria-label="Quick navigation">
+    <button type="button" onClick={onCharacters} aria-current={active === 'characters' ? 'page' : undefined}>
+      <UserRound aria-hidden="true" /><span>My Character</span>
+    </button>
+    <button type="button" onClick={onCreate} aria-current={active === 'create' ? 'page' : undefined}>
+      <Plus aria-hidden="true" /><span>Create</span>
+    </button>
+    <button type="button" onClick={onHome} aria-current={active === 'home' ? 'page' : undefined}>
+      <House aria-hidden="true" /><span>Home</span>
+    </button>
+    <button type="button" onClick={onRecent} disabled={!hasRecentChat} aria-current={active === 'recent' ? 'page' : undefined}>
+      <MessageCircle aria-hidden="true" /><span>Most Recent Chat</span>
+    </button>
+  </nav>
+);
 
 export default function App() {
   const [data, setData] = useState<StorageData>(loadLocalData);
@@ -742,6 +768,13 @@ export default function App() {
     setIsCreateCharacterOpen(true);
   };
 
+  const handleOpenMostRecentChat = () => {
+    const latestChat = [...dataRef.current.chats].sort((a, b) =>
+      new Date(b.updatedAt || '').getTime() - new Date(a.updatedAt || '').getTime()
+    )[0];
+    if (latestChat) handleSelectChat(latestChat.id);
+  };
+
   const activeWalletPersona = activeChat ? (data.personas.find((item) => item.id === activeChat.personaId) || data.personas[0]) : undefined;
   const activeWallet = activeChat && activeWalletPersona ? getWalletForScope(data.wallets, activeChat.id, activeWalletPersona.id) : null;
   const walletSenderName = activeChat ? (data.characters.find((item) => activeChat.characterIds.includes(item.id))?.name || 'Story character') : 'Story character';
@@ -749,6 +782,7 @@ export default function App() {
   // 1. Dedicated Full-Page Create Character View
   if (isCreateCharacterOpen) {
     return (
+      <>
       <CreateCharacterView
         existingCharacter={characterToEdit}
         existingCharactersList={data.characters}
@@ -791,6 +825,15 @@ export default function App() {
           setActiveTab('home');
         }}
       />
+      <QuickBottomToolbar
+        active="create"
+        onCharacters={() => { setIsCreateCharacterOpen(false); setCharacterToEdit(null); setActiveTab('characters'); }}
+        onCreate={() => handleOpenCreateCharacterPage(null)}
+        onHome={() => { setIsCreateCharacterOpen(false); setCharacterToEdit(null); setActiveTab('home'); }}
+        onRecent={() => handleOpenMostRecentChat()}
+        hasRecentChat={data.chats.length > 0}
+      />
+      </>
     );
   }
 
@@ -1189,6 +1232,15 @@ export default function App() {
           </>
         )}
       </main>
+
+      <QuickBottomToolbar
+        active={activeTab === 'characters' ? 'characters' : activeTab === 'home' ? 'home' : undefined}
+        onCharacters={() => { setIsCreateCharacterOpen(false); setCharacterToEdit(null); setInChatMode(false); setActiveTab('characters'); }}
+        onCreate={() => handleOpenCreateCharacterPage(null)}
+        onHome={() => { setIsCreateCharacterOpen(false); setCharacterToEdit(null); setInChatMode(false); setActiveTab('home'); }}
+        onRecent={handleOpenMostRecentChat}
+        hasRecentChat={data.chats.length > 0}
+      />
 
       <BotStudioModal
         isOpen={isCreatorBotOpen}
