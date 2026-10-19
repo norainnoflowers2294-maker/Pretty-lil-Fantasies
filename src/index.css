@@ -3466,3 +3466,15 @@ body {
   color: #211019 !important;
   stroke: #211019 !important;
 }
+
+
+/* Restore the settings brand mark to the pearl pink icon treatment. */
+#root .cp-settings-overlay .cp-settings-header div[class*="w-10"][class*="h-10"][class*="rounded-"][class*="bg-gradient"] {
+  color: #211019 !important;
+  background: linear-gradient(135deg, #fff7fb, #ffc6dc 56%, #dfd0f2) !important;
+  box-shadow: 0 4px 12px rgba(104,39,75,.14), inset 0 1px 0 #fff !important;
+}
+#root .cp-settings-overlay .cp-settings-header div[class*="w-10"][class*="h-10"][class*="rounded-"][class*="bg-gradient"] svg {
+  color: #211019 !important;
+  stroke: #211019 !important;
+}
