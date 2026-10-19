@@ -2323,3 +2323,46 @@ body {
   border: 0 !important;
   box-shadow: none !important;
 }
+
+
+/* Slow, glassy bubbles drift around the wallpaper without blocking controls. */
+#root .cp-app-shell { isolation: isolate; }
+#root .cp-app-shell .plf-bubbles-layer {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none !important;
+  z-index: 2;
+  contain: paint;
+}
+#root .cp-app-shell .plf-floating-bubble {
+  position: absolute;
+  display: block;
+  border: 1px solid rgba(255,255,255,.78);
+  border-radius: 50%;
+  opacity: .2;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255,255,255,.76), rgba(255,238,246,.32) 35%, rgba(247,174,204,.08) 72%);
+  box-shadow:
+    inset -3px -4px 10px rgba(212,107,153,.12),
+    inset 2px 2px 8px rgba(255,255,255,.64),
+    0 4px 16px rgba(255,255,255,.16);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  animation-name: plf-bubble-drift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  will-change: transform;
+}
+@keyframes plf-bubble-drift {
+  0% { transform: translate3d(0, 12px, 0) scale(.96); }
+  50% { transform: translate3d(10px, -10px, 0) scale(1.03); }
+  100% { transform: translate3d(-7px, -28px, 0) scale(.98); }
+}
+@media (prefers-reduced-motion: reduce) {
+  #root .cp-app-shell .plf-floating-bubble {
+    animation: none !important;
+    opacity: .12;
+  }
+}
