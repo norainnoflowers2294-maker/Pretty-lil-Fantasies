@@ -3354,3 +3354,16 @@ body {
   border-color: rgba(255,255,255,.98) !important;
   box-shadow: 0 4px 13px rgba(103,39,74,.14), inset 0 1px 0 #fff !important;
 }
+
+
+/* Keep native app, settings, and chat drawer selectors light instead of inheriting legacy plum. */
+#root .cp-chat select[class*="rounded-"][class*="border"][class*="bg-"],
+#root .cp-chat aside[role="dialog"] select[class*="rounded-"][class*="border"][class*="bg-"],
+#root .cp-settings-overlay select[class*="rounded-"][class*="border"][class*="bg-"],
+#root aside[role="dialog"] select[class*="rounded-"][class*="border"][class*="bg-"] {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  background-color: #ffe0ed !important;
+  background-image: linear-gradient(135deg, #fff8fb, #ffd4e7 58%, #e5d8f3) !important;
+  border-color: rgba(217,135,167,.78) !important;
+}
