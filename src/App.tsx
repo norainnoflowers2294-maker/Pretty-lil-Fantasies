@@ -343,7 +343,15 @@ export default function App() {
         if (!mounted || authRevision !== firebaseAuthRevisionRef.current) return;
         const current = dataRef.current;
         const remoteUpdatedAt = (remote as (Partial<StorageData> & { updatedAt?: unknown }) | null)?.updatedAt;
-        const useCloudSnapshot = Boolean(remote && shouldPreferFirebaseSnapshot(remoteUpdatedAt, getLocalDataSavedAt()));
+        // A different device (or Google account) must not overwrite this account's
+        // cloud backup merely because unrelated local data has a newer timestamp.
+        const lastAccountKey = 'plf_local_snapshot_account';
+        let localAccountId = '';
+        try { localAccountId = localStorage.getItem(lastAccountKey) || ''; } catch { /* storage may be restricted */ }
+        const useCloudSnapshot = Boolean(remote && (
+          (localAccountId && localAccountId !== user.uid) ||
+          shouldPreferFirebaseSnapshot(remoteUpdatedAt, getLocalDataSavedAt())
+        ));
         const merged: StorageData = remote && useCloudSnapshot ? {
           ...current,
           ...remote,
@@ -373,7 +381,12 @@ export default function App() {
         if (readyData.appPreferences.homeImage) setHomeImage(readyData.appPreferences.homeImage);
         setActiveChat(readyData.chats.find((chat) => chat.id === activeChatId) || null);
         await saveLocalData(readyData);
+        if (!useCloudSnapshot && localAccountId && localAccountId !== user.uid && !remote) {
+          // Never upload another account's local data into a new Firebase account.
+          throw new Error('This device contains data from another Google account. Sign back into that account to recover its backup.');
+        }
         if (!useCloudSnapshot) await enqueueFirebaseSync(readyData);
+        try { localStorage.setItem(lastAccountKey, user.uid); } catch { /* IndexedDB remains available */ }
         firebaseCloudReadyRef.current = true;
         if (useCloudSnapshot) setFirebaseSyncMessage('Your latest chats and app data were restored from Firebase.');
       } catch (error) {
