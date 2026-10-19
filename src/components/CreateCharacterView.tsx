@@ -116,6 +116,7 @@ interface CreateCharacterViewProps {
   onSaveCharacter: (character: Character) => void | Promise<{ localSaved: boolean; firebaseSaved: boolean; message: string }>;
   onBack: () => void;
   onStartChat?: (character: Character) => void;
+  onRegisterCreateAction?: (action: (() => void) | null) => void;
   onOpenLibrary?: () => void;
   onOpenPersonaLibrary?: () => void;
   onOpenLorebookLibrary?: () => void;
@@ -131,6 +132,7 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
   onSaveCharacter,
   onBack,
   onStartChat,
+  onRegisterCreateAction,
   onOpenLibrary,
   onOpenPersonaLibrary,
   onOpenLorebookLibrary,
@@ -224,6 +226,7 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const importInputRef = useRef<HTMLInputElement>(null);
+  const createActionRef = useRef<() => void>(() => {});
 
   // Toggle Accordion Section
   const toggleSection = (sectionKey: string) => {
@@ -552,6 +555,15 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
       setIsSavingCharacter(false);
     }
   };
+
+  // Let the persistent bottom-bar Create button submit this character to the library.
+  createActionRef.current = () => { void handleCreateCharacter(); };
+  useEffect(() => {
+    if (!onRegisterCreateAction) return;
+    const submitCurrentCharacter = () => createActionRef.current();
+    onRegisterCreateAction(submitCurrentCharacter);
+    return () => onRegisterCreateAction(null);
+  }, [onRegisterCreateAction]);
 
   // ---------------------------------------------------------------------------
   // IMPORT / EXPORT HANDLERS
@@ -1174,7 +1186,7 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
 
         {/* Modal for Avatar URL Input */}
         {showAvatarUrlModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
             <div
               className="w-full max-w-md p-5 rounded-3xl border-2 space-y-4 shadow-2xl"
               style={{
