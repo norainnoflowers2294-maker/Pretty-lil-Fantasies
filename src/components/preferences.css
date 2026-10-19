@@ -29,3 +29,29 @@ input,textarea,select{-webkit-text-fill-color:currentColor;caret-color:var(--cp-
 }
 
 .cp-setting-block{align-items:stretch;flex-direction:column;gap:8px}.cp-setting-block textarea{width:100%;box-sizing:border-box;min-height:150px;resize:vertical;background:#251327;color:#ffe5f1;border:1px solid #ffffff30;border-radius:12px;padding:12px;font:inherit;line-height:1.5}.cp-setting-block textarea:focus{outline:2px solid var(--cp-accent);outline-offset:1px}.cp-setting-block small{font-size:11px;opacity:.65;align-self:flex-end}
+
+/* Accessible black and hot-pink settings skin */
+.plf-settings-theme{background:#000!important;color:#fff!important;font-size:17px}
+.plf-settings-theme [class*="bg-"]{background:#050005!important;background-image:none!important;color:#fff!important}
+.plf-settings-theme :is(p,span,label,button,input,textarea,select,a,li,summary,small){color:#fff!important;font-size:16px!important}
+.plf-settings-theme :is(h1,h2){color:#fff!important;font-size:23px!important}
+.plf-settings-theme :is(h3,h4){color:#fff!important;font-size:20px!important}
+.plf-settings-theme :is(button,[role="tab"],input,textarea,select,[class*="rounded"],[class*="border"]){border-color:#ff1493!important}
+.plf-settings-theme button{border-style:solid!important;border-width:1px!important}
+.plf-settings-theme :is(input,textarea,select){background:#090009!important;outline-color:#ff1493!important}
+.plf-settings-theme :is(button,input,textarea,select):focus-visible{outline:2px solid #ff1493!important;outline-offset:2px}
+.cp-preferences{background:#000!important;color:#fff!important}
+.cp-preferences-card{background:#050005!important;border:1px solid #ff1493!important;color:#fff!important}
+.cp-preferences :is(header,nav,footer){background:#050005!important;border-color:#ff1493!important}
+.cp-preferences :is(h2,h3,p,small,label,summary,output){color:#fff!important;opacity:1!important}
+.cp-preferences h2{font-size:25px!important}
+.cp-preferences h3{font-size:21px!important}
+.cp-preferences :is(button,select,input,textarea){border-color:#ff1493!important;color:#fff!important;font-size:16px!important}
+.cp-preferences button{background:#090009!important}
+.cp-preferences button[aria-pressed=true],.cp-preferences .cp-primary{background:#17000f!important;border-color:#ff1493!important;color:#fff!important;box-shadow:0 0 12px #ff149355!important}
+.cp-preferences select,.cp-preferences textarea{background:#090009!important}
+.cp-preferences .cp-setting{font-size:17px!important;border-color:#ff149344!important}
+.cp-preferences .cp-setting-block small,.cp-preferences p,.cp-preferences details{font-size:15px!important}
+.cp-preferences .cp-setting-block textarea{background:#090009!important;color:#fff!important;border-color:#ff1493!important;font-size:16px!important}
+.cp-preferences footer{border-color:#ff1493!important}
+@media(max-width:600px){.cp-preferences .cp-setting{font-size:16px!important}.cp-preferences-card{background:#050005!important}}
