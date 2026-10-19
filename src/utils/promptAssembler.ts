@@ -92,6 +92,24 @@ export function buildOpenRouterMessages(params: AssembleParams): OpenRouterApiMe
   if (preferences?.unstuckRecovery) sceneVoiceRules.push(`WHEN STUCK: ${preferences.unstuckRecoveryPrompt.trim()}`);
   if (preferences?.finishRepliesCleanly) sceneVoiceRules.push(`FINISH THOUGHTS: ${preferences.finishRepliesPrompt.trim()}`);
   if (sceneVoiceRules.length) systemParts.push(`[SCENE, VOICE & REPLY CONTROLS FROM SETTINGS]\n${sceneVoiceRules.join('\n')}`);
+  const mockStylePrompts: Record<NonNullable<Chat['mockStyle']>, string> = {
+    chatgpt: 'MOCK CHATGPT STYLE: Be clear, friendly, practical, and organized. Answer the actual question first, explain useful steps in plain language, and use concise headings or lists when they help. Be warm without sounding overly formal.',
+    gemini: 'MOCK GEMINI STYLE: Be curious, thoughtful, and synthesis-minded. Connect useful ideas, notice visual or creative possibilities, and offer balanced options. Keep explanations clear and grounded; do not pad the answer.',
+    deepseek: 'MOCK DEEPSEEK STYLE: Be analytical, precise, and structured. Break complicated problems into logical steps, state assumptions, and give technically useful details or examples. Keep the reasoning readable and the answer direct.',
+    grok: 'MOCK GROK STYLE: Be candid, playful, quick-witted, and conversational. Use dry humor when it fits, keep the energy lively, and give a straight answer without being rude or derailing the request.',
+  };
+  if (chat.mockStyle && mockStylePrompts[chat.mockStyle]) systemParts.push(`[RESPONSE VOICE PRESET]\\n${mockStylePrompts[chat.mockStyle]}`);
+
+  const helperModePrompts: Record<NonNullable<Chat['helperMode']>, string> = {
+    roleplay: '',
+    internet: 'INTERNET RESEARCH MODE: Use the available web search tool for current, factual, or source-dependent questions. Summarize what the sources say, add clickable Markdown links or tool citations for factual claims, distinguish confirmed facts from inference, and say when search finds no reliable answer. Never invent a search result.',
+    coder: 'CODER MODE: Act as a practical coding partner. Clarify the goal from context, inspect the relevant code or error, propose a working implementation, include complete code when requested, and explain exactly where it goes. Mention meaningful edge cases and a concise verification step. Do not claim code was tested unless it was.',
+    ideas: 'IDEA CREATOR MODE: Generate several distinct, specific ideas tailored to the user's constraints. Make each idea actionable, avoid repeating the same concept in different words, and highlight your strongest recommendation with a brief reason.',
+    story: 'STORY WRITER MODE: Help create vivid, emotionally grounded fiction with strong character voice, scene momentum, and concrete sensory detail. Offer a few directions when asked to brainstorm. Preserve established canon and never decide the user's actions, thoughts, feelings, or dialogue.',
+  };
+  if (chat.helperMode && chat.helperMode !== 'roleplay' && helperModePrompts[chat.helperMode]) {
+    systemParts.push(`[ASSISTANT HELPER MODE]\\n${helperModePrompts[chat.helperMode]}`);
+  }
 
   if (phoneContext.trim()) systemParts.push(phoneContext);
   systemParts.push(`[SECRETS, RUMORS & KNOWLEDGE]\nCharacters may keep secrets and spread rumors through believable in-story channels. Track who witnessed or was told each fact. A rumor is not confirmed truth. Characters must not know private thoughts, whispered speech, hidden messages, or events they have not discovered. Never give Emmy/user undisclosed information unless their character learned it in the scene.`);
