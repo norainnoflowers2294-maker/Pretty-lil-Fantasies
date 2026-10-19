@@ -56,7 +56,8 @@ export const CategoryPills: React.FC<CategoryPillsProps> = ({
               <button
                 key={cat.id}
                 onClick={() => onSelectCategory(cat.id)}
-                className="flex flex-col items-center justify-center space-y-1.5 group flex-1 py-1 transition-all"
+                aria-pressed={isActive}
+                className="plf-category-pill flex flex-col items-center justify-center space-y-1.5 group flex-1 py-1 transition-all"
               >
                 <div
                   className={`plf-category-icon-ring relative p-0.5 rounded-full transition-all duration-300 ${
