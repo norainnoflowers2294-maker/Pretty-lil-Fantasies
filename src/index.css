@@ -3558,3 +3558,12 @@ body {
 #root .cp-create-character :is(h1,h2,h3,h4,h5,h6) {
   text-transform: none !important;
 }
+
+
+/* Final capitalization override for every app heading, including nested views. */
+#root :is(h1,h2,h3,h4,h5,h6) {
+  text-transform: none !important;
+}
+#root .cp-create-character :is(h1,h2,h3,h4,h5,h6) {
+  text-transform: none !important;
+}
