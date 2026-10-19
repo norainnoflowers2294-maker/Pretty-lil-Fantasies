@@ -204,6 +204,7 @@ export interface Chat {
   messages: ChatMessage[];
   contextResetAt?: number;
   openingPending?: boolean;
+  pinned?: boolean;
   relationshipScore?: number;
   inventory?: string[];
   weather?: string;
