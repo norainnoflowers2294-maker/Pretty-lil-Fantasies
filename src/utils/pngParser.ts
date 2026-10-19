@@ -393,7 +393,7 @@ function normalizeLorebookJson(parsed: any, fallbackName: string, avatar?: strin
 }
 
 export async function parseLorebookFile(file: File): Promise<Partial<Lorebook>> {
-  const fallbackName = file.name.replace(/\\.[^/.]+$/, '').replace(/[-_]/g, ' ') || 'Imported Lorebook';
+  const fallbackName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ') || 'Imported Lorebook';
   if (file.name.toLowerCase().endsWith('.json')) {
     return normalizeLorebookJson(JSON.parse(await file.text()), fallbackName);
   }
