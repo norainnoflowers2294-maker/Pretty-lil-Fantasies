@@ -891,3 +891,83 @@ body {
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
 }
+
+
+/* App-wide clear-glass controls with black labels and icons. Page backgrounds stay unchanged. */
+#root :is(button, a, [role="button"], [role="tab"]) {
+  color: #000 !important;
+  background-color: rgba(255,255,255,.56) !important;
+  background-image: linear-gradient(145deg, rgba(255,255,255,.7), rgba(255,255,255,.34) 52%, rgba(255,255,255,.48)) !important;
+  border-color: rgba(0,0,0,.38) !important;
+  box-shadow: 0 5px 16px rgba(37,0,20,.14), inset 0 1px 0 rgba(255,255,255,.82), inset 0 -1px 0 rgba(0,0,0,.08) !important;
+  text-shadow: none !important;
+  -webkit-backdrop-filter: blur(16px) saturate(150%) !important;
+  backdrop-filter: blur(16px) saturate(150%) !important;
+}
+#root :is(button, a, [role="button"], [role="tab"]) *,
+#root :is(button, a, [role="button"], [role="tab"]) svg,
+#root svg {
+  color: #000 !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+#root :is(button, a, [role="button"], [role="tab"]):is(:hover, :focus-visible) {
+  background-color: rgba(255,255,255,.76) !important;
+  border-color: rgba(0,0,0,.58) !important;
+}
+#root :is(button, a, [role="button"], [role="tab"])[aria-current="page"],
+#root :is(button, a, [role="button"], [role="tab"])[aria-pressed="true"],
+#root :is(button, a, [role="button"], [role="tab"])[aria-selected="true"] {
+  background-color: rgba(255,255,255,.68) !important;
+  background-image: linear-gradient(145deg, rgba(255,255,255,.8), rgba(255,255,255,.52)) !important;
+  border-color: rgba(0,0,0,.55) !important;
+  box-shadow: 0 0 14px rgba(255,255,255,.26), inset 0 1px 0 rgba(255,255,255,.88) !important;
+}
+#root input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]),
+#root textarea,
+#root select {
+  color: #000 !important;
+  background-color: rgba(255,255,255,.56) !important;
+  background-image: linear-gradient(145deg, rgba(255,255,255,.7), rgba(255,255,255,.34)) !important;
+  border-color: rgba(0,0,0,.38) !important;
+  text-shadow: none !important;
+  -webkit-text-fill-color: #000 !important;
+  caret-color: #000 !important;
+}
+#root input::placeholder,
+#root textarea::placeholder {
+  color: rgba(0,0,0,.62) !important;
+  -webkit-text-fill-color: rgba(0,0,0,.62) !important;
+}
+#root option { color: #000 !important; background: #fff !important; }
+
+/* Persona tags, status chips, and similar small labels. */
+#root span[class*="rounded-full"][class*="bg-"],
+#root [data-tag],
+#root [class*="tag"],
+#root [class*="badge"],
+#root [class*="chip"] {
+  color: #000 !important;
+  background-color: rgba(255,255,255,.54) !important;
+  background-image: linear-gradient(145deg, rgba(255,255,255,.68), rgba(255,255,255,.32)) !important;
+  border-color: rgba(0,0,0,.36) !important;
+  text-shadow: none !important;
+}
+#root span[class*="rounded-full"][class*="bg-"] svg,
+#root [data-tag] svg,
+#root [class*="tag"] svg,
+#root [class*="badge"] svg,
+#root [class*="chip"] svg {
+  color: #000 !important;
+  filter: none !important;
+}
+
+/* Preserve readable black labels on controls over the black settings panels. */
+#root .plf-settings-theme :is(button, a, [role="button"], [role="tab"], input, textarea, select) {
+  color: #000 !important;
+  background-color: rgba(255,255,255,.78) !important;
+  background-image: linear-gradient(145deg, rgba(255,255,255,.86), rgba(255,255,255,.58)) !important;
+}
+#root .plf-settings-theme :is(button, a, [role="button"], [role="tab"]) * {
+  color: #000 !important;
+}
