@@ -89,8 +89,8 @@ export const CharacterModal: React.FC<CharacterModalProps> = ({
   );
 
   return (
-    <div className={fullPage ? "w-full max-w-7xl mx-auto px-4 py-6" : "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200"}>
-      <div className={`relative w-full ${fullPage ? "max-w-7xl min-h-[70vh]" : "max-w-4xl max-h-[90vh]"} bg-[#140410] border-2 border-[#ff3399]/60 rounded-3xl shadow-[0_0_50px_rgba(255,0,128,0.5)] overflow-hidden flex flex-col`}>
+    <div className={`cp-character-library ${fullPage ? "w-full max-w-7xl mx-auto px-4 py-6" : "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200"}`}>
+      <div className={`cp-character-library-panel relative w-full ${fullPage ? "max-w-7xl min-h-[70vh]" : "max-w-4xl max-h-[90vh]"} bg-[#140410] border-2 border-[#ff3399]/60 rounded-3xl shadow-[0_0_50px_rgba(255,0,128,0.5)] overflow-hidden flex flex-col`}>
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#ff3399]/30 bg-[#0d020b]">
           <div className="flex items-center space-x-3">
