@@ -40,7 +40,7 @@ export const ColorPopHeader: React.FC<ColorPopHeaderProps> = ({
   const hasError = diagnostic.status === 'error';
 
   return (
-    <header className="relative w-full px-4 sm:px-6 pt-4 pb-2 flex items-center justify-between z-30">
+    <header className="relative w-full px-4 sm:px-6 pb-2 flex items-center justify-between z-30" style={{ paddingTop: "max(calc(env(safe-area-inset-top, 0px) + 20px), 72px)" }}>
       {/* Left Action Icons */}
       <div className="flex items-center space-x-2 sm:space-x-3">
         <button
