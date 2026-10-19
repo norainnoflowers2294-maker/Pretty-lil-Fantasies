@@ -2837,3 +2837,94 @@ body {
 @media (prefers-reduced-motion: reduce) {
   #root .cp-app-shell .plf-floating-bubble { animation: none !important; opacity: .25 !important; }
 }
+
+
+/* The full-page character creator lives outside .cp-app-shell, so give it the same complete PLF treatment. */
+#root .cp-create-character {
+  box-sizing: border-box;
+  min-height: 100svh !important;
+  height: auto !important;
+  overflow-y: visible !important;
+  padding-bottom: calc(11rem + env(safe-area-inset-bottom, 0px)) !important;
+  color: #211019 !important;
+  background-color: #f8dce9 !important;
+  background-image:
+    linear-gradient(145deg, rgba(255,240,248,.76), rgba(255,218,235,.62) 48%, rgba(226,233,255,.58) 76%, rgba(211,244,248,.58)),
+    url("/Pretty-lil-Fantasies/backgrounds/line-art-flowers.webp") !important;
+  background-size: cover !important;
+  background-position: center top !important;
+  background-attachment: fixed !important;
+}
+#root .cp-create-character :is(h1,h2,h3,h4,h5,h6) {
+  font-family: "Brovalgin", Georgia, serif !important;
+  text-transform: uppercase !important;
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+}
+#root .cp-create-character :is(p,label,span,small,strong,legend) {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+}
+#root .cp-create-character :is(section,article,fieldset) {
+  color: #211019 !important;
+  background-color: rgba(255,239,247,.91) !important;
+  background-image:
+    radial-gradient(ellipse at 8% 0%, rgba(255,255,255,.97), transparent 36%),
+    linear-gradient(125deg, rgba(255,246,251,.96), rgba(255,215,233,.94) 52%, rgba(232,225,255,.88) 78%, rgba(220,245,248,.86)) !important;
+  border-color: rgba(255,255,255,.98) !important;
+  box-shadow: 0 10px 26px rgba(111,39,73,.15), inset 0 1px 0 #fff !important;
+}
+#root .cp-create-character :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),textarea,select) {
+  color: #160b10 !important;
+  -webkit-text-fill-color: #160b10 !important;
+  caret-color: #160b10 !important;
+  background-color: #ffe6f0 !important;
+  background-image: linear-gradient(125deg, #fff7fb, #ffe1ed 55%, #efe9ff 83%, #e7f7f8) !important;
+  border: 1px solid rgba(198,115,151,.56) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.96), 0 3px 10px rgba(91,31,62,.1) !important;
+}
+#root .cp-create-character :is(input,textarea)::placeholder {
+  color: #674654 !important;
+  -webkit-text-fill-color: #674654 !important;
+  opacity: 1 !important;
+}
+#root .cp-create-character button,
+#root .cp-create-character [role="button"],
+#root .cp-create-character a[role="button"] {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  background-color: #ffe7f1 !important;
+  background-image: linear-gradient(140deg, #fffafd, #ffddeb 56%, #eee5ff 82%, #e1f7f8) !important;
+  border-color: rgba(255,255,255,.96) !important;
+  box-shadow: 0 4px 13px rgba(112,40,72,.13), inset 0 1px 0 #fff !important;
+}
+#root .cp-create-character button :is(svg,span),
+#root .cp-create-character [role="button"] :is(svg,span) {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  stroke: currentColor;
+}
+#root .cp-create-character :is(aside,[role="dialog"]) {
+  color: #211019 !important;
+  background:
+    radial-gradient(ellipse at 8% 2%, rgba(255,255,255,.96), transparent 33%),
+    radial-gradient(ellipse at 98% 30%, rgba(103,223,234,.2), transparent 33%),
+    linear-gradient(145deg, rgba(255,245,250,.99), rgba(255,215,233,.98) 58%, rgba(232,224,255,.97)) !important;
+  border-color: rgba(255,255,255,.98) !important;
+}
+#root .cp-create-character ~ .cp-bottom-toolbar {
+  z-index: 100 !important;
+  background:
+    radial-gradient(ellipse at 8% 0%, rgba(255,255,255,.97), transparent 42%),
+    linear-gradient(115deg, rgba(255,244,250,.97), rgba(255,208,229,.96) 48%, rgba(229,224,255,.94) 76%, rgba(217,246,249,.94)) !important;
+  border-color: rgba(255,255,255,.98) !important;
+  box-shadow: 0 12px 30px rgba(80,19,51,.2), inset 0 1px 0 #fff !important;
+}
+#root .cp-create-character ~ .cp-bottom-toolbar button,
+#root .cp-create-character ~ .cp-bottom-toolbar button * { color: #211019 !important; -webkit-text-fill-color: #211019 !important; }
+#root .cp-create-character ~ .cp-bottom-toolbar button[aria-current="page"] {
+  background: linear-gradient(135deg, #ffd4e6, #ff9fc5 62%, #ebccf7) !important;
+}
+@media (max-width: 640px) {
+  #root .cp-create-character { padding-bottom: calc(12rem + env(safe-area-inset-bottom, 0px)) !important; }
+}
