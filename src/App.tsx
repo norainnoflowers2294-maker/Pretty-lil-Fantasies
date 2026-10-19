@@ -1040,12 +1040,10 @@ export default function App() {
 
   // Dashboard View (Faithfully matching the uploaded image + Dual Track System)
   return (
-    <div className="cp-app-shell min-h-screen bg-[#ff1493] text-[#ffd6eb] flex flex-col font-sans selection:bg-[#ff007f]/40 relative overflow-x-hidden" style={preferences.dashboardBackground ? {
-      backgroundImage: `url("${preferences.dashboardBackground.replace(/"/g, '%22')}")`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundAttachment: 'fixed',
-    } : undefined}>
+    <div data-screen={activeTab} className="cp-app-shell min-h-screen bg-[#ff1493] text-[#ffd6eb] flex flex-col font-sans selection:bg-[#ff007f]/40 relative overflow-x-hidden" style={{
+      '--plf-screen-background': `url("${import.meta.env.BASE_URL}backgrounds/${({ home: 'feather-dark.webp', chats: 'pastel-blur.webp', characters: 'line-art-flowers.webp', lorebooks: 'flower-candles-alt.webp', personas: 'neon-floral.webp', gallery: 'painted-flowers.webp', files: 'fluid-color.webp', perchance: 'fluid-color.webp', social: 'neon-floral.webp', journal: 'flower-candles.webp', marketplace: 'flower-candles-alt.webp', 'memory-map': 'feather-dark.webp', more: 'pastel-blur.webp' } as Record<NavTab, string>)[activeTab]}")`,
+      ...(preferences.dashboardBackground ? { backgroundImage: `url("${preferences.dashboardBackground.replace(/"/g, '%22')}")`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' } : {}),
+    } as React.CSSProperties}>
       {/* Background Neon Glow Orbs */}
       <div className="fixed top-0 left-1/4 w-[500px] h-[500px] bg-[#ff007f]/10 rounded-full blur-[140px] pointer-events-none" />
       <div className="fixed bottom-0 right-1/4 w-[500px] h-[500px] bg-[#9b51e0]/10 rounded-full blur-[140px] pointer-events-none" />
