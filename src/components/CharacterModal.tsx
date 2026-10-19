@@ -18,7 +18,7 @@ interface CharacterModalProps {
   isOpen: boolean;
   onClose: () => void;
   characters: Character[];
-  onSaveCharacter: (char: Character) => void | Promise<{ localSaved: boolean; firebaseSaved: boolean; message: string }>;
+  onSaveCharacter: (char: Character) => Promise<{ localSaved: boolean; firebaseSaved: boolean; message: string }>;
   onDeleteCharacter?: (characterId: string) => void;
   onStartChatWithCharacter: (char: Character) => void;
   onOpenCreateCharacter?: (characterToEdit?: Character | null) => void;
