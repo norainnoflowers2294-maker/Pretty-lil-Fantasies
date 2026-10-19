@@ -45,6 +45,9 @@ export const CharacterModal: React.FC<CharacterModalProps> = ({
 
     try {
       const parsed = await parseCharacterFile(file);
+      if (parsed.customFields?.importWarning) {
+        window.alert(String(parsed.customFields.importWarning));
+      }
       const now = new Date().toISOString();
       const fallbackName = file.name.replace(/\\.[^/.]+$/, '').replace(/[-_]/g, ' ').trim() || 'Imported Character';
       const matchingCharacter = characters.find((character) =>
@@ -113,7 +116,7 @@ export const CharacterModal: React.FC<CharacterModalProps> = ({
               <span>Import Card</span>
               <input
                 type="file"
-                accept=".png,.json"
+                accept=".png,.json,image/png,application/json"
                 onChange={handleFileUpload}
                 className="hidden"
               />
