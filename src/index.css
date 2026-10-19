@@ -971,3 +971,26 @@ body {
 #root .plf-settings-theme :is(button, a, [role="button"], [role="tab"]) * {
   color: #000 !important;
 }
+
+
+/* Screen artwork sits behind the existing floating glass controls. */
+#root .cp-app-shell {
+  isolation: isolate;
+}
+#root .cp-app-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: var(--plf-screen-background);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+#root .cp-chat > div.absolute.inset-0.bg-gradient-to-b {
+  background-image: linear-gradient(to bottom, rgba(13,2,11,.35), rgba(13,2,11,.22) 48%, rgba(13,2,11,.42)) !important;
+}
+@media (max-width: 640px) {
+  #root .cp-app-shell::before { background-position: center center; }
+}
