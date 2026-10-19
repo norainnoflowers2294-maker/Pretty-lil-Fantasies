@@ -1029,7 +1029,12 @@ export default function App() {
 
   // Dashboard View (Faithfully matching the uploaded image + Dual Track System)
   return (
-    <div className="cp-app-shell min-h-screen bg-[#0d020b] text-[#ffd6eb] flex flex-col font-sans selection:bg-[#ff007f]/40 relative overflow-x-hidden">
+    <div className="cp-app-shell min-h-screen bg-[#ff1493] text-[#ffd6eb] flex flex-col font-sans selection:bg-[#ff007f]/40 relative overflow-x-hidden" style={preferences.dashboardBackground ? {
+      backgroundImage: `url("${preferences.dashboardBackground.replace(/"/g, '%22')}")`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundAttachment: 'fixed',
+    } : undefined}>
       {/* Background Neon Glow Orbs */}
       <div className="fixed top-0 left-1/4 w-[500px] h-[500px] bg-[#ff007f]/10 rounded-full blur-[140px] pointer-events-none" />
       <div className="fixed bottom-0 right-1/4 w-[500px] h-[500px] bg-[#9b51e0]/10 rounded-full blur-[140px] pointer-events-none" />
