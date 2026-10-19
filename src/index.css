@@ -3218,3 +3218,52 @@ body {
   opacity: 1 !important;
 }
 #root .cp-settings-overlay :is(label,p,small,span) { color: #211019 !important; }
+
+
+/* Make every right and left chat drawer control readable against the floral glass. */
+#root .cp-chat aside[role="dialog"],
+#root .cp-chat div[role="dialog"] {
+  color: #211019 !important;
+  background-color: rgba(255,239,247,.97) !important;
+  border-color: rgba(255,255,255,.98) !important;
+}
+#root .cp-chat aside[role="dialog"] :is(h1,h2,h3,h4,h5,h6,label,p,small,span) {
+  color: #211019 !important;
+}
+#root .cp-chat aside[role="dialog"] :is(div,section,article,form)[class*="rounded-"][class*="border"] {
+  color: #211019 !important;
+  background-color: rgba(255,225,239,.92) !important;
+  background-image: linear-gradient(135deg, rgba(255,249,252,.96), rgba(255,216,234,.92) 60%, rgba(232,220,246,.92)) !important;
+  border-color: rgba(255,255,255,.98) !important;
+  box-shadow: 0 5px 15px rgba(103,39,74,.13), inset 0 1px 0 #fff !important;
+}
+#root .cp-chat aside[role="dialog"] :is(button,select,input,textarea) {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  caret-color: #211019 !important;
+  background-color: #ffe0ed !important;
+  background-image: linear-gradient(135deg, #fff8fb, #ffd5e7 58%, #e6d9f4) !important;
+  border-color: rgba(255,255,255,.98) !important;
+}
+#root .cp-chat aside[role="dialog"] :is(input,textarea)::placeholder {
+  color: #6d3c52 !important;
+  -webkit-text-fill-color: #6d3c52 !important;
+  opacity: 1 !important;
+}
+#root .cp-chat aside[role="dialog"] button svg {
+  color: #211019 !important;
+  stroke: #211019 !important;
+}
+#root .cp-chat header.cp-chat-header button,
+#root .cp-chat .cp-chat-composer button {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  background-color: #ffd8e9 !important;
+  background-image: linear-gradient(135deg, #fff7fb, #ffd0e4 58%, #e5d8f3) !important;
+  border-color: rgba(255,255,255,.98) !important;
+}
+#root .cp-chat .cp-chat-header button svg,
+#root .cp-chat .cp-chat-composer button svg {
+  color: #211019 !important;
+  stroke: #211019 !important;
+}
