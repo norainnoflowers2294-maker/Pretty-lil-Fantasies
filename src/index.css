@@ -1709,3 +1709,38 @@ body {
   color: #1b1018 !important;
   -webkit-text-fill-color: #1b1018 !important;
 }
+
+
+/* Softer blush-glass composer from the reference screen. */
+#root .cp-chat textarea[placeholder^="Reply to"] {
+  color: #111 !important;
+  -webkit-text-fill-color: #111 !important;
+  caret-color: #111 !important;
+  background: linear-gradient(145deg, #fff5fa 0%, #f6dfed 52%, #fbf0f7 100%) !important;
+  background-image: linear-gradient(145deg, #fff5fa 0%, #f6dfed 52%, #fbf0f7 100%) !important;
+  border: 1px solid rgba(255,255,255,.96) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.98), inset 0 -1px 0 rgba(213,139,177,.22), 0 5px 15px rgba(108,37,72,.13) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(145%) !important;
+  backdrop-filter: blur(20px) saturate(145%) !important;
+}
+#root .cp-chat textarea[placeholder^="Reply to"]::placeholder {
+  color: #49313e !important;
+  -webkit-text-fill-color: #49313e !important;
+  opacity: 1 !important;
+}
+#root .cp-chat .cp-message-menu {
+  color: #1b1018 !important;
+  background: linear-gradient(145deg, rgba(255,249,252,.99), rgba(255,222,238,.98)) !important;
+  border-color: rgba(255,255,255,.98) !important;
+  box-shadow: 0 12px 28px rgba(83,25,54,.24), inset 0 1px 0 #fff !important;
+}
+#root .cp-chat .cp-message-menu button {
+  justify-content: flex-start;
+  color: #1b1018 !important;
+  background: transparent !important;
+  -webkit-text-fill-color: #1b1018 !important;
+  font-family: "Bavista Soulare", Georgia, serif !important;
+}
+#root .cp-chat .cp-message-menu button:hover {
+  background: rgba(238,168,199,.3) !important;
+}
