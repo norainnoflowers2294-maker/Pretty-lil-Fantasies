@@ -2675,6 +2675,8 @@ body {
   --plf-ink: #211019;
   --plf-muted-ink: #604652;
 }
+#root :is(h1,h2,h3,h4,h5,h6),
+#root .cp-create-character :is(h1,h2,h3,h4,h5,h6),
 #root .cp-app-shell :is(h1,h2,h3,h4,h5,h6),
 #root .cp-chat :is(h1,h2,h3,h4,h5,h6),
 #root .cp-preferences :is(h1,h2,h3,h4,h5,h6),
