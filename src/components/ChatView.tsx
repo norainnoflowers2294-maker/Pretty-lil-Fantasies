@@ -33,6 +33,7 @@ import {
   Volume2,
   VolumeX,
   Copy,
+  MoreVertical,
   ChevronLeft,
   ChevronRight,
   ChevronDown,
@@ -302,6 +303,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const speechRequestRef = useRef(0);
   const [regeneratingMsgId, setRegeneratingMsgId] = useState<string | null>(null);
+  const [openMessageMenuId, setOpenMessageMenuId] = useState<string | null>(null);
   const [commandSuggestionIndex, setCommandSuggestionIndex] = useState(0);
 
   // Chat navigation drawers and dual-track overlay
@@ -1495,16 +1497,26 @@ export const ChatView: React.FC<ChatViewProps> = ({
                       <span className="text-[9px] opacity-70 tabular-nums">{(msg.currentSwipeIndex ?? msg.swipes!.length - 1) + 1}/{msg.swipes!.length}</span>
                       <button type="button" disabled={loading} aria-label="Next reply" title="Next reply" onClick={(e) => { e.stopPropagation(); handleChangeSwipe(msg, 1); }} className="p-1 rounded hover:bg-white/10 disabled:opacity-40"><ChevronRight className="w-3 h-3" /></button>
                     </>}
-                    <button type="button" disabled={loading} aria-label={speakingMessageId === msg.id ? "Stop reading message" : "Read message aloud"} title={speakingMessageId === msg.id ? "Stop reading" : "Read aloud"} onClick={(e) => { e.stopPropagation(); handleSpeakMessage(msg); }} className="p-1 rounded hover:bg-white/10 disabled:opacity-40">{speakingMessageId === msg.id ? <VolumeX className="w-3 h-3" /> : <Volume2 className="w-3 h-3" />}</button>
-                    <button type="button" aria-label="Copy message" title="Copy message" onClick={(e) => { e.stopPropagation(); void handleCopyMessage(msg); }} className="p-1 rounded hover:bg-white/10"><Copy className="w-3 h-3" /></button>
-                    {!isUser && <button type="button" disabled={loading} aria-label="Regenerate character reply" title="Regenerate reply" onClick={(e) => { e.stopPropagation(); void handleRegenerateMessage(msg); }} className="p-1 rounded hover:bg-white/10 disabled:opacity-40">{regeneratingMsgId === msg.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}</button>}
-                    <button type="button" disabled={loading} aria-label="Edit message" title="Edit message" onClick={(e) => { e.stopPropagation(); setEditingMsgId(msg.id); setEditContent(msg.content); }} className="p-1 rounded hover:bg-white/10 disabled:opacity-40"><Edit2 className="w-3 h-3" /></button>
-                    <button type="button" disabled={loading} aria-label="Delete message" title="Delete message" onClick={(e) => {
-                      e.stopPropagation();
-                      if (preferences.confirmDelete && !window.confirm("Delete this message?")) return;
-                      onUpdateChat({ ...chat, messages: chat.messages.filter(m => m.id !== msg.id), updatedAt: new Date().toISOString() });
-                    }} className="p-1 rounded hover:bg-rose-500/20 hover:text-rose-300 disabled:opacity-40"><Trash2 className="w-3 h-3" /></button>
-                    <button type="button" onClick={(e) => { e.stopPropagation(); handleSaveQuote(msg); }} className="p-1 rounded hover:bg-emerald-500/20 hover:text-emerald-300" title="Bookmark this quote to Saved Messages" aria-label="Save message"><Bookmark className="w-3 h-3" /></button>
+                    <div className="relative" data-message-menu>
+                      <button type="button" aria-label="More message options" aria-haspopup="menu" aria-expanded={openMessageMenuId === msg.id}
+                        onClick={(event) => { event.stopPropagation(); setOpenMessageMenuId((current) => current === msg.id ? null : msg.id); }}
+                        className="rounded-full border border-white/40 bg-white/50 p-1.5 text-[#1b1018] shadow-sm hover:bg-white/80">
+                        <MoreVertical className="h-4 w-4" />
+                      </button>
+                      {openMessageMenuId === msg.id && <div role="menu" aria-label="Message options" className="cp-message-menu absolute right-0 top-full z-50 mt-1 w-52 rounded-xl border p-1.5 shadow-xl">
+                        <button type="button" role="menuitem" onClick={(event) => { event.stopPropagation(); handleSpeakMessage(msg); setOpenMessageMenuId(null); }} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm"><Volume2 className="h-4 w-4" />Read aloud</button>
+                        <button type="button" role="menuitem" onClick={(event) => { event.stopPropagation(); void handleCopyMessage(msg); setOpenMessageMenuId(null); }} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm"><Copy className="h-4 w-4" />Copy message</button>
+                        {!isUser && <button type="button" role="menuitem" disabled={loading} onClick={(event) => { event.stopPropagation(); void handleRegenerateMessage(msg); setOpenMessageMenuId(null); }} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm disabled:opacity-40">{regeneratingMsgId === msg.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}Regenerate reply</button>}
+                        <button type="button" role="menuitem" disabled={loading} onClick={(event) => { event.stopPropagation(); setEditingMsgId(msg.id); setEditContent(msg.content); setOpenMessageMenuId(null); }} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm disabled:opacity-40"><Edit2 className="h-4 w-4" />Edit message</button>
+                        <button type="button" role="menuitem" disabled={loading} onClick={(event) => {
+                          event.stopPropagation();
+                          if (preferences.confirmDelete && !window.confirm("Delete this message?")) return;
+                          onUpdateChat({ ...chat, messages: chat.messages.filter((message) => message.id !== msg.id), updatedAt: new Date().toISOString() });
+                          setOpenMessageMenuId(null);
+                        }} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-rose-800 disabled:opacity-40"><Trash2 className="h-4 w-4" />Delete message</button>
+                        <button type="button" role="menuitem" onClick={(event) => { event.stopPropagation(); handleSaveQuote(msg); setOpenMessageMenuId(null); }} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm"><Bookmark className="h-4 w-4" />Save message</button>
+                      </div>}
+                    </div>
                   </div>
                 </div>
 
