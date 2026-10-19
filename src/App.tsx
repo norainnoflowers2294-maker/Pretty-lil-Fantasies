@@ -102,6 +102,7 @@ const QuickBottomToolbar: React.FC<{
 export default function App() {
   const [data, setData] = useState<StorageData>(loadLocalData);
   const dataRef = useRef(data);
+  const characterCreateActionRef = useRef<(() => void) | null>(null);
   const [storageHydrated, setStorageHydrated] = useState(false);
   const [firebaseCloudHydrated, setFirebaseCloudHydrated] = useState(false);
   const firebaseCloudReadyRef = useRef(false);
@@ -824,6 +825,7 @@ export default function App() {
         existingCharacter={characterToEdit}
         existingCharactersList={data.characters}
         onSaveCharacter={(savedChar) => handleSaveCharacter(savedChar)}
+        onRegisterCreateAction={(action) => { characterCreateActionRef.current = action; }}
         onBack={() => {
           setIsCreateCharacterOpen(false);
           setCharacterToEdit(null);
@@ -863,7 +865,7 @@ export default function App() {
       <QuickBottomToolbar
         active="create"
         onCharacters={() => { setIsCreateCharacterOpen(false); setCharacterToEdit(null); setActiveTab('characters'); }}
-        onCreate={() => handleOpenCreateCharacterPage(null)}
+        onCreate={() => characterCreateActionRef.current ? characterCreateActionRef.current() : handleOpenCreateCharacterPage(null)}
         onHome={() => { setIsCreateCharacterOpen(false); setCharacterToEdit(null); setInChatMode(false); setActiveTab('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
         onRecent={() => handleOpenMostRecentChat()}
         hasRecentChat={data.chats.length > 0}
