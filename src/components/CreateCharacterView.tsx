@@ -38,25 +38,25 @@ import { resolveImageUrl } from '../utils/imageUrl';
 // 18-COLOR PALETTE CONSTANTS (Explicitly used throughout interface)
 // ---------------------------------------------------------------------------
 const PALETTE = {
-  // Soft blush glass and rose accents
-  navy: '#F8E2EB',
-  electricBlue: '#D887A7',
-  periwinkle: '#684251',
-  orangeRed: '#D96588',
-  hotPink: '#E777A0',
-  bubblegumPink: '#F2A8C2',
-  peach: '#FBE5ED',
-  coralPink: '#D77A97',
-  raspberry: '#C64F7E',
-  deepRaspberry: '#A83C68',
-  orchid: '#E7B6CA',
-  lavender: '#785264',
-  tangerine: '#E9A4BD',
-  brightCoral: '#D9678C',
-  softRed: '#CF6486',
-  mint: '#D77A9B',
-  teal: '#B85D81',
-  midnight: '#FFF5F8',
+  // PLF iridescent jelly-glass: vivid pink, aqua, and lilac with ink-dark contrast.
+  navy: '#211019',
+  electricBlue: '#63DFE9',
+  periwinkle: '#9079E8',
+  orangeRed: '#F24D99',
+  hotPink: '#FF2EA6',
+  bubblegumPink: '#FFA8D0',
+  peach: '#FFF0F7',
+  coralPink: '#FF83B5',
+  raspberry: '#D51B79',
+  deepRaspberry: '#781248',
+  orchid: '#D9A6FF',
+  lavender: '#C7B3FF',
+  tangerine: '#FFC0D8',
+  brightCoral: '#FF5DA8',
+  softRed: '#EF639B',
+  mint: '#9CEEDB',
+  teal: '#28CFC7',
+  midnight: '#FFF7FB',
 };
 
 // Preset Speech & Voice options
@@ -622,7 +622,7 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
 
       {/* Floating Toast Notification */}
       {toastMessage && (
-        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 px-5 py-2.5 rounded-2xl bg-[#020E8B]/90 border-2 border-[#8DB2F6] text-white text-xs font-bold shadow-[0_0_25px_rgba(1,141,242,0.6)] backdrop-blur-md flex items-center space-x-2 animate-in fade-in slide-in-from-top-4 duration-200">
+        <div className="cp-character-toast fixed top-20 left-1/2 z-[100] flex -translate-x-1/2 items-center space-x-2 rounded-2xl border border-white/90 bg-[#fff2f8]/95 px-5 py-2.5 text-xs font-bold text-[#211019] shadow-[0_8px_26px_rgba(109,38,74,.2)] backdrop-blur-xl animate-in fade-in slide-in-from-top-4 duration-200">
           <Sparkles className="w-4 h-4 text-[#FF7EB0]" />
           <span>{toastMessage}</span>
         </div>
