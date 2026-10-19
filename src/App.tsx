@@ -548,6 +548,101 @@ export default function App() {
     createChatForCharacterIds(characterIds, { personaId, scenario, title });
   };
 
+  const handleExportChatBundle = (chat: Chat) => {
+    const current = dataRef.current;
+    const bundle = {
+      format: 'pretty-little-fantasies-chat-bundle',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      chat,
+      characters: chat.characterIds
+        .map((id) => current.characters.find((character) => character.id === id))
+        .filter((character): character is Character => Boolean(character)),
+      persona: current.personas.find((item) => item.id === chat.personaId) || null,
+    };
+    const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = (chat.title || 'story_chat').trim().replace(/[^a-z0-9_-]+/gi, '_').slice(0, 80) + '_bundle.json';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportChatBundle = async (file: File) => {
+    try {
+      if (file.size > 25 * 1024 * 1024) throw new Error('The bundle is larger than 25 MB.');
+      const parsed = JSON.parse(await file.text()) as {
+        format?: unknown;
+        version?: unknown;
+        chat?: Chat;
+        characters?: Character[];
+        persona?: Persona | null;
+      };
+      if (parsed.format !== 'pretty-little-fantasies-chat-bundle' || parsed.version !== 1 || !parsed.chat || !Array.isArray(parsed.chat.messages) || !Array.isArray(parsed.chat.characterIds) || !Array.isArray(parsed.characters)) {
+        throw new Error('This file is not a supported Pretty Little Fantasies chat bundle.');
+      }
+      const current = dataRef.current;
+      const importedCharacters = parsed.characters.filter((character) => character && typeof character.id === 'string' && typeof character.name === 'string');
+      const characterIdMap = new Map<string, string>();
+      importedCharacters.forEach((character, index) => characterIdMap.set(character.id, `char_import_${Date.now()}_${index}_${Math.random().toString(36).slice(2, 7)}`));
+      parsed.chat.characterIds.forEach((id) => {
+        if (!characterIdMap.has(id)) characterIdMap.set(id, current.characters.some((character) => character.id === id) ? id : id);
+      });
+      const remapCharacterReferences = (value: unknown): unknown => {
+        if (Array.isArray(value)) return value.map(remapCharacterReferences);
+        if (value && typeof value === 'object') {
+          return Object.fromEntries(Object.entries(value as Record<string, unknown>).map(([key, child]) => [
+            key,
+            key === 'characterId' && typeof child === 'string' ? (characterIdMap.get(child) || child) : remapCharacterReferences(child),
+          ]));
+        }
+        return value;
+      };
+      const now = new Date().toISOString();
+      const characters = importedCharacters.map((character) => ({
+        ...(remapCharacterReferences(character) as Character),
+        id: characterIdMap.get(character.id)!,
+        createdAt: character.createdAt || now,
+        updatedAt: now,
+      }));
+      const importedPersona = parsed.persona && typeof parsed.persona.id === 'string' && typeof parsed.persona.name === 'string'
+        ? { ...parsed.persona, id: `persona_import_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`, is_default: false, createdAt: parsed.persona.createdAt || now, updatedAt: now }
+        : null;
+      const personaId = importedPersona?.id || current.personas.find((persona) => persona.is_default)?.id || current.personas[0]?.id;
+      if (!personaId) throw new Error('The bundle has no persona and this account has no persona to use.');
+      const importedChat = {
+        ...(parsed.chat as Chat),
+        id: `chat_import_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+        userId: auth.currentUser?.uid,
+        title: parsed.chat.title || 'Imported story',
+        characterIds: parsed.chat.characterIds.map((id) => characterIdMap.get(id) || id),
+        personaId,
+        messages: parsed.chat.messages.map((message, index) => ({
+          ...message,
+          id: `msg_import_${Date.now()}_${index}_${Math.random().toString(36).slice(2, 6)}`,
+          senderId: characterIdMap.get(message.senderId) || message.senderId,
+        })),
+        createdAt: parsed.chat.createdAt || now,
+        updatedAt: now,
+      };
+      const result = await updateData({
+        ...current,
+        characters: [...characters, ...current.characters],
+        deletedCharacterIds: (current.deletedCharacterIds || []).filter((id) => !characterIdMap.has(id)),
+        personas: importedPersona ? [importedPersona, ...current.personas] : current.personas,
+        chats: [importedChat, ...current.chats],
+        activeChatId: importedChat.id,
+      });
+      const cloudStatus = result?.firebaseSaved
+        ? ' It was backed up to Firebase.'
+        : ` It is on this device for now: ${result?.message || 'Firebase sync is not available.'}`;
+      window.alert(`Imported “${importedChat.title}” with ${characters.length} character card(s) and ${importedPersona ? 'its matching persona' : 'the default persona'}.${cloudStatus}`);
+    } catch (error) {
+      window.alert(error instanceof Error ? error.message : 'Could not import this chat bundle.');
+    }
+  };
+
   const handleStartDedicatedBot = (kind: 'horoscope' | 'chatgpt') => {
     const current = dataRef.current;
     const id = kind === 'chatgpt' ? 'dedicated_chatgpt' : 'dedicated_horoscope';
@@ -1234,7 +1329,7 @@ export default function App() {
             onBack={() => setActiveTab('home')}
           />
         ) : activeTab === 'chats' ? (
-          <ChatsLibraryView chats={data.chats} characters={data.characters} onOpenChat={handleSelectChat} onTogglePin={(chat) => handleUpdateChat({ ...chat, pinned: !chat.pinned, updatedAt: new Date().toISOString() })} />
+          <ChatsLibraryView chats={data.chats} characters={data.characters} onOpenChat={handleSelectChat} onTogglePin={(chat) => handleUpdateChat({ ...chat, pinned: !chat.pinned, updatedAt: new Date().toISOString() })} onExportBundle={handleExportChatBundle} onImportBundle={handleImportChatBundle} />
         ) : activeTab === 'characters' ? (
           <CharacterModal
             isOpen={true}
@@ -1298,6 +1393,13 @@ export default function App() {
               onPlay={handleStartDailyPrompt}
               onStartBot={handleStartDedicatedBot}
               onOpenCreator={() => setIsCreatorBotOpen(true)}
+              onCreateCharacter={() => handleOpenCreateCharacterPage(null)}
+              onCreatePersona={() => {
+                setActiveTab('personas');
+                setIsPersonaCreatorOpen(true);
+                setPersonaToEdit(null);
+              }}
+              onCreateLorebook={() => setIsLoreModalOpen(true)}
             />
 
             {/* 4. Glowing 4 Action Cards */}
