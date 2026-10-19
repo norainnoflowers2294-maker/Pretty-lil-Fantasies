@@ -823,9 +823,7 @@ export default function App() {
       <CreateCharacterView
         existingCharacter={characterToEdit}
         existingCharactersList={data.characters}
-        onSaveCharacter={(savedChar) => {
-          handleSaveCharacter(savedChar);
-        }}
+        onSaveCharacter={(savedChar) => handleSaveCharacter(savedChar)}
         onBack={() => {
           setIsCreateCharacterOpen(false);
           setCharacterToEdit(null);
