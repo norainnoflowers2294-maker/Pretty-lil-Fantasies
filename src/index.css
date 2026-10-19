@@ -3007,3 +3007,75 @@ body {
   color: #211019 !important;
   -webkit-text-fill-color: #211019 !important;
 }
+
+
+/* Final cascade pass: keep dashboard controls in the floral blush and pearl palette. */
+#root .cp-app-shell main section.plf-create-something[class*="rounded-"][class*="border"] {
+  color: #211019 !important;
+  background-color: #ffc9df !important;
+  background-image:
+    radial-gradient(ellipse at 5% 5%, rgba(255,255,255,.72), transparent 30%),
+    radial-gradient(ellipse at 94% 15%, rgba(112,226,238,.42), transparent 33%),
+    radial-gradient(ellipse at 74% 100%, rgba(193,143,244,.42), transparent 38%),
+    linear-gradient(115deg, #ffd6e8 0%, #ffb3d2 44%, #e9c8f6 76%, #ccecf0 100%) !important;
+  border-color: rgba(255,255,255,.98) !important;
+  box-shadow: 0 10px 28px rgba(115,44,74,.2), inset 0 1px 0 #fff !important;
+}
+#root .cp-app-shell main button.plf-create-shortcut[class*="rounded-"][class*="border"] {
+  color: #211019 !important;
+  background-color: #ffd3e5 !important;
+  background-image:
+    radial-gradient(ellipse at 18% 4%, rgba(255,255,255,.98), transparent 42%),
+    linear-gradient(135deg, #fff3f8, #ffc4dc 54%, #e7d4fa 80%, #d8f2f4) !important;
+  border-color: rgba(255,255,255,.98) !important;
+}
+#root .cp-app-shell main button.plf-create-shortcut svg,
+#root .cp-app-shell main button.plf-create-shortcut span {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  stroke: #211019 !important;
+}
+#root .cp-app-shell main button.cp-action-card {
+  color: #211019 !important;
+  background-color: #ffc9df !important;
+  background-image:
+    radial-gradient(ellipse at 14% 6%, rgba(255,255,255,.72), transparent 38%),
+    linear-gradient(135deg, #ffd9e9, #ffb4d3 48%, #e8d1f7 78%, #d3eff1) !important;
+  border: 1px solid rgba(255,255,255,.98) !important;
+  box-shadow: 0 8px 22px rgba(115,44,74,.18), inset 0 1px 0 #fff !important;
+}
+#root .cp-app-shell main button.cp-action-card :is(svg,span) {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  stroke: #211019 !important;
+}
+#root .cp-app-shell main .plf-category-pill .plf-category-icon-ring {
+  background: linear-gradient(135deg, #fff, #ffb9d7 55%, #d9c7f3) !important;
+  box-shadow: 0 3px 10px rgba(108,39,76,.16) !important;
+}
+#root .cp-app-shell main .plf-category-pill .plf-category-icon {
+  background: linear-gradient(135deg, #fffafd, #ffd3e5 62%, #e7d7f5) !important;
+  color: #211019 !important;
+  border-color: rgba(255,255,255,.98) !important;
+}
+#root .cp-app-shell main .plf-category-pill svg {
+  width: 19px !important;
+  height: 19px !important;
+  color: #211019 !important;
+  stroke: #211019 !important;
+}
+#root .cp-app-shell main .plf-category-pill[aria-pressed="false"] .plf-category-icon-ring {
+  background: linear-gradient(135deg, #fff, #ffd1e4 58%, #e4d9f4) !important;
+}
+#root .cp-app-shell main button:not(.plf-create-shortcut):not(.plf-category-pill):not(.cp-action-card) {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  background-color: #ffd6e8 !important;
+  background-image: linear-gradient(135deg, #fff7fb, #ffd3e5 55%, #e4d8f3) !important;
+  border-color: rgba(255,255,255,.96) !important;
+  box-shadow: 0 5px 14px rgba(115,44,74,.14), inset 0 1px 0 #fff !important;
+}
+#root .cp-app-shell main button:not(.plf-create-shortcut):not(.plf-category-pill):not(.cp-action-card) svg {
+  color: #211019 !important;
+  stroke: #211019 !important;
+}
