@@ -1521,3 +1521,97 @@ body {
 #root .cp-chat .cp-message-bubble * {
   font-family: "Another Typewriter", "Courier New", monospace !important;
 }
+
+
+/* Final shared reskin and user-selected type roles. */
+@font-face {
+  font-family: "Bavista Soulare";
+  src: url("/Pretty-lil-Fantasies/fonts/Bavista_Soulare.otf") format("opentype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Aloevera";
+  src: url("/Pretty-lil-Fantasies/fonts/Aloevera.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Oleo Script";
+  src: url("/Pretty-lil-Fantasies/fonts/OleoScript.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+/* Headings keep the handwritten display style across every screen. */
+#root :is(h1,h2,h3,h4,[data-screen-title]) {
+  font-family: "Helmida", Georgia, serif !important;
+}
+#root .cp-preferences :is(h1,h2,h3,h4,[data-settings-heading]) {
+  font-family: "Oleo Script", cursive !important;
+}
+
+/* Buttons and navigation tabs use Bavista Soulare; icons remain their own SVGs. */
+#root .cp-app-shell :is(button,a,[role="button"],[role="tab"]),
+#root aside[role="dialog"] :is(button,a,[role="button"],[role="tab"]),
+#root [role="dialog"]:not(aside) :is(button,a,[role="button"],[role="tab"]) {
+  font-family: "Bavista Soulare", Georgia, serif !important;
+}
+
+/* Both sides of every chat bubble keep the chosen typewriter face. */
+#root .cp-chat .cp-message-bubble,
+#root .cp-chat .cp-message-bubble * {
+  font-family: "Another Typewriter", "Courier New", monospace !important;
+}
+
+/* Reply composer: the requested Aloevera type on a light-pink field with black text. */
+#root .cp-chat textarea[placeholder^="Reply to"] {
+  font-family: "Aloevera", "Trebuchet MS", sans-serif !important;
+  color: #111 !important;
+  -webkit-text-fill-color: #111 !important;
+  caret-color: #111 !important;
+  background: #ffe3ef !important;
+  background-image: none !important;
+  border: 1px solid #e8a3c0 !important;
+}
+#root .cp-chat textarea[placeholder^="Reply to"]::placeholder {
+  color: #49313e !important;
+  -webkit-text-fill-color: #49313e !important;
+  opacity: 1 !important;
+}
+
+/* Home and other pages share a stable blush-glass surface and readable dark copy. */
+#root .cp-app-shell {
+  color: #1b1018 !important;
+  background: transparent !important;
+  background-image: none !important;
+}
+#root .cp-app-shell main :is(section,article,form),
+#root .cp-app-shell main [class*="rounded-"][class*="border"] {
+  color: #1b1018 !important;
+  background-color: rgba(255, 235, 245, .82) !important;
+  border-color: rgba(255, 255, 255, .96) !important;
+  box-shadow: 0 12px 30px rgba(90, 25, 58, .16), inset 0 1px 0 rgba(255,255,255,.96) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(155%) !important;
+  backdrop-filter: blur(22px) saturate(155%) !important;
+}
+#root .cp-app-shell main :is(p,h1,h2,h3,h4,h5,h6,span,small,strong,label) {
+  color: #1b1018 !important;
+  -webkit-text-fill-color: #1b1018 !important;
+  text-shadow: none !important;
+}
+#root .cp-app-shell :is(button,a,[role="button"],[role="tab"]) {
+  color: #1b1018 !important;
+  -webkit-text-fill-color: #1b1018 !important;
+}
+#root .cp-app-shell :is(button,a,[role="button"],[role="tab"]):is([aria-current="page"],[aria-pressed="true"]) {
+  background-color: #f5bdd5 !important;
+  border-color: #fff !important;
+}
+@media (max-width: 640px) {
+  #root .cp-app-shell > header h1 { font-size: clamp(.95rem, 5vw, 1.6rem) !important; }
+  #root .cp-app-shell main { width: 100%; min-width: 0; }
+}
