@@ -11,6 +11,7 @@ interface WalletModalProps {
   personaName: string;
   characterName: string;
   onSaveWallet: (wallet: StoryWallet) => void;
+  onIncomingPayment?: (transaction: StoryWallet['transactions'][number]) => void;
 }
 
 function accountIcon(account: StoryWalletAccount) {
@@ -24,7 +25,7 @@ function dateLabel(timestamp: number) {
   return new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).format(timestamp);
 }
 
-export function WalletModal({ isOpen, onClose, view, onChangeView, wallet, personaName, characterName, onSaveWallet }: WalletModalProps) {
+export function WalletModal({ isOpen, onClose, view, onChangeView, wallet, personaName, characterName, onSaveWallet, onIncomingPayment }: WalletModalProps) {
   const [amount, setAmount] = useState('');
   const [sender, setSender] = useState(characterName);
   const [memo, setMemo] = useState('');
@@ -65,6 +66,8 @@ export function WalletModal({ isOpen, onClose, view, onChangeView, wallet, perso
         memo,
       });
       onSaveWallet(next);
+      const payment = next.transactions[0];
+      if (payment && /lucious/i.test(payment.sender)) onIncomingPayment?.(payment);
       setAmount('');
       setMemo('');
       setStatus('Fictional transfer added to this story wallet.');
@@ -74,7 +77,7 @@ export function WalletModal({ isOpen, onClose, view, onChangeView, wallet, perso
   };
 
   return <div className="fixed inset-0 z-[80] flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-sm p-0 sm:p-5" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
-    <section role="dialog" aria-modal="true" aria-label={view === 'activity' ? 'Fictional Cash App feed' : 'Fictional wallet'} className="w-full sm:max-w-2xl max-h-[94dvh] overflow-hidden rounded-t-3xl sm:rounded-3xl border border-[#ff66b2]/40 bg-[#140410] text-[#ffe5f1] shadow-[0_20px_80px_rgba(0,0,0,.7)]">
+    <section role="dialog" aria-modal="true" aria-label={view === 'activity' ? 'Fictional Cash App feed' : 'Fictional wallet'} className="cp-wallet-modal w-full sm:max-w-2xl max-h-[94dvh] overflow-hidden rounded-t-3xl sm:rounded-3xl border border-[#ff66b2]/40 bg-[#140410] text-[#ffe5f1] shadow-[0_20px_80px_rgba(0,0,0,.7)]">
       <header className="flex items-center justify-between border-b border-white/10 bg-[#0d020b] px-5 py-4">
         <div>
           <p className="text-[10px] font-bold tracking-[.22em] text-[#9be3d5]">FICTIONAL STORY WALLET</p>
