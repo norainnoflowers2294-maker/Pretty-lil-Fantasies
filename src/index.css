@@ -3369,6 +3369,37 @@ body {
 }
 
 
+/* Explicit palette surface for legacy chat-drawer textareas, inputs and selects. */
+#root .cp-chat aside[role="dialog"][aria-label="Chat navigation drawer"] :is(textarea[class*="rounded-"][class*="border"][class*="bg-"], input[class*="rounded-"][class*="border"][class*="bg-"], select[class*="rounded-"][class*="border"][class*="bg-"]),
+#root .cp-chat aside[role="dialog"][aria-label="Chat tools drawer"] :is(textarea[class*="rounded-"][class*="border"][class*="bg-"], input[class*="rounded-"][class*="border"][class*="bg-"], select[class*="rounded-"][class*="border"][class*="bg-"]) {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  caret-color: #211019 !important;
+  background: linear-gradient(135deg, #fff7fb, #ffd6e8 58%, #e7d9f4) !important;
+  border-color: rgba(217,135,167,.82) !important;
+  box-shadow: inset 0 1px 3px rgba(133,53,88,.08), 0 3px 10px rgba(133,53,88,.1) !important;
+}
+#root .cp-chat aside[role="dialog"][aria-label="Chat navigation drawer"] :is(textarea,input)::placeholder,
+#root .cp-chat aside[role="dialog"][aria-label="Chat tools drawer"] :is(textarea,input)::placeholder {
+  color: #6d3c52 !important;
+  -webkit-text-fill-color: #6d3c52 !important;
+  opacity: 1 !important;
+}
+
+/* Give recent-chat captions a blush glass footing so black titles stay legible over photos. */
+#root .cp-app-shell main .grid > div.group > div[class*="relative p-3"] {
+  background: linear-gradient(135deg, rgba(255,241,248,.97), rgba(255,214,232,.94) 58%, rgba(232,218,246,.92)) !important;
+  border-top: 1px solid rgba(255,255,255,.96);
+  color: #211019 !important;
+  text-shadow: none !important;
+}
+#root .cp-app-shell main .grid > div.group > div[class*="relative p-3"] :is(h3,p,span) {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  text-shadow: none !important;
+}
+
+
 /* Keep the compact chat persona picker from inheriting the old plum quick-action chip. */
 #root .cp-chat .cp-chat-composer label:has(select[aria-label="Change persona for this chat"]) {
   color: #211019 !important;
