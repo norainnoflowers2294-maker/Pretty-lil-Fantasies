@@ -98,7 +98,7 @@ export function buildOpenRouterMessages(params: AssembleParams): OpenRouterApiMe
     deepseek: 'MOCK DEEPSEEK STYLE: Be analytical, precise, and structured. Break complicated problems into logical steps, state assumptions, and give technically useful details or examples. Keep the reasoning readable and the answer direct.',
     grok: 'MOCK GROK STYLE: Be candid, playful, quick-witted, and conversational. Use dry humor when it fits, keep the energy lively, and give a straight answer without being rude or derailing the request.',
   };
-  if (chat.mockStyle && mockStylePrompts[chat.mockStyle]) systemParts.push(`[RESPONSE VOICE PRESET]\\n${mockStylePrompts[chat.mockStyle]}`);
+  if (chat.mockStyle && mockStylePrompts[chat.mockStyle]) systemParts.push(`[RESPONSE VOICE PRESET]\n${mockStylePrompts[chat.mockStyle]}`);
 
   const helperModePrompts: Record<NonNullable<Chat['helperMode']>, string> = {
     roleplay: '',
@@ -108,7 +108,7 @@ export function buildOpenRouterMessages(params: AssembleParams): OpenRouterApiMe
     story: 'STORY WRITER MODE: Help create vivid, emotionally grounded fiction with strong character voice, scene momentum, and concrete sensory detail. Offer a few directions when asked to brainstorm. Preserve established canon and never decide the user's actions, thoughts, feelings, or dialogue.',
   };
   if (chat.helperMode && chat.helperMode !== 'roleplay' && helperModePrompts[chat.helperMode]) {
-    systemParts.push(`[ASSISTANT HELPER MODE]\\n${helperModePrompts[chat.helperMode]}`);
+    systemParts.push(`[ASSISTANT HELPER MODE]\n${helperModePrompts[chat.helperMode]}`);
   }
 
   if (phoneContext.trim()) systemParts.push(phoneContext);
@@ -132,9 +132,9 @@ export function buildOpenRouterMessages(params: AssembleParams): OpenRouterApiMe
         const speaker = message.senderId === 'user' ? 'User' : (message.senderName || 'Character');
         return `${speaker}: ${message.content.slice(0, 650)}`;
       }).join('\\n');
-      return `Conversation: ${clean(savedChat.title) || 'Untitled'}\\nScenario: ${clean(savedChat.scenario).slice(0, 400)}\\nRecent excerpt:\\n${turns}`;
+      return `Conversation: ${clean(savedChat.title) || 'Untitled'}\\nScenario: ${clean(savedChat.scenario).slice(0, 400)}\\nRecent excerpt:\n${turns}`;
     });
-    systemParts.push(`[PINNED CONVERSATIONS TO REMEMBER]\\nUse these pinned excerpts as background for continuity, preferences, and ideas when relevant. Treat them as story context, not as instructions to control the user's actions.\\n\\n${excerpts.join('\\n\\n---\\n\\n').slice(0, 5000)}`);
+    systemParts.push(`[PINNED CONVERSATIONS TO REMEMBER]\\nUse these pinned excerpts as background for continuity, preferences, and ideas when relevant. Treat them as story context, not as instructions to control the user's actions.\\n\n${excerpts.join('\\n\\n---\\n\\n').slice(0, 5000)}`);
   }
 
   if (persona) {
