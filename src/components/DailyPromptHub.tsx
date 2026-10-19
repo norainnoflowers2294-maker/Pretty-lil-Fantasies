@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Bot, Cake, ChevronRight, Compass, Sparkles, WandSparkles } from 'lucide-react';
+import { Bot, Cake, ChevronRight, Compass, Sparkles, WandSparkles, UserRound, Contact, BookOpen, Feather } from 'lucide-react';
 import type { Character, Persona } from '../types/roleplay';
 
 const prompts = [
@@ -19,8 +19,11 @@ interface Props {
   onPlay: (characterIds: string[], personaId: string, prompt: string, title: string) => void;
   onStartBot: (kind: 'horoscope' | 'chatgpt') => void;
   onOpenCreator: () => void;
+  onCreateCharacter: () => void;
+  onCreatePersona: () => void;
+  onCreateLorebook: () => void;
 }
-export function DailyPromptHub({ characters, personas, onPlay, onStartBot, onOpenCreator }: Props) {
+export function DailyPromptHub({ characters, personas, onPlay, onStartBot, onOpenCreator, onCreateCharacter, onCreatePersona, onCreateLorebook }: Props) {
   const [todayDate, setTodayDate] = useState(() => new Date());
   useEffect(() => { const timer = window.setInterval(() => setTodayDate(new Date()), 60_000); return () => window.clearInterval(timer); }, []);
   const prompt = prompts[dayIndex(todayDate)];
@@ -47,6 +50,25 @@ export function DailyPromptHub({ characters, personas, onPlay, onStartBot, onOpe
           <span className="mt-3 inline-flex rounded-full border border-[#d68eaa]/35 bg-white/75 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#211019]">{prompt.mood}</span>
         </div>
         <button type="button" onClick={() => setOpen(true)} className="flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-white/90 bg-gradient-to-r from-[#ffd5e5] via-[#f4aec9] to-[#ffe8f0] px-6 py-3 font-bold text-[#211019] shadow-[0_6px_16px_rgba(115,44,74,.14)] transition hover:brightness-105"><Compass className="h-4 w-4" />Play now<ChevronRight className="h-4 w-4" /></button>
+      </div>
+    </section>
+    <section aria-label="Create something new" className="mx-4 sm:mx-6 overflow-hidden rounded-[26px] border border-white/90 bg-gradient-to-br from-white/85 via-[#ffe1ed]/90 to-[#f4d8ff]/80 p-4 text-[#1d1017] shadow-[0_10px_28px_rgba(115,44,74,.14)] backdrop-blur-xl">
+      <div className="mb-3 flex items-center gap-2">
+        <span className="grid h-8 w-8 place-items-center rounded-full border border-white/90 bg-gradient-to-br from-[#fffafd] to-[#ffd5e5] text-[#211019] shadow-[inset_0_1px_5px_white,0_3px_8px_rgba(115,44,74,.13)]"><Sparkles className="h-4 w-4" /></span>
+        <div><h3 className="text-sm font-extrabold">Create Something New</h3><p className="text-[11px] text-[#543645]/80">Swipe to choose your next idea</p></div>
+        <span aria-hidden="true" className="ml-auto text-[10px] font-semibold text-[#543645]/75">SWIPE →</span>
+      </div>
+      <div className="flex snap-x snap-mandatory gap-2.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {[
+          { label: 'Character', icon: <UserRound className="h-5 w-5" />, action: onCreateCharacter },
+          { label: 'Persona', icon: <Contact className="h-5 w-5" />, action: onCreatePersona },
+          { label: 'Lorebook', icon: <BookOpen className="h-5 w-5" />, action: onCreateLorebook },
+          { label: 'New Story', icon: <Feather className="h-5 w-5" />, action: () => setOpen(true) },
+        ].map((item) => <button key={item.label} type="button" onClick={item.action} className="group relative flex min-w-[112px] snap-start flex-col items-center gap-2 overflow-hidden rounded-2xl border border-white/95 bg-gradient-to-br from-[#fffafd] via-[#ffe6f0] to-[#eadfff] px-3 py-3 text-center text-[#211019] shadow-[inset_0_1px_5px_rgba(255,255,255,.95),0_5px_12px_rgba(115,44,74,.12)] transition hover:-translate-y-0.5 hover:shadow-[inset_0_1px_8px_white,0_8px_16px_rgba(200,75,140,.2)] active:scale-[.98]">
+            <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/70 via-white/20 to-transparent" />
+            <span className="relative grid h-10 w-10 place-items-center rounded-full border border-white bg-gradient-to-br from-white/90 to-[#ffd8ea] text-[#211019] shadow-[inset_0_1px_5px_white,0_3px_8px_rgba(115,44,74,.13)]">{item.icon}</span>
+            <span className="relative text-xs font-bold">{item.label}</span>
+          </button>)}
       </div>
     </section>
     <section className="cp-dedicated-bots mx-4 sm:mx-6">
