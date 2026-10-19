@@ -1,3 +1,4 @@
+import { CloudLoginScreen } from './components/CloudLoginScreen';
 import { normalizePreferences, downloadJson, type AppPreferences } from './lib/preferences';
 import './components/preferences.css';
 import { testOpenRouterConnection } from './lib/openrouter';
@@ -791,6 +792,17 @@ export default function App() {
   const activeWalletPersona = activeChat ? (data.personas.find((item) => item.id === activeChat.personaId) || data.personas[0]) : undefined;
   const activeWallet = activeChat && activeWalletPersona ? getWalletForScope(data.wallets, activeChat.id, activeWalletPersona.id) : null;
   const walletSenderName = activeChat ? (data.characters.find((item) => activeChat.characterIds.includes(item.id))?.name || 'Story character') : 'Story character';
+
+  // Show cloud sign-in on a fresh visit without locking away local stories.
+  // Once Google auth restores, the existing Firebase hydration flow takes over.
+  if (storageHydrated && firebaseCloudHydrated && !firebaseUser &&
+      typeof sessionStorage !== 'undefined' && sessionStorage.getItem('plf_continue_local') !== 'yes') {
+    return <CloudLoginScreen onContinueLocal={() => {
+      try { sessionStorage.setItem('plf_continue_local', 'yes'); } catch {}
+      setFirebaseCloudHydrated(false);
+      window.setTimeout(() => setFirebaseCloudHydrated(true), 0);
+    }} />;
+  }
 
   // 1. Dedicated Full-Page Create Character View
   if (isCreateCharacterOpen) {
