@@ -528,8 +528,19 @@ export default function App() {
       system_prompt: kind === 'chatgpt' ? 'You are ChatGPT, a helpful general-purpose assistant. Answer the user directly and clearly; you are not a roleplay character.' : 'You are a friendly horoscope guide. Offer astrology as reflective entertainment, not certainty. Ask for a zodiac sign when needed.',
       createdAt: now, updatedAt: now,
     };
-    if (!existing) updateData({ ...current, characters: [botCharacter, ...current.characters] });
-    createChatForCharacterIds([botCharacter.id], { scenario: botCharacter.scenario, title: name });
+    // Dedicated bots must have a valid card in the current storage snapshot
+    // before the chat is created, including when a legacy card already exists.
+    const freshBot = { ...botCharacter,
+      name,
+      personality: kind === 'chatgpt' ? 'Helpful, clear, curious, and practical.' : 'Warm, reflective, playful, and astrology-inspired.',
+      scenario: kind === 'chatgpt' ? 'A friendly assistant chat for questions, planning, and brainstorming.' : 'A daily horoscope companion for zodiac reflections and story inspiration.',
+      first_mes: kind === 'chatgpt' ? 'Hi! What would you like help with?' : 'Welcome, stargazer. What sign or question should we explore today?',
+      system_prompt: kind === 'chatgpt' ? 'You are an in-app general-purpose AI assistant, not a roleplay character. Answer questions directly and clearly. Do not narrate actions or speak for the user.' : 'You are a friendly horoscope guide. Offer astrology as reflective entertainment, not certainty. Ask for a zodiac sign when needed.',
+      updatedAt: now,
+    };
+    const characters = existing ? current.characters.map((character) => character.id === id ? freshBot : character) : [freshBot, ...current.characters];
+    void updateData({ ...current, characters });
+    createChatForCharacterIds([id], { scenario: freshBot.scenario, title: name });
   };
 
   const handleStartChatWithCharacter = (char: Character) => {
