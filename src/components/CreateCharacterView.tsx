@@ -974,10 +974,12 @@ export const CreateCharacterView: React.FC<CreateCharacterViewProps> = ({
             </div>
 
             <button
-              onClick={() => setRightDrawerOpen(false)}
-              className="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all"
+              type="button"
+              aria-label="Close right navigation drawer"
+              onClick={(event) => { event.stopPropagation(); setRightDrawerOpen(false); }}
+              className="relative z-10 grid min-h-11 min-w-11 place-items-center rounded-full border border-white/90 bg-white/85 p-2 text-[#211019] shadow-lg transition-all hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pink-500"
             >
-              <X className="w-4 h-4" />
+              <X className="h-5 w-5" />
             </button>
           </div>
 
