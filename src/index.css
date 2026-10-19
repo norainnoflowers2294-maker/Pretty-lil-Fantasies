@@ -1615,3 +1615,12 @@ body {
   #root .cp-app-shell > header h1 { font-size: clamp(.95rem, 5vw, 1.6rem) !important; }
   #root .cp-app-shell main { width: 100%; min-width: 0; }
 }
+
+
+/* Keep closed full-screen overlays hidden; the prior global visibility rule made Home look dimmed. */
+#root .cp-app-shell .opacity-0 {
+  opacity: 0 !important;
+}
+#root .cp-app-shell .opacity-100 {
+  opacity: 1 !important;
+}
