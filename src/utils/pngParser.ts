@@ -248,11 +248,27 @@ function hasCharacterCardData(parsed: any): boolean {
 }
 
 export async function parseCharacterFile(file: File): Promise<Partial<Character>> {
-  const fallbackName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ') || 'Unnamed Character';
-  if (file.name.toLowerCase().endsWith('.json')) {
+  const normalizedName = file.name.toLowerCase();
+  const fallbackName = file.name.replace(/\\.[^/.]+$/, '').replace(/[-_]/g, ' ') || 'Unnamed Character';
+  const isJson = normalizedName.endsWith('.json') || file.type === 'application/json' || file.type.endsWith('+json');
+  if (isJson) {
     return normalizeCharacterCard(JSON.parse(await file.text()), fallbackName);
   }
-  if (!file.name.toLowerCase().endsWith('.png')) throw new Error('Choose a character PNG or JSON card.');
+
+  // Some mobile file pickers omit the filename extension or MIME type. Detect
+  // PNG by its signature too, while retaining the image-only fallback below.
+  const signature = new Uint8Array(await file.slice(0, 8).arrayBuffer());
+  const hasPngSignature =
+    signature[0] === 0x89 &&
+    signature[1] === 0x50 &&
+    signature[2] === 0x4e &&
+    signature[3] === 0x47 &&
+    signature[4] === 0x0d &&
+    signature[5] === 0x0a &&
+    signature[6] === 0x1a &&
+    signature[7] === 0x0a;
+  const isPng = normalizedName.endsWith('.png') || file.type === 'image/png' || hasPngSignature;
+  if (!isPng) throw new Error('Choose a character PNG or JSON card.');
 
   const { textChunks, base64Image } = await parsePngMetadata(file);
   const metadataPriority = ['chara', 'ccv3', 'ccv2', 'character', 'character_card', 'character_card_v2', 'chara_card', 'chara_card_v2', 'chara_card_v3', 'description', 'comment'];
