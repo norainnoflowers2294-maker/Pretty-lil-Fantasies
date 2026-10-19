@@ -71,7 +71,7 @@ export const ActionCards: React.FC<ActionCardsProps> = ({
           <button
             key={card.id}
             onClick={card.onClick}
-            className={`group relative rounded-3xl p-6 bg-gradient-to-br ${card.gradient} border-2 ${card.border} ${card.glow} flex flex-col items-center text-center justify-between min-h-[220px] transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] cursor-pointer overflow-hidden`}
+            className={`cp-action-card group relative rounded-3xl p-6 bg-gradient-to-br ${card.gradient} border-2 ${card.border} ${card.glow} flex flex-col items-center text-center justify-between min-h-[220px] transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] cursor-pointer overflow-hidden`}
           >
             <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-black/20 pointer-events-none" />
 
@@ -79,7 +79,7 @@ export const ActionCards: React.FC<ActionCardsProps> = ({
               <Sparkles className="w-4 h-4 animate-pulse" />
             </div>
 
-            <div className="mt-2 w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-md border border-white/40 flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform">
+            <div className="cp-action-icon mt-2 w-16 h-16 rounded-full bg-white/20 backdrop-blur-md border border-white/40 flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform">
               {card.icon}
             </div>
 
@@ -92,7 +92,7 @@ export const ActionCards: React.FC<ActionCardsProps> = ({
               </p>
             </div>
 
-            <div className="w-9 h-9 rounded-full bg-white text-black flex items-center justify-center shadow-md group-hover:scale-110 group-hover:bg-[#ffebf5] transition-all">
+            <div className="cp-action-arrow w-9 h-9 rounded-full bg-white text-black flex items-center justify-center shadow-md group-hover:scale-110 group-hover:bg-[#ffebf5] transition-all">
               <ArrowRight className="w-4 h-4 text-pink-600 font-bold" />
             </div>
           </button>
