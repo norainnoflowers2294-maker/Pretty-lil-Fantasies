@@ -2956,3 +2956,54 @@ body {
 @media (prefers-reduced-motion: reduce) {
   #root .cp-app-shell .plf-floating-bubble { opacity: .2 !important; }
 }
+
+
+/* Let the top navigation buttons float individually, without a track behind them. */
+#root .cp-app-shell .plf-top-row,
+#root .cp-app-shell .plf-top-row > div,
+#root .cp-app-shell .plf-top-row nav,
+#root .cp-app-shell .plf-top-row .plf-top-navigation-track {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+#root .cp-app-shell .plf-top-row .plf-top-navigation-track > button {
+  border: 1px solid rgba(255,255,255,.96) !important;
+  border-radius: 999px !important;
+  background:
+    radial-gradient(circle at 27% 18%, rgba(255,255,255,.98), transparent 47%),
+    linear-gradient(140deg, #fff8fc, #ffd9e9 60%, #e4e5ff) !important;
+  box-shadow: 0 5px 14px rgba(107,39,73,.15), inset 0 1px 0 #fff !important;
+}
+
+/* Keep the dashboard shortcut card visibly pink and iridescent instead of washing to white. */
+#root .cp-app-shell main .plf-create-something {
+  color: #211019 !important;
+  background-color: #ffd9e9 !important;
+  background-image:
+    radial-gradient(ellipse at 4% 8%, rgba(255,255,255,.66), transparent 29%),
+    radial-gradient(ellipse at 95% 18%, rgba(110,226,239,.34), transparent 32%),
+    radial-gradient(ellipse at 72% 100%, rgba(193,147,246,.34), transparent 37%),
+    linear-gradient(115deg, rgba(255,220,235,.97), rgba(255,187,216,.96) 43%, rgba(228,207,252,.94) 75%, rgba(204,239,244,.94)) !important;
+  border-color: rgba(255,255,255,.99) !important;
+  box-shadow: 0 10px 28px rgba(115,44,74,.18), inset 0 1px 0 #fff !important;
+}
+#root .cp-app-shell main .plf-create-something > span[aria-hidden="true"] {
+  color: rgba(185,67,116,.45) !important;
+}
+#root .cp-app-shell main .plf-create-shortcut {
+  color: #211019 !important;
+  background-color: #ffe1ed !important;
+  background-image:
+    radial-gradient(ellipse at 15% 4%, rgba(255,255,255,.96), transparent 43%),
+    linear-gradient(135deg, #fff7fb, #ffd8e9 48%, #e8dcff 78%, #ddf4f6) !important;
+  border-color: rgba(255,255,255,.98) !important;
+}
+#root .cp-app-shell main .plf-create-shortcut :is(span,svg) {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+}
