@@ -1150,7 +1150,7 @@ export default function App() {
             onBack={() => setActiveTab('home')}
           />
         ) : activeTab === 'chats' ? (
-          <ChatsLibraryView chats={data.chats} characters={data.characters} onOpenChat={handleSelectChat} />
+          <ChatsLibraryView chats={data.chats} characters={data.characters} onOpenChat={handleSelectChat} onTogglePin={(chat) => handleUpdateChat({ ...chat, pinned: !chat.pinned, updatedAt: new Date().toISOString() })} />
         ) : activeTab === 'characters' ? (
           <CharacterModal
             isOpen={true}
