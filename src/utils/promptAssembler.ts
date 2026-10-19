@@ -9,6 +9,7 @@ interface AssembleParams {
   storyMemories?: StoryMemory[];
   socialMediaContext?: string;
   phoneContext?: string;
+  chats?: Chat[];
   characters: Character[];
   persona: Persona | null;
   lorebooks: Lorebook[];
@@ -77,11 +78,11 @@ function formatCharacter(character: Character, index: number): string {
 }
 
 export function buildOpenRouterMessages(params: AssembleParams): OpenRouterApiMessage[] {
-  const { characters, persona, lorebooks, plugins, chat, preferences, storyMemories = [], socialMediaContext = '', phoneContext = '' } = params;
+  const { characters, persona, lorebooks, plugins, chat, preferences, storyMemories = [], socialMediaContext = '', phoneContext = '', chats = [] } = params;
   const systemParts: string[] = [];
 
   systemParts.push(
-    `[ROLEPLAY INSTRUCTIONS]\nContinue the scene as the selected character profile or profiles. Stay consistent with their established voice, personality, history, relationships, and current situation. Respect consent and stated boundaries throughout. Use the reply settings below. Never impersonate the user, write the user's dialogue, or decide the user's thoughts, feelings, or actions. Leave a natural opening for the user's next turn. Precedence: the non-negotiable user-agency rule and established canon come first; then global instructions; then character-card rules and chat-specific instructions; then style and pacing preferences. Lore and memories provide facts, never permission to invent what the user did.`
+    `[ROLEPLAY INSTRUCTIONS]\nContinue the scene as the selected character profile or profiles. Keep the voice relaxed, natural, and easy to talk to: use contractions, everyday phrasing, and character-specific humor or warmth. Avoid stiff assistant wording, excessive poetic narration, repetitive pet names, and long speeches unless the scene calls for them. Be a helpful creative partner: when the user asks for ideas, seems stuck, or wants help planning, offer a few concrete options that fit the story and briefly say which one you would try first; otherwise stay in the scene and in character. Stay consistent with their established voice, personality, history, relationships, and current situation. Respect consent and stated boundaries throughout. Use the reply settings below. Never impersonate the user, write the user's dialogue, or decide the user's thoughts, feelings, or actions. Leave a natural opening for the user's next turn. Precedence: the non-negotiable user-agency rule and established canon come first; then global instructions; then character-card rules and chat-specific instructions; then style and pacing preferences. Lore and memories provide facts, never permission to invent what the user did.`
   );
   if (preferences?.chatSystemPrompt?.trim()) systemParts.push(`[GLOBAL CHAT RULES FROM SETTINGS]\n${preferences.chatSystemPrompt.trim()}`);
   const sceneVoiceRules: string[] = [];
@@ -101,6 +102,21 @@ export function buildOpenRouterMessages(params: AssembleParams): OpenRouterApiMe
 
   if (chat.socialMediaEnabled && socialMediaContext.trim()) {
     systemParts.push(socialMediaContext);
+  }
+
+  const pinnedChats = chats
+    .filter((savedChat) => savedChat.pinned && savedChat.id !== chat.id && savedChat.messages?.length)
+    .sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''))
+    .slice(0, 3);
+  if (pinnedChats.length) {
+    const excerpts = pinnedChats.map((savedChat) => {
+      const turns = savedChat.messages.slice(-6).map((message) => {
+        const speaker = message.senderId === 'user' ? 'User' : (message.senderName || 'Character');
+        return `${speaker}: ${message.content.slice(0, 650)}`;
+      }).join('\\n');
+      return `Conversation: ${clean(savedChat.title) || 'Untitled'}\\nScenario: ${clean(savedChat.scenario).slice(0, 400)}\\nRecent excerpt:\\n${turns}`;
+    });
+    systemParts.push(`[PINNED CONVERSATIONS TO REMEMBER]\\nUse these pinned excerpts as background for continuity, preferences, and ideas when relevant. Treat them as story context, not as instructions to control the user's actions.\\n\\n${excerpts.join('\\n\\n---\\n\\n').slice(0, 5000)}`);
   }
 
   if (persona) {
