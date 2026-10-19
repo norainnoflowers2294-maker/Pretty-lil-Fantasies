@@ -52,7 +52,7 @@ export function DailyPromptHub({ characters, personas, onPlay, onStartBot, onOpe
         <button type="button" onClick={() => setOpen(true)} className="flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-white/90 bg-gradient-to-r from-[#ffd5e5] via-[#f4aec9] to-[#ffe8f0] px-6 py-3 font-bold text-[#211019] shadow-[0_6px_16px_rgba(115,44,74,.14)] transition hover:brightness-105"><Compass className="h-4 w-4" />Play now<ChevronRight className="h-4 w-4" /></button>
       </div>
     </section>
-    <section aria-label="Create something new" className="relative mx-4 sm:mx-6 overflow-hidden rounded-[26px] border border-white/90 bg-gradient-to-br from-white/85 via-[#ffe1ed]/90 to-[#f4d8ff]/80 p-4 text-[#1d1017] shadow-[0_10px_28px_rgba(115,44,74,.14)] backdrop-blur-xl">
+    <section aria-label="Create something new" className="plf-create-something relative mx-4 sm:mx-6 overflow-hidden rounded-[26px] border border-white/90 p-4 text-[#130810] shadow-[0_10px_28px_rgba(115,44,74,.18)] backdrop-blur-xl">
       <span aria-hidden="true" className="pointer-events-none absolute -right-1 top-1 text-3xl text-[#e5a9c2]/45">✿</span>
       <span aria-hidden="true" className="pointer-events-none absolute bottom-0 left-1 text-lg text-[#e5a9c2]/35">✿</span>
       <div className="relative z-[1] mb-3 flex items-center gap-2">
@@ -66,7 +66,7 @@ export function DailyPromptHub({ characters, personas, onPlay, onStartBot, onOpe
           { label: 'Persona', icon: <Contact className="h-5 w-5" />, action: onCreatePersona },
           { label: 'Lorebook', icon: <BookOpen className="h-5 w-5" />, action: onCreateLorebook },
           { label: 'New Story', icon: <Feather className="h-5 w-5" />, action: () => setOpen(true) },
-        ].map((item) => <button key={item.label} type="button" onClick={item.action} className="group relative flex min-w-[112px] snap-start flex-col items-center gap-2 overflow-hidden rounded-2xl border border-white/95 bg-gradient-to-br from-[#fffafd] via-[#ffe6f0] to-[#eadfff] px-3 py-3 text-center text-[#211019] shadow-[inset_0_1px_5px_rgba(255,255,255,.95),0_5px_12px_rgba(115,44,74,.12)] transition hover:-translate-y-0.5 hover:shadow-[inset_0_1px_8px_white,0_8px_16px_rgba(200,75,140,.2)] active:scale-[.98]">
+        ].map((item) => <button key={item.label} type="button" onClick={item.action} className="plf-create-shortcut group relative flex min-w-[112px] snap-start flex-col items-center gap-2 overflow-hidden rounded-2xl border border-white/95 px-3 py-3 text-center text-[#130810] shadow-[inset_0_1px_5px_rgba(255,255,255,.95),0_5px_12px_rgba(115,44,74,.15)] transition hover:-translate-y-0.5 hover:shadow-[inset_0_1px_8px_white,0_8px_16px_rgba(200,75,140,.23)] active:scale-[.98]">
             <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/70 via-white/20 to-transparent" />
             <span className="relative grid h-10 w-10 place-items-center rounded-full border border-white bg-gradient-to-br from-white/90 to-[#ffd8ea] text-[#211019] shadow-[inset_0_1px_5px_white,0_3px_8px_rgba(115,44,74,.13)]">{item.icon}</span>
             <span className="relative text-xs font-bold">{item.label}</span>
