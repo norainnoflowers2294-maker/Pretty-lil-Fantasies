@@ -17,7 +17,7 @@ describe('fictional wallet ledger', () => {
     const wallet = createStoryWallet('chat-a', 'persona-a');
     const input = { eventId: 'transfer-1', sender: 'Lou', recipient: 'Emmy', amountCents: 75000, memo: 'For you', timestamp: 100 };
     const posted = recordIncomingTransfer(wallet, input);
-    expect(posted.accounts.find((account) => account.type === 'cash')?.balanceCents).toBe(first.accounts.find((account) => account.type === 'cash')!.balanceCents + 75000);
+    expect(posted.accounts.find((account) => account.type === 'cash')?.balanceCents).toBe(wallet.accounts.find((account) => account.type === 'cash')!.balanceCents + 75000);
     expect(recordIncomingTransfer(posted, input)).toBe(posted);
     expect(posted.transactions).toHaveLength(1);
   });
