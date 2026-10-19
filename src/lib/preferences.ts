@@ -1,5 +1,5 @@
 export const DEFAULT_PREFERENCES = {
-  theme: 'colorpop', accent: '#ff007f', fontSize: 16, headerFont: 'cooper', homeImage: '',
+  theme: 'colorpop', accent: '#ff007f', fontSize: 16, headerFont: 'cooper', homeImage: '', dashboardBackground: '',
   reducedMotion: false, compactMode: false, messageAnimations: true,
   chatSystemPrompt: '',
   dontLeaveScene: true,
@@ -41,7 +41,7 @@ export function normalizePreferences(input: unknown): AppPreferences {
     else if (choices[key] && choices[key].includes(value as string)) result[key] = value;
     else if (key === 'chatSystemPrompt' && typeof value === 'string') result[key] = value.slice(0, 6000);
     else if (key.endsWith('Prompt') && typeof value === 'string') result[key] = value.slice(0, 3000);
-    else if (key === 'homeImage' && typeof value === 'string') result[key] = value.slice(0, 8000000);
+    else if ((key === 'homeImage' || key === 'dashboardBackground') && typeof value === 'string') result[key] = value.slice(0, 8000000);
     else if (key === 'accent' && /^#[0-9a-f]{6}$/i.test(value as string)) result[key] = value;
     else if (key === 'fontSize' && Number.isFinite(value)) result[key] = Math.round(Math.min(24, Math.max(12, value as number)));
     else if (key === 'contextMessages' && Number.isFinite(value)) result[key] = Math.round(Math.min(200, Math.max(5, value as number)));
