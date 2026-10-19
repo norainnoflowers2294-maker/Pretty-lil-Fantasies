@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Clock3, MessageCircle, Search } from 'lucide-react';
+import { Clock3, MessageCircle, Pin, PinOff, Search } from 'lucide-react';
 import type { Chat, Character } from '../types/roleplay';
 import { resolveImageUrl } from '../utils/imageUrl';
 
@@ -7,6 +7,7 @@ interface ChatsLibraryViewProps {
   chats: Chat[];
   characters: Character[];
   onOpenChat: (chatId: string) => void;
+  onTogglePin: (chat: Chat) => void;
 }
 
 function lastMessageTime(chat: Chat): number {
@@ -29,9 +30,9 @@ function timeAgo(timestamp: number): string {
   return new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }).format(timestamp);
 }
 
-export const ChatsLibraryView: React.FC<ChatsLibraryViewProps> = ({ chats, characters, onOpenChat }) => {
+export const ChatsLibraryView: React.FC<ChatsLibraryViewProps> = ({ chats, characters, onOpenChat, onTogglePin }) => {
   const [query, setQuery] = useState('');
-  const sortedChats = useMemo(() => [...chats].sort((a, b) => lastMessageTime(b) - lastMessageTime(a)), [chats]);
+  const sortedChats = useMemo(() => [...chats].sort((a, b) => Number(Boolean(b.pinned)) - Number(Boolean(a.pinned)) || lastMessageTime(b) - lastMessageTime(a)), [chats]);
   const filteredChats = sortedChats.filter((chat) => {
     const names = chat.characterIds.map((id) => characters.find((character) => character.id === id)?.name || '').join(' ');
     return (chat.title + ' ' + names).toLowerCase().includes(query.trim().toLowerCase());
@@ -59,7 +60,8 @@ export const ChatsLibraryView: React.FC<ChatsLibraryViewProps> = ({ chats, chara
             const participants = chat.characterIds.map((id) => characters.find((character) => character.id === id)).filter((character): character is Character => Boolean(character));
             const cover = chat.bgImage || participants[0]?.avatar || '/penthouse.jpg';
             return (
-              <button key={chat.id} type="button" onClick={() => onOpenChat(chat.id)} className="group overflow-hidden rounded-3xl border border-[#ff66b2]/25 bg-[#180713]/90 text-left shadow-[0_12px_32px_rgba(0,0,0,0.28)] transition duration-200 hover:-translate-y-1 hover:border-[#ff66b2]/70 hover:shadow-[0_0_25px_rgba(255,0,128,0.2)] focus:outline-none focus:ring-2 focus:ring-[#ff66b2]">
+              <div key={chat.id} className="relative">
+              <button type="button" onClick={() => onOpenChat(chat.id)} className="group block w-full overflow-hidden rounded-3xl border border-[#ff66b2]/25 bg-[#180713]/90 text-left shadow-[0_12px_32px_rgba(0,0,0,0.28)] transition duration-200 hover:-translate-y-1 hover:border-[#ff66b2]/70 hover:shadow-[0_0_25px_rgba(255,0,128,0.2)] focus:outline-none focus:ring-2 focus:ring-[#ff66b2]">
                 <div className="relative h-36 overflow-hidden bg-gradient-to-br from-[#4a1038] to-[#170411]">
                   <img src={resolveImageUrl(cover)} alt="" className="h-full w-full object-cover opacity-70 transition duration-300 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#180713] via-transparent to-black/10" />
@@ -79,6 +81,10 @@ export const ChatsLibraryView: React.FC<ChatsLibraryViewProps> = ({ chats, chara
                   <div className="flex items-center gap-1.5 text-xs font-bold text-[#ff99cc]"><MessageCircle className="h-3.5 w-3.5" />Open conversation</div>
                 </div>
               </button>
+              <button type="button" aria-label={chat.pinned ? `Unpin ${chat.title || 'conversation'}` : `Pin ${chat.title || 'conversation'}`} title={chat.pinned ? 'Unpin conversation' : 'Pin conversation'} onClick={() => onTogglePin(chat)} className={`absolute right-3 top-3 z-10 rounded-full border border-white/25 p-2.5 text-white shadow-lg backdrop-blur-md transition hover:scale-105 ${chat.pinned ? 'bg-[#ff007f]/90' : 'bg-black/50 hover:bg-[#ff007f]/75'}`}>
+                {chat.pinned ? <PinOff className="h-4 w-4" /> : <Pin className="h-4 w-4" />}
+              </button>
+            </div>
             );
           })}
         </div>
