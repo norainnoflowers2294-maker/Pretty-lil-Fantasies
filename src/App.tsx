@@ -77,14 +77,14 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 
 const FloatingBubbles: React.FC = () => {
   const bubbles = [
-    { size: 26, left: '5%', top: '20%', delay: '-3s', duration: '21s' },
-    { size: 42, left: '88%', top: '14%', delay: '-12s', duration: '25s' },
-    { size: 18, left: '11%', top: '48%', delay: '-8s', duration: '19s' },
-    { size: 34, left: '92%', top: '43%', delay: '-5s', duration: '23s' },
-    { size: 23, left: '7%', top: '73%', delay: '-15s', duration: '27s' },
-    { size: 48, left: '84%', top: '78%', delay: '-10s', duration: '24s' },
-    { size: 15, left: '30%', top: '89%', delay: '-6s', duration: '20s' },
-    { size: 21, left: '68%', top: '9%', delay: '-17s', duration: '26s' },
+    { size: 28, left: '1.5%', top: '18%', delay: '-3s', duration: '21s' },
+    { size: 24, left: '95%', top: '24%', delay: '-12s', duration: '25s' },
+    { size: 18, left: '2.5%', top: '45%', delay: '-8s', duration: '19s' },
+    { size: 30, left: '94%', top: '52%', delay: '-5s', duration: '23s' },
+    { size: 22, left: '1%', top: '70%', delay: '-15s', duration: '27s' },
+    { size: 34, left: '94%', top: '82%', delay: '-10s', duration: '24s' },
+    { size: 16, left: '4%', top: '89%', delay: '-6s', duration: '20s' },
+    { size: 20, left: '96%', top: '8%', delay: '-17s', duration: '26s' },
   ];
 
   return (
