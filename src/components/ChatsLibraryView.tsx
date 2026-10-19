@@ -45,7 +45,7 @@ export const ChatsLibraryView: React.FC<ChatsLibraryViewProps> = ({ chats, chara
     <section className="cp-chats-library mx-auto w-full max-w-6xl px-4 py-6 sm:px-6">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.28em] text-[#ff66b2]">Your story library</p>
+          <p className="mb-1 text-[10px] font-bold tracking-[0.12em] text-[#ff66b2]">Your story library</p>
           <h1 className="text-3xl font-black text-white sm:text-4xl">All Chats</h1>
           <p className="mt-2 text-sm text-[#ffd6eb]/65">{chats.length} {chats.length === 1 ? 'conversation' : 'conversations'}, sorted by latest activity</p>
         </div>
