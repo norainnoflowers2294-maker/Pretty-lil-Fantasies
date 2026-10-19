@@ -2398,3 +2398,21 @@ body {
 #root .cp-chat .cp-message-bubble > div:first-child {
   border-color: rgba(135,67,96,.2) !important;
 }
+
+
+/* Lighten any remaining horizontally scrollable category trays. */
+#root .cp-app-shell .no-scrollbar {
+  background-color: rgba(255,247,251,.8) !important;
+  background-image: linear-gradient(145deg, rgba(255,255,255,.93), rgba(255,224,238,.88)) !important;
+  border-color: rgba(255,255,255,.94) !important;
+  box-shadow: 0 8px 22px rgba(115,44,74,.12), inset 0 1px 0 #fff !important;
+}
+#root .cp-app-shell .no-scrollbar button {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  background-color: rgba(255,240,247,.94) !important;
+  background-image: linear-gradient(145deg, #fffafd, #ffddeb 58%, #fff1f7) !important;
+  border-color: rgba(196,104,145,.38) !important;
+}
+/* Keep the drifting spheres at the edges and barely there, so copy stays clear. */
+#root .cp-app-shell .plf-floating-bubble { opacity: .13; }
