@@ -132,6 +132,30 @@ export function PreferencesPanel({ value, onSave, onClose, onExportData, onImpor
               first_person: 'First person', third_person: 'Third person',
             } as Record<string, string>)[v] || v.replace(/_/g, ' ').replace(/\b\w/g, letter => letter.toUpperCase())}</option>)}</select>}</label>;
         })}
+        {tab === 0 && <section className="cp-setting cp-setting-block" aria-label="Dashboard background">
+          <strong>Dashboard background only</strong>
+          <p>Choose a photo for the homepage. Chat backgrounds and message bubbles stay unchanged.</p>
+          <label>Upload a background photo
+            <input type="file" accept="image/*" onChange={async (event) => {
+              const file = event.target.files?.[0];
+              if (!file) return;
+              if (file.size > 4_000_000) { setStatus('Choose an image smaller than 4 MB.'); return; }
+              const reader = new FileReader();
+              reader.onload = () => {
+                if (typeof reader.result === 'string') void update('dashboardBackground', reader.result);
+              };
+              reader.onerror = () => setStatus('Could not read that image.');
+              reader.readAsDataURL(file);
+              event.target.value = '';
+            }} />
+          </label>
+          <label>Or paste an image URL
+            <input type="url" placeholder="https://example.com/background.jpg" value={draft.dashboardBackground.startsWith('data:') ? '' : draft.dashboardBackground} onChange={(event) => update('dashboardBackground', event.target.value)} />
+          </label>
+          {draft.dashboardBackground && <div style={{ height: 120, borderRadius: 18, backgroundImage: `url("${draft.dashboardBackground.replace(/"/g, '%22')}")`, backgroundSize: 'cover', backgroundPosition: 'center' }} role="img" aria-label="Dashboard background preview" />}
+          <button type="button" onClick={() => update('dashboardBackground', '')}>Restore default dashboard background</button>
+          <small>Press Save settings to apply. Signed-in cloud sync will include your selection.</small>
+        </section>}
         {tab === 1 && <p>Chat controls here affect app behavior. Chat-specific instructions can be added in Chat Settings. Notifications show only “A reply is ready,” without chat text.</p>}
         {tab === 2 && <>
           <p>These roleplay values are saved as defaults for new chats. The OpenRouter AI tab controls temperature and the maximum output-token limit; this prose target is separate. Global instructions are sent in the system prompt. Character canon and required user-agency rules stay higher priority.</p>
