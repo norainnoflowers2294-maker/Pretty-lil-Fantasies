@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { Clock3, MessageCircle, Pin, PinOff, Search } from 'lucide-react';
+import React, { useMemo, useRef, useState } from 'react';
+import { Clock3, MessageCircle, Pin, PinOff, Search, Upload, Download } from 'lucide-react';
 import type { Chat, Character } from '../types/roleplay';
 import { resolveImageUrl } from '../utils/imageUrl';
 
@@ -8,6 +8,8 @@ interface ChatsLibraryViewProps {
   characters: Character[];
   onOpenChat: (chatId: string) => void;
   onTogglePin: (chat: Chat) => void;
+  onExportBundle: (chat: Chat) => void;
+  onImportBundle: (file: File) => void | Promise<void>;
 }
 
 function lastMessageTime(chat: Chat): number {
@@ -30,8 +32,9 @@ function timeAgo(timestamp: number): string {
   return new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }).format(timestamp);
 }
 
-export const ChatsLibraryView: React.FC<ChatsLibraryViewProps> = ({ chats, characters, onOpenChat, onTogglePin }) => {
+export const ChatsLibraryView: React.FC<ChatsLibraryViewProps> = ({ chats, characters, onOpenChat, onTogglePin, onExportBundle, onImportBundle }) => {
   const [query, setQuery] = useState('');
+  const importInputRef = useRef<HTMLInputElement>(null);
   const sortedChats = useMemo(() => [...chats].sort((a, b) => Number(Boolean(b.pinned)) - Number(Boolean(a.pinned)) || lastMessageTime(b) - lastMessageTime(a)), [chats]);
   const filteredChats = sortedChats.filter((chat) => {
     const names = chat.characterIds.map((id) => characters.find((character) => character.id === id)?.name || '').join(' ');
@@ -45,6 +48,10 @@ export const ChatsLibraryView: React.FC<ChatsLibraryViewProps> = ({ chats, chara
           <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.28em] text-[#ff66b2]">Your story library</p>
           <h1 className="text-3xl font-black text-white sm:text-4xl">All Chats</h1>
           <p className="mt-2 text-sm text-[#ffd6eb]/65">{chats.length} {chats.length === 1 ? 'conversation' : 'conversations'}, sorted by latest activity</p>
+        </div>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <input ref={importInputRef} type="file" accept="application/json,.json" className="hidden" onChange={(event) => { const file = event.target.files?.[0]; if (file) void onImportBundle(file); event.currentTarget.value = ''; }} />
+          <button type="button" onClick={() => importInputRef.current?.click()} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-white/80 bg-gradient-to-r from-[#fffafd] to-[#ffdce9] px-4 text-xs font-bold text-[#211019] shadow-[0_4px_12px_rgba(115,44,74,.12)]"><Upload className="h-4 w-4" />Import chat bundle</button>
         </div>
         <label className="flex w-full items-center gap-2 rounded-2xl border border-[#ff66b2]/30 bg-[#1a0715]/80 px-3 py-2.5 sm:max-w-xs">
           <Search className="h-4 w-4 text-[#ff99cc]" />
@@ -81,7 +88,8 @@ export const ChatsLibraryView: React.FC<ChatsLibraryViewProps> = ({ chats, chara
                   <div className="flex items-center gap-1.5 text-xs font-bold text-[#ff99cc]"><MessageCircle className="h-3.5 w-3.5" />Open conversation</div>
                 </div>
               </button>
-              <button type="button" aria-label={chat.pinned ? `Unpin ${chat.title || 'conversation'}` : `Pin ${chat.title || 'conversation'}`} title={chat.pinned ? 'Unpin conversation' : 'Pin conversation'} onClick={() => onTogglePin(chat)} className={`absolute right-3 top-3 z-10 rounded-full border border-white/25 p-2.5 text-white shadow-lg backdrop-blur-md transition hover:scale-105 ${chat.pinned ? 'bg-[#ff007f]/90' : 'bg-black/50 hover:bg-[#ff007f]/75'}`}>
+              <button type="button" onClick={() => onExportBundle(chat)} className="absolute left-3 top-3 z-10 inline-flex items-center gap-1.5 rounded-full border border-white/70 bg-white/90 px-3 py-2.5 text-[10px] font-bold text-[#211019] shadow-lg backdrop-blur-md transition hover:scale-105" aria-label={`Export ${chat.title || 'conversation'} with its character and persona cards`} title="Export chat with character and persona"><Download className="h-3.5 w-3.5" />Bundle</button>
+              <button type="button" aria-label={chat.pinned ? `Unpin ${chat.title || 'conversation'}`} title={chat.pinned ? 'Unpin conversation' : 'Pin conversation'} onClick={() => onTogglePin(chat)} className={`absolute right-3 top-3 z-10 rounded-full border border-white/25 p-2.5 text-white shadow-lg backdrop-blur-md transition hover:scale-105 ${chat.pinned ? 'bg-[#ff007f]/90' : 'bg-black/50 hover:bg-[#ff007f]/75'}`}>
                 {chat.pinned ? <PinOff className="h-4 w-4" /> : <Pin className="h-4 w-4" />}
               </button>
             </div>
