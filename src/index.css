@@ -3367,3 +3367,21 @@ body {
   background-image: linear-gradient(135deg, #fff8fb, #ffd4e7 58%, #e5d8f3) !important;
   border-color: rgba(217,135,167,.78) !important;
 }
+
+
+/* Final readable-input pass for chat drawers; legacy utility classes otherwise restore plum backgrounds. */
+#root .cp-chat aside[role="dialog"][aria-label="Chat navigation drawer"] :is(textarea[class*="rounded-"][class*="border"][class*="bg-"], input[class*="rounded-"][class*="border"][class*="bg-"], select[class*="rounded-"][class*="border"][class*="bg-"]),
+#root .cp-chat aside[role="dialog"][aria-label="Chat tools drawer"] :is(textarea[class*="rounded-"][class*="border"][class*="bg-"], input[class*="rounded-"][class*="border"][class*="bg-"], select[class*="rounded-"][class*="border"][class*="bg-"]) {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  caret-color: #211019 !important;
+  background: linear-gradient(135deg, #fff7fb, #ffd6e8 58%, #e7d9f4) !important;
+  border-color: rgba(217,135,167,.82) !important;
+  box-shadow: inset 0 1px 3px rgba(133,53,88,.08), 0 3px 10px rgba(133,53,88,.1) !important;
+}
+#root .cp-chat aside[role="dialog"][aria-label="Chat navigation drawer"] :is(textarea,input)::placeholder,
+#root .cp-chat aside[role="dialog"][aria-label="Chat tools drawer"] :is(textarea,input)::placeholder {
+  color: #6d3c52 !important;
+  -webkit-text-fill-color: #6d3c52 !important;
+  opacity: 1 !important;
+}
