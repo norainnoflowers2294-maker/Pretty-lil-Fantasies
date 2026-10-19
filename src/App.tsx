@@ -77,14 +77,14 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 
 const FloatingBubbles: React.FC = () => {
   const particles = [
-    { kind: 'bubble', path: 'a', size: 34, left: '8%', top: '18%', delay: '-3s', duration: '23s' },
-    { kind: 'pearl', path: 'b', size: 13, left: '21%', top: '76%', delay: '-11s', duration: '29s' },
-    { kind: 'bubble', path: 'c', size: 24, left: '89%', top: '27%', delay: '-12s', duration: '26s' },
-    { kind: 'pearl', path: 'd', size: 17, left: '78%', top: '62%', delay: '-6s', duration: '31s' },
-    { kind: 'bubble', path: 'b', size: 28, left: '14%', top: '57%', delay: '-8s', duration: '25s' },
-    { kind: 'pearl', path: 'a', size: 11, left: '93%', top: '83%', delay: '-15s', duration: '28s' },
-    { kind: 'bubble', path: 'd', size: 20, left: '72%', top: '88%', delay: '-5s', duration: '24s' },
-    { kind: 'pearl', path: 'c', size: 15, left: '4%', top: '38%', delay: '-17s', duration: '32s' },
+    { kind: 'bubble', path: 'a', size: 54, left: '8%', top: '18%', delay: '-3s', duration: '23s' },
+    { kind: 'pearl', path: 'b', size: 25, left: '21%', top: '76%', delay: '-11s', duration: '29s' },
+    { kind: 'bubble', path: 'c', size: 43, left: '89%', top: '27%', delay: '-12s', duration: '26s' },
+    { kind: 'pearl', path: 'd', size: 30, left: '78%', top: '62%', delay: '-6s', duration: '31s' },
+    { kind: 'bubble', path: 'b', size: 49, left: '14%', top: '57%', delay: '-8s', duration: '25s' },
+    { kind: 'pearl', path: 'a', size: 23, left: '93%', top: '83%', delay: '-15s', duration: '28s' },
+    { kind: 'bubble', path: 'd', size: 40, left: '72%', top: '88%', delay: '-5s', duration: '24s' },
+    { kind: 'pearl', path: 'c', size: 27, left: '4%', top: '38%', delay: '-17s', duration: '32s' },
   ];
 
   return (
@@ -1095,6 +1095,7 @@ export default function App() {
           onOpenSettings={() => setIsSettingsOpen(true)}
           onOpenPlugins={() => setIsPluginModalOpen(true)}
           onOpenCharacterModal={() => setIsCharModalOpen(true)}
+          onEditCharacter={handleOpenCreateCharacterPage}
           onOpenLorebookModal={() => setIsLoreModalOpen(true)}
           onOpenPersonaModal={() => setIsPersonaModalOpen(true)}
           onOpenStoryNotesModal={() => setIsStoryNotesOpen(true)}
