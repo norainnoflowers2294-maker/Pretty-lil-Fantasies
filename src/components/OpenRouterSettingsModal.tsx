@@ -346,7 +346,7 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-0 backdrop-blur-md animate-in fade-in duration-200 sm:p-4">
-      <div className="relative flex h-[100dvh] max-h-[calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom))] w-full max-w-2xl flex-col overflow-hidden border-2 border-[#079AF0]/45 bg-[#140410] shadow-[0_0_50px_rgba(7,154,240,0.28)] sm:h-auto sm:max-h-[90dvh] sm:rounded-3xl">
+      <div className="plf-settings-theme relative flex h-[100dvh] max-h-[calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom))] w-full max-w-2xl flex-col overflow-hidden border-2 border-[#079AF0]/45 bg-[#140410] shadow-[0_0_50px_rgba(7,154,240,0.28)] sm:h-auto sm:max-h-[90dvh] sm:rounded-3xl">
         <div className="flex shrink-0 items-center justify-between border-b border-[#8AABF4]/30 bg-[#0d020b] px-4 py-4 sm:px-6">
           <div className="flex items-center gap-2 min-w-0">
             <button
