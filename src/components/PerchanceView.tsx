@@ -3,26 +3,43 @@ import { ExternalLink, Globe2, Link2, Save, Sparkles, Trash2 } from 'lucide-reac
 
 const PERCHANCE_LINKS_KEY = 'pretty_little_fantasies_perchance_links_v2';
 const LEGACY_PERCHANCE_URL_KEY = 'colorpop_perchance_url_v1';
+const PERCHANCE_DEFAULTS_SEEDED_KEY = 'pretty_little_fantasies_perchance_defaults_seeded_v1';
 interface PerchanceLink { id: string; name: string; url: string; }
+
+const DEFAULT_PERCHANCE_LINKS: PerchanceLink[] = [
+  { id: 'perchance-prompt-forge-sd', name: 'Prompt Forge for Stable Diffusion', url: 'https://perchance.org/111-prompt---forge' },
+  { id: 'perchance-prompt-forge-edit', name: 'Prompt Forge (edit)', url: 'https://perchance.org/d0arzy2yav#edit' },
+  { id: 'perchance-ink-and-ivy', name: 'Ink and Ivy - Creative', url: 'https://perchance.org/soulphone' },
+];
 
 function readSavedLinks(): PerchanceLink[] {
   try {
     const saved = localStorage.getItem(PERCHANCE_LINKS_KEY);
+    const defaultsSeeded = localStorage.getItem(PERCHANCE_DEFAULTS_SEEDED_KEY) === 'true';
     if (saved) {
       const parsed: unknown = JSON.parse(saved);
-      if (Array.isArray(parsed)) return parsed.filter((item): item is PerchanceLink =>
-        item && typeof item.id === 'string' && typeof item.name === 'string' && typeof item.url === 'string');
+      if (Array.isArray(parsed)) {
+        const existing = parsed.filter((item): item is PerchanceLink =>
+          item && typeof item.id === 'string' && typeof item.name === 'string' && typeof item.url === 'string');
+        if (defaultsSeeded) return existing;
+        const existingUrls = new Set(existing.map((item) => item.url));
+        const next = [...existing, ...DEFAULT_PERCHANCE_LINKS.filter((item) => !existingUrls.has(item.url))];
+        localStorage.setItem(PERCHANCE_LINKS_KEY, JSON.stringify(next));
+        localStorage.setItem(PERCHANCE_DEFAULTS_SEEDED_KEY, 'true');
+        return next;
+      }
     }
     const legacyUrl = localStorage.getItem(LEGACY_PERCHANCE_URL_KEY);
-    if (legacyUrl) {
-      const migrated = [{ id: `perchance-${Date.now()}`, name: 'Perchance project', url: legacyUrl }];
-      localStorage.setItem(PERCHANCE_LINKS_KEY, JSON.stringify(migrated));
-      return migrated;
-    }
+    const migrated = legacyUrl
+      ? [{ id: `perchance-${Date.now()}`, name: 'Perchance project', url: legacyUrl }, ...DEFAULT_PERCHANCE_LINKS]
+      : DEFAULT_PERCHANCE_LINKS;
+    localStorage.setItem(PERCHANCE_LINKS_KEY, JSON.stringify(migrated));
+    localStorage.setItem(PERCHANCE_DEFAULTS_SEEDED_KEY, 'true');
+    return migrated;
   } catch {
     // Keep the page usable if browser storage is unavailable or contains invalid data.
   }
-  return [];
+  return DEFAULT_PERCHANCE_LINKS;
 }
 
 export const PerchanceView: React.FC = () => {
