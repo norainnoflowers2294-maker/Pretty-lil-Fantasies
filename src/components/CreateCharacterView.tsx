@@ -38,29 +38,25 @@ import { resolveImageUrl } from '../utils/imageUrl';
 // 18-COLOR PALETTE CONSTANTS (Explicitly used throughout interface)
 // ---------------------------------------------------------------------------
 const PALETTE = {
-  // Blues
-  navy: '#020E8B',
-  electricBlue: '#018DF2',
-  periwinkle: '#8DB2F6',
-  // Pinks & Reds
-  orangeRed: '#F93F02',
-  hotPink: '#FF007E',
-  bubblegumPink: '#FF7EB0',
-  peach: '#FFCDA8',
-  coralPink: '#FF9786',
-  raspberry: '#DC0E69',
-  deepRaspberry: '#AA015B',
-  // Purples
-  orchid: '#B333A8',
-  lavender: '#B37ABE',
-  // Warm Accents
-  tangerine: '#EB970C',
-  brightCoral: '#FC5E42',
-  softRed: '#F3524E',
-  // Mint & Dark
-  mint: '#39B99F',
-  teal: '#048074',
-  midnight: '#010925',
+  // Soft blush glass and rose accents
+  navy: '#F8E2EB',
+  electricBlue: '#D887A7',
+  periwinkle: '#684251',
+  orangeRed: '#D96588',
+  hotPink: '#E777A0',
+  bubblegumPink: '#F2A8C2',
+  peach: '#FBE5ED',
+  coralPink: '#D77A97',
+  raspberry: '#C64F7E',
+  deepRaspberry: '#A83C68',
+  orchid: '#E7B6CA',
+  lavender: '#785264',
+  tangerine: '#E9A4BD',
+  brightCoral: '#D9678C',
+  softRed: '#CF6486',
+  mint: '#D77A9B',
+  teal: '#B85D81',
+  midnight: '#FFF5F8',
 };
 
 // Preset Speech & Voice options
