@@ -814,3 +814,58 @@ body {
   #root .cp-app-shell button,
   #root .cp-chat button { transition: none !important; }
 }
+
+
+/* Solid hot-pink canvas with jelly-glass controls layered over it. */
+:root {
+  --plf-hot-pink: #ff1493;
+  --plf-glass-surface: rgba(255, 255, 255, .18);
+  --plf-glass-highlight: rgba(255, 255, 255, .42);
+  --plf-glass-edge: rgba(255, 255, 255, .72);
+}
+html,
+body,
+#root {
+  background-color: var(--plf-hot-pink) !important;
+  background-image: none !important;
+}
+body {
+  color: #fff;
+  background: var(--plf-hot-pink) !important;
+}
+#root,
+#root .cp-app-shell,
+#root .cp-chat {
+  background: transparent !important;
+}
+
+/* Glass buttons, navigation chips, and links retain their current dimensions. */
+#root .cp-app-shell button,
+#root .cp-chat button,
+#root .cp-app-shell a,
+#root .cp-chat a {
+  color: #fff !important;
+  background-color: var(--plf-glass-surface) !important;
+  background-image: linear-gradient(145deg, var(--plf-glass-highlight), rgba(255,255,255,.08) 48%, rgba(255,20,147,.25)) !important;
+  border: 1px solid var(--plf-glass-edge) !important;
+  box-shadow: 0 8px 24px rgba(111, 0, 57, .2), inset 0 1px 0 rgba(255,255,255,.68), inset 0 -1px 0 rgba(255,255,255,.18) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
+  text-shadow: 0 1px 2px rgba(85, 0, 43, .48);
+}
+#root .cp-app-shell button[aria-current="page"],
+#root .cp-app-shell button[aria-pressed="true"],
+#root .cp-chat button[aria-pressed="true"],
+#root .cp-chat button[type="submit"],
+#root .cp-app-shell a[aria-current="page"] {
+  background-color: rgba(255, 20, 147, .34) !important;
+  background-image: linear-gradient(140deg, rgba(255,255,255,.42), rgba(255,20,147,.42) 58%, rgba(255,255,255,.12)) !important;
+  box-shadow: 0 0 20px rgba(255,255,255,.22), 0 8px 22px rgba(111,0,57,.22), inset 0 1px 0 rgba(255,255,255,.76) !important;
+}
+#root .cp-app-shell button:hover,
+#root .cp-chat button:hover,
+#root .cp-app-shell a:hover,
+#root .cp-chat a:hover {
+  border-color: rgba(255,255,255,.94) !important;
+  background-color: rgba(255,255,255,.27) !important;
+}
