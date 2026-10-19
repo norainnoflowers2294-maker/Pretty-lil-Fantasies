@@ -1065,7 +1065,7 @@ export default function App() {
 
       {/* 2. Top Navigation Pill with Dual Track Trigger */}
       <div className="w-full max-w-4xl mx-auto px-4 flex items-center justify-between gap-2">
-        <div className="flex-1">
+        <div className="min-w-0 flex-1">
           <TopNavPill
             activeTab={activeTab}
             onChangeTab={(t) => {
