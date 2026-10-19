@@ -14,6 +14,7 @@ interface AppDrawersProps {
   onNavigate: (tab: NavTab) => void;
   onSelectChat: (id: string) => void;
   onOpenWallet: (view: 'dashboard' | 'activity') => void;
+  walletBalance: string;
   onOpenSettings: () => void;
   onOpenPlugins: () => void;
   onOpenStoryNotes: () => void;
@@ -102,6 +103,12 @@ export const AppDrawers: React.FC<AppDrawersProps> = (props) => {
                   {item.icon}<span>{item.label}</span>
                 </button>
               ))}
+              <button type="button" disabled={!props.activeChat} onClick={() => props.activeChat && run(() => props.onOpenWallet('dashboard'))}
+                aria-label="Open Story Wallet" className="cp-wallet-card my-3 flex w-full items-center gap-3 rounded-2xl border p-4 text-left transition disabled:cursor-not-allowed">
+                <span className="cp-wallet-card-icon"><WalletCards className="h-5 w-5" /></span>
+                <span className="min-w-0 flex-1"><strong className="block text-sm">Story Wallet</strong><small className="block text-xs">{props.activeChat ? 'Money from Lucious' : 'Open a chat to view your wallet'}</small></span>
+                <strong className="text-sm">{props.activeChat ? props.walletBalance : '—'}</strong>
+              </button>
               <div className="border-t border-white/10 pt-3">
                 <h3 className="px-2 pb-2 text-[10px] font-bold uppercase tracking-widest text-[#ff99cc]">Recent chats</h3>
                 {props.chats.length ? props.chats.map((chat, index) => (
@@ -128,11 +135,6 @@ export const AppDrawers: React.FC<AppDrawersProps> = (props) => {
               <button type="button" aria-label="Close tools drawer" onClick={() => setRightOpen(false)} className="rounded-xl border border-[#B879C2]/60 bg-[#B879C2]/20 p-2 text-white hover:brightness-125"><X className="h-4 w-4" /></button>
             </div>
             <div className="min-h-0 flex-1 space-y-2 overflow-y-auto overscroll-contain touch-pan-y p-3 [-webkit-overflow-scrolling:touch]">
-              <button type="button" disabled={!props.activeChat} onClick={() => run(() => props.onOpenWallet('dashboard'))}
-                style={{ backgroundColor: '#37B6A533', borderColor: '#37B6A588' }}
-                className="flex w-full items-center gap-3 rounded-xl border p-3 text-left text-white transition enabled:hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-45">
-                <WalletCards className="h-5 w-5 text-[#ff99cc]" /><span><strong className="block text-sm">Money system · Story Wallet</strong><small className="text-[10px] text-[#ffd6eb]/65">{props.activeChat ? 'Balances and character transfers' : 'Open a chat to use its wallet'}</small></span>
-              </button>
               <button type="button" onClick={() => run(props.onOpenSocialMedia)} style={{ backgroundColor: '#FE008833', borderColor: '#FE008899' }} className="flex w-full items-center gap-3 rounded-xl border p-3 text-left text-sm text-white transition hover:brightness-125"><AtSign className="h-4 w-4 text-pink-300" />Social Media world</button>
               <button type="button" onClick={() => run(props.onOpenStoryNotes)} style={{ backgroundColor: '#B12FA733', borderColor: '#B12FA799' }} className="flex w-full items-center gap-3 rounded-xl border p-3 text-left text-sm text-white transition hover:brightness-125"><FileText className="h-4 w-4 text-indigo-300" />Story Notes &amp; Memories</button>
               <button type="button" onClick={() => run(props.onOpenSavedMessages)} style={{ backgroundColor: '#37B6A533', borderColor: '#37B6A599' }} className="flex w-full items-center gap-3 rounded-xl border p-3 text-left text-sm text-white transition hover:brightness-125"><Bookmark className="h-4 w-4 text-emerald-300" />Saved Messages</button>
