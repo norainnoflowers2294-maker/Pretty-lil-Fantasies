@@ -249,8 +249,14 @@ function hasCharacterCardData(parsed: any): boolean {
 
 export async function parseCharacterFile(file: File): Promise<Partial<Character>> {
   const normalizedName = file.name.toLowerCase();
-  const fallbackName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ') || 'Unnamed Character';
-  const isJson = normalizedName.endsWith('.json') || file.type === 'application/json' || file.type.endsWith('+json');
+  const fallbackName = file.name.replace(/\\.[^/.]+$/, '').replace(/[-_]/g, ' ') || 'Unnamed Character';
+  const mimeType = String(file.type || '').split(';', 1)[0].trim().toLowerCase();
+  const hasJsonExtension = normalizedName.endsWith('.json');
+  const hasJsonMimeType = mimeType === 'application/json' || mimeType.endsWith('+json');
+  const possibleJsonText = !hasJsonExtension && !hasJsonMimeType
+    ? (await file.slice(0, 1024).text()).trimStart()
+    : '';
+  const isJson = hasJsonExtension || hasJsonMimeType || possibleJsonText.startsWith('{') || possibleJsonText.startsWith('[');
   if (isJson) {
     return normalizeCharacterCard(JSON.parse(await file.text()), fallbackName);
   }
