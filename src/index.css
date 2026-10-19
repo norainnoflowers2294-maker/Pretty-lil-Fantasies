@@ -2513,3 +2513,66 @@ body {
 #root .cp-settings-panel :is(input,textarea,select) { color: #111 !important; -webkit-text-fill-color: #111 !important; background: #ffeaf2 !important; }
 #root .cp-settings-panel :is(section,article,[class*="rounded-2xl"][class*="border"]) { border-color: rgba(196,104,145,.38) !important; background-color: rgba(255,250,253,.92) !important; color: #211019 !important; }
 @media (min-width: 640px) { #root .cp-settings-panel { height: auto !important; max-height: 90dvh !important; padding-bottom: 0; } #root .cp-settings-header { padding-top: 1rem !important; } }
+
+
+/* Final app-wide drawer, dashboard and chat finish. */
+#root .cp-app-drawer-overlay > div:first-child,
+#root .cp-chat-drawer-overlay > div:first-child { background: rgba(75,35,55,.24) !important; }
+#root .cp-app-drawer-panel,
+#root aside[role="dialog"][aria-label="Chat navigation drawer"],
+#root aside[role="dialog"][aria-label="Chat tools drawer"] {
+  color: #211019 !important;
+  background: linear-gradient(150deg, rgba(255,250,253,.98), rgba(255,224,238,.97) 52%, rgba(255,241,247,.98)) !important;
+  border-color: rgba(255,255,255,.96) !important;
+  box-shadow: 0 18px 55px rgba(73,10,46,.19), inset 0 1px 0 #fff !important;
+  -webkit-backdrop-filter: blur(28px) saturate(150%) !important;
+  backdrop-filter: blur(28px) saturate(150%) !important;
+}
+#root .cp-app-drawer-panel > div:first-child,
+#root aside[role="dialog"][aria-label="Chat navigation drawer"] > div:first-child,
+#root aside[role="dialog"][aria-label="Chat tools drawer"] > div:first-child { background: rgba(255,247,251,.8) !important; border-color: rgba(196,104,145,.28) !important; }
+#root .cp-app-drawer-panel :is(h1,h2,h3,h4,p,span,small,strong,label),
+#root aside[role="dialog"][aria-label^="Chat "] :is(h1,h2,h3,h4,p,span,small,strong,label) { color: #211019 !important; -webkit-text-fill-color: #211019 !important; text-shadow: none !important; }
+#root .cp-app-drawer-panel button,
+#root aside[role="dialog"][aria-label^="Chat "] button { color: #211019 !important; -webkit-text-fill-color: #211019 !important; background: linear-gradient(145deg,#fffafd,#ffddeb 58%,#fff1f7) !important; border: 1px solid rgba(196,104,145,.35) !important; box-shadow: 0 4px 12px rgba(115,44,74,.11), inset 0 1px 0 #fff !important; }
+#root .cp-app-drawer-panel button svg,
+#root aside[role="dialog"][aria-label^="Chat "] button svg { color: #211019 !important; stroke: #211019 !important; }
+#root .cp-app-drawer-panel :is(textarea,input,select),
+#root aside[role="dialog"][aria-label^="Chat "] :is(textarea,input,select) { color: #111 !important; -webkit-text-fill-color: #111 !important; background: #ffe5ef !important; border-color: rgba(196,104,145,.4) !important; }
+#root .cp-drawer-trigger { color: #211019 !important; background: linear-gradient(145deg,#fffafd,#ffddeb) !important; border-color: rgba(196,104,145,.45) !important; box-shadow: 0 5px 14px rgba(115,44,74,.12), inset 0 1px 0 #fff !important; }
+
+/* Dashboard action cards keep their pastel surfaces and circular icon medallions. */
+#root .cp-action-card { color: #211019 !important; background: linear-gradient(145deg,#fffafd,#ffe0ed 55%,#f7c5da) !important; border: 1px solid rgba(255,255,255,.96) !important; box-shadow: 0 10px 25px rgba(115,44,74,.15), inset 0 1px 0 #fff !important; }
+#root .cp-action-card :is(h3,p) { color: #211019 !important; -webkit-text-fill-color: #211019 !important; text-shadow: none !important; }
+#root .cp-action-card .cp-action-icon { border-radius: 9999px !important; color: #211019 !important; background: linear-gradient(145deg,#fffafd,#f5c4d8) !important; border: 1px solid rgba(255,255,255,.98) !important; box-shadow: 0 6px 16px rgba(115,44,74,.14), inset 0 1px 0 #fff !important; }
+#root .cp-action-card .cp-action-icon svg { color: #211019 !important; stroke: #211019 !important; filter: none !important; }
+#root .cp-action-card .cp-action-arrow { color: #211019 !important; background: #fffafd !important; border: 1px solid rgba(196,104,145,.32) !important; }
+#root .cp-action-card > div.absolute.inset-0 { opacity: .13 !important; }
+#root .plf-category-pill { background: transparent !important; background-image: none !important; border: 0 !important; box-shadow: none !important; color: #211019 !important; }
+#root .plf-category-icon-ring { border-radius: 9999px !important; }
+#root .plf-category-icon { border-radius: 9999px !important; color: #211019 !important; background: linear-gradient(145deg,#fffafd,#ffe1ed 58%,#f4aec9) !important; box-shadow: 0 5px 15px rgba(115,44,74,.13), inset 0 1px 0 #fff !important; }
+#root .plf-category-icon svg { color: #211019 !important; stroke: #211019 !important; }
+#root .plf-category-pill[aria-pressed="true"] .plf-category-icon-ring { background: linear-gradient(145deg,#fff,#f0a0c1) !important; box-shadow: 0 0 16px rgba(219,94,146,.32) !important; }
+
+/* Entire chat surface uses blush glass; the composer stays visible above scrolling messages. */
+#root .cp-chat { color: #211019 !important; background: #f9e3ec !important; }
+#root .cp-chat > div.absolute.inset-0.bg-gradient-to-b { background-image: linear-gradient(to bottom,rgba(255,243,248,.28),rgba(255,233,242,.2) 48%,rgba(255,243,248,.34)) !important; }
+#root .cp-chat-topbar { color: #211019 !important; background: rgba(255,247,251,.94) !important; border-color: rgba(196,104,145,.4) !important; box-shadow: 0 5px 18px rgba(115,44,74,.12) !important; }
+#root .cp-chat-scenario { color: #211019 !important; background: rgba(255,239,246,.88) !important; border-color: rgba(196,104,145,.32) !important; }
+#root .cp-chat-topbar :is(h1,h2,h3,p,span,strong),
+#root .cp-chat-scenario :is(p,span,strong) { color: #211019 !important; -webkit-text-fill-color: #211019 !important; text-shadow: none !important; }
+#root .cp-chat .cp-messages { min-height: 0 !important; flex: 1 1 0% !important; overflow-y: auto !important; background: transparent !important; }
+#root .cp-chat-composer { position: sticky !important; bottom: 0 !important; z-index: 90 !important; flex: 0 0 auto !important; margin-top: auto !important; color: #211019 !important; background: rgba(255,246,250,.97) !important; border-color: rgba(196,104,145,.45) !important; box-shadow: 0 -8px 24px rgba(115,44,74,.12) !important; }
+#root .cp-chat-composer > div { color: #211019 !important; }
+#root .cp-chat .cp-message-bubble,
+#root .cp-chat .cp-message-bubble.cp-bubble-user { color: #211019 !important; -webkit-text-fill-color: #211019 !important; background: linear-gradient(145deg,rgba(255,250,253,.84),rgba(255,211,229,.76)) !important; border: 1px solid rgba(255,255,255,.96) !important; box-shadow: 0 8px 24px rgba(115,44,74,.14), inset 0 1px 0 #fff !important; -webkit-backdrop-filter: blur(22px) saturate(150%) !important; backdrop-filter: blur(22px) saturate(150%) !important; }
+#root .cp-chat .cp-message-bubble :is(p,span,div,strong) { color: #211019 !important; -webkit-text-fill-color: #211019 !important; }
+#root .cp-chat .cp-message-menu { background: rgba(255,247,251,.98) !important; border-color: rgba(196,104,145,.4) !important; }
+#root .cp-chat .cp-message-menu button { color: #211019 !important; background: transparent !important; box-shadow: none !important; }
+#root .cp-chat .cp-message-menu button:hover { background: #ffe5ef !important; }
+@media (max-width: 640px) {
+  #root .cp-chat { height: 100svh !important; max-height: 100svh !important; }
+  #root .cp-chat-composer { padding-bottom: calc(.5rem + env(safe-area-inset-bottom, 0px)) !important; }
+  #root .cp-chat-composer textarea[placeholder^="Reply to"] { min-height: 3.25rem !important; max-height: 7rem !important; }
+  #root .cp-app-drawer-panel, #root aside[role="dialog"][aria-label^="Chat "] { width: min(92vw, 22rem) !important; }
+}
