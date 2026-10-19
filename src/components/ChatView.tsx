@@ -622,24 +622,27 @@ export const ChatView: React.FC<ChatViewProps> = ({
 
     setErrorDetails(null);
     const command = parseSlashCommand(inputText.trim());
-    if (command) {
+    const oneShotOoc = command?.type === 'ooc-message' ? command.content : '';
+    if (command && !oneShotOoc) {
       setInputText('');
       await executeSlashCommand(command);
       return;
     }
 
-    const userText = inputText.trim();
-    const assistantWasTagged = /(^|\\s)@assistant\\b/i.test(userText);
+    const userText = oneShotOoc ? `OOC: ${oneShotOoc}` : inputText.trim();
+    const explicitOoc = /^(?:OOC\s*:|\[OOC\])\s*/i.test(userText);
+    const messageBody = userText.replace(/^(?:OOC\s*:|\[OOC\])\s*/i, '').trim();
+    const assistantWasTagged = /(^|\s)@assistant\b/i.test(messageBody);
     const personaForMessage = personas.find((persona) => persona.id === activePersonaIdRef.current) || activePersona;
     const userDisplayName = personaForMessage ? (personaForMessage.display_name || personaForMessage.name) : 'You';
     const messageTimestamp = Date.now();
-    const formattedUserText = textMode ? userDisplayName + ' - ' + userText : userText;
+    const formattedUserText = textMode ? userDisplayName + ' - ' + messageBody : messageBody;
     const userMessage: ChatMessage = {
       id: `msg_u_${Date.now()}`,
       senderId: 'user',
       senderName: personaForMessage ? (personaForMessage.display_name || personaForMessage.name) : 'You',
       avatar: personaForMessage?.avatar || '/colorpop_hero.jpg',
-      content: textMode ? formattedUserText : chat.oocMode ? `[OOC] ${formattedUserText}` : formattedUserText,
+      content: explicitOoc || chat.oocMode ? `[OOC] ${formattedUserText}` : formattedUserText,
       timestamp: messageTimestamp,
     };
 
@@ -675,10 +678,10 @@ export const ChatView: React.FC<ChatViewProps> = ({
         });
       }
 
-      if (updatedChat.oocMode) {
+      if (explicitOoc || updatedChat.oocMode) {
         apiMessages.unshift({
           role: 'system',
-          content: 'Out-of-character mode is enabled. Treat the user message marked [OOC] as meta direction or a question about the roleplay. Respond out of character, follow their direction, and do not advance the scene or write actions, thoughts, or dialogue for the user. Keep the response concise unless asked for detail.',
+          content: 'The latest user message is an out-of-character instruction or question marked [OOC]. Address its request directly as meta conversation, make the requested change or give the requested help, and do not continue the roleplay scene. Do not write actions, thoughts, feelings, or dialogue for the user. Keep the answer concise unless the user asks for detail.',
         });
       }
 
@@ -697,7 +700,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
         apiMessages,
         activeCharacters,
         personaForMessage,
-        assistantWasTagged || Boolean(updatedChat.oocMode),
+        assistantWasTagged || explicitOoc || Boolean(updatedChat.oocMode),
         false,
         recordModelUsed,
       );
