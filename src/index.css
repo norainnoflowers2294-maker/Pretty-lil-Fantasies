@@ -3111,3 +3111,110 @@ body {
   padding-bottom: 0 !important;
 }
 #root .cp-app-shell .plf-top-row::-webkit-scrollbar { display: none !important; }
+
+
+/* Chat and settings use their own legacy dark surfaces; bring them into the same blush glass palette. */
+#root .cp-chat {
+  color: #211019 !important;
+  background-color: #f8dbe7 !important;
+}
+#root .cp-chat .cp-chat-header,
+#root .cp-chat .cp-chat-scenario,
+#root .cp-chat .cp-chat-composer {
+  color: #211019 !important;
+  background-color: rgba(255,239,247,.96) !important;
+  background-image: linear-gradient(135deg, rgba(255,250,253,.98), rgba(255,213,231,.96) 58%, rgba(226,216,245,.94)) !important;
+  border-color: rgba(217,135,167,.55) !important;
+  box-shadow: 0 5px 18px rgba(115,44,74,.12), inset 0 1px 0 #fff !important;
+  backdrop-filter: blur(20px) saturate(150%) !important;
+}
+#root .cp-chat .cp-messages {
+  color: #211019 !important;
+}
+#root .cp-chat div.cp-message-bubble[class*="rounded-"][class*="border"] {
+  color: #211019 !important;
+  background-color: rgba(255,224,238,.94) !important;
+  background-image:
+    radial-gradient(ellipse at 10% 0%, rgba(255,255,255,.76), transparent 40%),
+    linear-gradient(135deg, #ffe5ef, #f7cde2 62%, #e7d9f4) !important;
+  border-color: rgba(255,255,255,.97) !important;
+  box-shadow: 0 7px 20px rgba(90,25,58,.16), inset 0 1px 0 #fff !important;
+}
+#root .cp-chat .cp-chat-composer textarea,
+#root .cp-chat textarea[class*="rounded-"] {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  caret-color: #211019 !important;
+  background-color: #ffe0ed !important;
+  background-image: linear-gradient(135deg, #fff5fa, #ffd9e8 58%, #e6d9f5) !important;
+  border: 1px solid rgba(217,135,167,.8) !important;
+  box-shadow: inset 0 2px 5px rgba(133,53,88,.08), 0 3px 10px rgba(133,53,88,.12) !important;
+}
+#root .cp-chat textarea::placeholder {
+  color: #6d3c52 !important;
+  -webkit-text-fill-color: #6d3c52 !important;
+  opacity: 1 !important;
+}
+#root .cp-chat .chat-quick-actions button,
+#root .cp-chat button:not([aria-label="Close tools drawer"]) {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  background-color: #ffd3e5 !important;
+  background-image: linear-gradient(135deg, #fff7fb, #ffd0e4 58%, #e4d6f2) !important;
+  border-color: rgba(255,255,255,.96) !important;
+  box-shadow: 0 4px 12px rgba(103,39,74,.15), inset 0 1px 0 #fff !important;
+}
+#root .cp-chat button svg {
+  color: #211019 !important;
+  stroke: #211019 !important;
+}
+#root .cp-settings-overlay {
+  background-color: rgba(255,211,229,.5) !important;
+  background-image: radial-gradient(ellipse at 15% 10%, rgba(255,255,255,.5), transparent 46%) !important;
+  backdrop-filter: blur(10px) !important;
+}
+#root .cp-settings-overlay .cp-settings-panel {
+  color: #211019 !important;
+  background-color: rgba(255,239,247,.96) !important;
+  background-image: linear-gradient(145deg, rgba(255,247,251,.98), rgba(255,218,234,.95) 52%, rgba(231,220,245,.93)) !important;
+  border-color: rgba(255,255,255,.98) !important;
+  box-shadow: 0 16px 42px rgba(95,35,65,.22), inset 0 1px 0 #fff !important;
+}
+#root .cp-settings-overlay .cp-settings-header,
+#root .cp-settings-overlay .cp-settings-footer {
+  color: #211019 !important;
+  background-color: rgba(255,235,244,.97) !important;
+  background-image: linear-gradient(135deg, #fff9fc, #ffd4e6 64%, #e6dcf3) !important;
+  border-color: rgba(217,135,167,.55) !important;
+}
+#root .cp-settings-overlay .cp-settings-tabs {
+  background: linear-gradient(135deg, #ffeaf3, #f8c7dc 58%, #e5d6f2) !important;
+  border-color: rgba(217,135,167,.55) !important;
+  scrollbar-width: none !important;
+}
+#root .cp-settings-overlay .cp-settings-tabs::-webkit-scrollbar { display: none !important; }
+#root .cp-settings-overlay button,
+#root .cp-settings-overlay select {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  background-color: #ffd8e9 !important;
+  background-image: linear-gradient(135deg, #fff8fb, #ffd0e3 58%, #e4d7f2) !important;
+  border-color: rgba(255,255,255,.97) !important;
+  box-shadow: 0 4px 12px rgba(104,39,75,.13), inset 0 1px 0 #fff !important;
+}
+#root .cp-settings-overlay input,
+#root .cp-settings-overlay textarea {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  caret-color: #211019 !important;
+  background-color: #fff0f6 !important;
+  background-image: linear-gradient(135deg, #fff9fc, #ffe1ed 62%, #e9dff4) !important;
+  border-color: rgba(217,135,167,.72) !important;
+}
+#root .cp-settings-overlay input::placeholder,
+#root .cp-settings-overlay textarea::placeholder {
+  color: #6d3c52 !important;
+  -webkit-text-fill-color: #6d3c52 !important;
+  opacity: 1 !important;
+}
+#root .cp-settings-overlay :is(label,p,small,span) { color: #211019 !important; }
