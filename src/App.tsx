@@ -855,7 +855,7 @@ export default function App() {
         active="create"
         onCharacters={() => { setIsCreateCharacterOpen(false); setCharacterToEdit(null); setActiveTab('characters'); }}
         onCreate={() => handleOpenCreateCharacterPage(null)}
-        onHome={() => { setIsCreateCharacterOpen(false); setCharacterToEdit(null); setActiveTab('home'); }}
+        onHome={() => { setIsCreateCharacterOpen(false); setCharacterToEdit(null); setInChatMode(false); setActiveTab('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
         onRecent={() => handleOpenMostRecentChat()}
         hasRecentChat={data.chats.length > 0}
       />
