@@ -20,9 +20,9 @@ export function BotStudioModal({ isOpen, config, onClose, onSaved, onSaveCharact
   if (!isOpen) return null;
   const generate = async () => {
     if (!idea.trim() || busy) return;
-    const command = idea.trim().match(/^@(character|lorebook|persona)\\b\\s*/i);
+    const command = idea.trim().match(/^@(character|lorebook|persona)\b\s*/i);
     const selectedTarget = (command?.[1]?.toLowerCase() as Target | undefined) || target;
-    const promptIdea = idea.trim().replace(/^@(character|lorebook|persona)\\b\\s*/i, '').trim();
+    const promptIdea = idea.trim().replace(/^@(character|lorebook|persona)\b\s*/i, '').trim();
     if (!promptIdea) {
       setError('Add your idea after @character, @persona, or @lorebook.');
       return;
