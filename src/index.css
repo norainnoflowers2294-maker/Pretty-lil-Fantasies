@@ -3413,3 +3413,36 @@ body {
   -webkit-text-fill-color: #211019 !important;
   background: transparent !important;
 }
+
+
+/* Keep the preferences dialog above the fixed app dock and in the blush palette. */
+#root .cp-settings-overlay {
+  z-index: 120 !important;
+}
+#root .cp-settings-overlay button[class*="rounded-"],
+#root .cp-settings-overlay button[class*="border"] {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  background-color: #ffd6e8 !important;
+  background-image: linear-gradient(135deg, #fff8fb, #ffd3e5 58%, #e5d8f3) !important;
+  border-color: rgba(255,255,255,.98) !important;
+  box-shadow: 0 4px 12px rgba(104,39,75,.14), inset 0 1px 0 #fff !important;
+  text-shadow: none !important;
+}
+#root .cp-settings-overlay button[class*="rounded-"] svg,
+#root .cp-settings-overlay button[class*="border"] svg {
+  color: #211019 !important;
+  stroke: #211019 !important;
+}
+#root .cp-settings-overlay .cp-settings-tabs button {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  background: linear-gradient(135deg, #fff7fb, #ffd6e8 58%, #e4d8f3) !important;
+  border-color: rgba(217,135,167,.65) !important;
+}
+#root .cp-settings-overlay .cp-settings-tabs button[aria-selected="true"],
+#root .cp-settings-overlay .cp-settings-tabs button[aria-pressed="true"] {
+  background: linear-gradient(135deg, #ffd1e5, #f3a9cc 58%, #e3c9f2) !important;
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+}
