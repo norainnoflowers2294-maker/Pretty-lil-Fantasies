@@ -2602,3 +2602,22 @@ body {
   color: #160b10 !important;
   -webkit-text-fill-color: #160b10 !important;
 }
+
+
+/* The chat screen renders outside the dashboard shell, so style its composer directly. */
+#root .cp-chat-composer textarea,
+#root .cp-chat-composer input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),
+#root .cp-chat-composer select {
+  background-color: #ffe6f0 !important;
+  background-image: linear-gradient(145deg, #fff9fc, #ffe0ec) !important;
+  color: #160b10 !important;
+  -webkit-text-fill-color: #160b10 !important;
+  caret-color: #160b10 !important;
+  border-color: #d98daa !important;
+}
+#root .cp-chat-composer textarea::placeholder,
+#root .cp-chat-composer input::placeholder {
+  color: #674654 !important;
+  -webkit-text-fill-color: #674654 !important;
+  opacity: 1 !important;
+}
