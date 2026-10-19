@@ -3773,3 +3773,18 @@ body {
 #root .cp-chats-library-card > div:nth-child(2) {
   background: linear-gradient(118deg, rgba(255, 227, 240, .96) 0%, rgba(241, 224, 255, .96) 36%, rgba(222, 237, 255, .96) 66%, rgba(220, 247, 237, .97) 100%) !important;
 }
+
+/* Final rainbow intensity pass: distinct soft hues remain visible beneath the glass. */
+#root .cp-chats-library {
+  background-color: #f4d9eb !important;
+  background-image: linear-gradient(118deg, #ffd0e4 0%, #e8d0ff 27%, #cfe4ff 52%, #c9f0e5 76%, #ffe2c9 100%) !important;
+}
+#root .cp-chats-library::after {
+  content: "" !important;
+}
+#root .cp-chats-library-card > div:nth-child(2) {
+  background-image: linear-gradient(118deg, #ffe1ed 0%, #eedcff 35%, #dfebff 68%, #d9f2e9 100%) !important;
+}
+#root .cp-chats-library-card > div:first-child > div:nth-child(2) {
+  background: linear-gradient(to top, rgba(255, 218, 235, .34), rgba(222, 218, 255, .02) 76%, transparent) !important;
+}
