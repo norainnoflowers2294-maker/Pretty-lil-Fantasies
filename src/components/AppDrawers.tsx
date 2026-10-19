@@ -74,22 +74,22 @@ export const AppDrawers: React.FC<AppDrawersProps> = (props) => {
       <div className="flex shrink-0 items-center gap-2">
         <button type="button" aria-label="Open app navigation drawer" aria-expanded={leftOpen}
           onClick={() => { setRightOpen(false); setLeftOpen(true); }}
-          className="rounded-full border border-[#ff3399]/60 bg-[#ff007f]/20 p-2.5 text-white shadow-[0_0_14px_rgba(255,0,128,0.25)] hover:bg-[#ff007f]/40">
+          className="cp-drawer-trigger rounded-full border border-[#ff3399]/60 bg-[#ff007f]/20 p-2.5 text-white shadow-[0_0_14px_rgba(255,0,128,0.25)] hover:bg-[#ff007f]/40">
           <PanelLeft className="h-4 w-4" />
         </button>
         <button type="button" aria-label="Open app tools drawer" aria-expanded={rightOpen}
           onClick={() => { setLeftOpen(false); setRightOpen(true); }}
-          className="rounded-full border border-[#ff3399]/60 bg-[#9b51e0]/20 p-2.5 text-white shadow-[0_0_14px_rgba(155,81,224,0.25)] hover:bg-[#9b51e0]/40">
+          className="cp-drawer-trigger rounded-full border border-[#ff3399]/60 bg-[#9b51e0]/20 p-2.5 text-white shadow-[0_0_14px_rgba(155,81,224,0.25)] hover:bg-[#9b51e0]/40">
           <PanelRight className="h-4 w-4" />
         </button>
       </div>
 
       {(leftOpen || rightOpen) && (
-        <div className="fixed inset-0 z-[80] overscroll-contain" onClick={close}>
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+        <div className="cp-app-drawer-overlay fixed inset-0 z-[80] overscroll-contain" onClick={close}>
+          <div className="absolute inset-0 bg-[#4b2337]/25 backdrop-blur-sm" />
           <aside role="dialog" aria-modal={leftOpen} aria-hidden={!leftOpen} aria-label="App navigation drawer"
             onClick={(event) => event.stopPropagation()}
-            className={`absolute inset-y-0 left-0 flex w-[min(88vw,22rem)] flex-col border-r border-[#ff66b2]/60 bg-[#140410] shadow-[10px_0_40px_rgba(255,0,128,0.35)] transition-transform duration-300 ${leftOpen ? 'pointer-events-auto translate-x-0' : 'pointer-events-none -translate-x-full'}`}>
+            className={`cp-app-drawer-panel cp-app-drawer-left absolute inset-y-0 left-0 flex w-[min(88vw,22rem)] flex-col border-r border-[#ff66b2]/60 bg-[#140410] shadow-[10px_0_40px_rgba(255,0,128,0.35)] transition-transform duration-300 ${leftOpen ? 'pointer-events-auto translate-x-0' : 'pointer-events-none -translate-x-full'}`}>
             <div className="flex items-center justify-between border-b border-[#ff3399]/30 p-4">
               <div><h2 className="font-bold text-white">App navigation</h2><p className="text-xs text-[#ffd6eb]/65">Go to any section</p></div>
               <button type="button" aria-label="Close navigation drawer" onClick={() => setLeftOpen(false)} className="rounded-xl border border-[#FC76AA]/60 bg-[#FC76AA]/20 p-2 text-white hover:brightness-125"><X className="h-4 w-4" /></button>
@@ -105,7 +105,7 @@ export const AppDrawers: React.FC<AppDrawersProps> = (props) => {
                 <button key={item.id} type="button" aria-current={props.activeTab === item.id ? 'page' : undefined}
                   onClick={() => run(() => props.onNavigate(item.id))}
                   style={{ backgroundColor: props.activeTab === item.id ? `${item.color}55` : `${item.color}22`, borderColor: `${item.color}88` }}
-                  className={`flex w-full items-center gap-3 rounded-xl border p-3 text-left text-sm text-white transition hover:brightness-125 ${props.activeTab === item.id ? 'font-semibold shadow-lg' : ''}`}>
+                  className={`cp-app-drawer-item flex w-full items-center gap-3 rounded-xl border p-3 text-left text-sm text-white transition hover:brightness-125 ${props.activeTab === item.id ? 'font-semibold shadow-lg' : ''}`}>
                   {item.icon}<span>{item.label}</span>
                 </button>
               ))}
@@ -118,7 +118,7 @@ export const AppDrawers: React.FC<AppDrawersProps> = (props) => {
                     onClick={() => run(() => props.onSelectChat(chat.id))}
                     aria-current={props.activeChat?.id === chat.id ? 'page' : undefined}
                     style={{ backgroundColor: `${color}33`, borderColor: `${color}88` }}
-                    className="mb-1 w-full rounded-xl border p-3 text-left text-white transition hover:brightness-125">
+                    className="cp-app-drawer-item mb-1 w-full rounded-xl border p-3 text-left text-white transition hover:brightness-125">
                     <span className="block truncate text-sm font-semibold text-white">{chat.title || 'Untitled chat'}</span>
                     <span className="block truncate text-[10px] text-[#ffd6eb]/60">{chat.messages[chat.messages.length - 1]?.content || 'No messages yet'}</span>
                   </button>
@@ -130,7 +130,7 @@ export const AppDrawers: React.FC<AppDrawersProps> = (props) => {
 
           <aside role="dialog" aria-modal={rightOpen} aria-hidden={!rightOpen} aria-label="App tools drawer"
             onClick={(event) => event.stopPropagation()}
-            className={`absolute inset-y-0 right-0 flex w-[min(88vw,22rem)] flex-col border-l border-[#ff66b2]/60 bg-[#140410] shadow-[-10px_0_40px_rgba(255,0,128,0.35)] transition-transform duration-300 ${rightOpen ? 'pointer-events-auto translate-x-0' : 'pointer-events-none translate-x-full'}`}>
+            className={`cp-app-drawer-panel cp-app-drawer-right absolute inset-y-0 right-0 flex w-[min(88vw,22rem)] flex-col border-l border-[#ff66b2]/60 bg-[#140410] shadow-[-10px_0_40px_rgba(255,0,128,0.35)] transition-transform duration-300 ${rightOpen ? 'pointer-events-auto translate-x-0' : 'pointer-events-none translate-x-full'}`}>
             <div className="flex items-center justify-between border-b border-[#ff3399]/30 p-4">
               <div><h2 className="font-bold text-white">App tools</h2><p className="text-xs text-[#ffd6eb]/65">Your story systems and settings</p></div>
               <button type="button" aria-label="Close tools drawer" onClick={() => setRightOpen(false)} className="rounded-xl border border-[#B879C2]/60 bg-[#B879C2]/20 p-2 text-white hover:brightness-125"><X className="h-4 w-4" /></button>
