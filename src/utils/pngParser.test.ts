@@ -201,6 +201,28 @@ describe('parseCharacterFile', () => {
   });
 
 
+  it('detects an embedded card when a mobile file picker omits the PNG extension and MIME type', async () => {
+    const card = { spec: 'chara_card_v2', data: { name: 'Mobile Mira', personality: 'Bright' } };
+    const keyword = new TextEncoder().encode('chara');
+    const payload = new TextEncoder().encode(btoa(unescape(encodeURIComponent(JSON.stringify(card)))));
+    const chunkData = new Uint8Array([...keyword, 0, ...payload]);
+    const length = chunkData.length;
+    const bytes = new Uint8Array([
+      0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
+      (length >>> 24) & 0xff, (length >>> 16) & 0xff, (length >>> 8) & 0xff, length & 0xff,
+      0x74, 0x45, 0x58, 0x74, ...chunkData, 0, 0, 0, 0,
+    ]);
+    const result = await parseCharacterFile(new File([bytes], 'mira-card'));
+    expect(result.name).toBe('Mobile Mira');
+    expect(result.personality).toBe('Bright');
+  });
+
+  it('recognizes extensionless JSON character files by MIME type', async () => {
+    const file = new File([JSON.stringify({ name: 'JSON Mira' })], 'mira-card', { type: 'application/json' });
+    const result = await parseCharacterFile(file);
+    expect(result.name).toBe('JSON Mira');
+  });
+
   it('imports the complete character profile from an embedded PNG card', async () => {
     const card = {
       spec: 'chara_card_v3',
