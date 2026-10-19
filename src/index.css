@@ -1922,3 +1922,79 @@ body {
 }
 #root .cp-app-shell .opacity-0 { opacity: 0 !important; }
 #root .cp-app-shell .opacity-100 { opacity: 1 !important; }
+
+
+/* Keep the dedicated bots carousel floating directly over the wallpaper. */
+#root .cp-app-shell main section.cp-dedicated-bots {
+  padding: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+#root .cp-app-shell main .cp-dedicated-bots > div:first-child {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+#root .cp-app-shell main .cp-dedicated-bots > div:last-child > button {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  background: linear-gradient(145deg, rgba(255,250,253,.96), rgba(255,218,234,.94)) !important;
+  border: 1px solid rgba(255,255,255,.98) !important;
+  box-shadow: 0 7px 18px rgba(112,40,72,.14), inset 0 1px 0 #fff !important;
+}
+#root .cp-app-shell main .cp-dedicated-bots > div:last-child > button * {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+}
+
+/* Uniform light-pink controls on all app screens, including the daily prompt. */
+#root .cp-app-shell main button,
+#root .cp-chat button,
+#root aside[role="dialog"] button,
+#root [role="dialog"]:not(aside) button,
+#root .cp-preferences button {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  background-color: rgba(255,242,248,.96) !important;
+  background-image: linear-gradient(145deg, #fffafd, #ffddeb 58%, #fff1f7) !important;
+  border-color: rgba(255,255,255,.98) !important;
+  box-shadow: 0 6px 16px rgba(112,40,72,.13), inset 0 1px 0 #fff !important;
+}
+#root .cp-app-shell main button *,
+#root .cp-chat button *,
+#root aside[role="dialog"] button *,
+#root [role="dialog"]:not(aside) button *,
+#root .cp-preferences button * {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+}
+#root .cp-app-shell main button[aria-current="page"],
+#root .cp-app-shell main button[aria-pressed="true"],
+#root .cp-chat button[aria-pressed="true"],
+#root .cp-chat button[type="submit"],
+#root aside[role="dialog"] button[aria-pressed="true"],
+#root [role="dialog"]:not(aside) button[aria-pressed="true"],
+#root .cp-preferences button[aria-pressed="true"] {
+  background: linear-gradient(135deg, #ffd3e5, #f2a0c0) !important;
+}
+#root .cp-app-shell .cp-bottom-toolbar,
+#root .cp-chat .cp-bottom-toolbar {
+  background: linear-gradient(145deg, rgba(255,250,253,.98), rgba(255,220,235,.97)) !important;
+  border-color: rgba(255,255,255,.98) !important;
+}
+#root .cp-app-shell .cp-bottom-toolbar button,
+#root .cp-app-shell .cp-bottom-toolbar button * {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+#root .cp-app-shell .cp-bottom-toolbar button[aria-current="page"] {
+  background: linear-gradient(135deg, #ffd3e5, #f2a0c0) !important;
+}
