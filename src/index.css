@@ -620,3 +620,31 @@ body {
 @media (prefers-reduced-motion: reduce) {
   #root .cp-bottom-toolbar button { transition: none !important; }
 }
+
+/* Soap-bubble jelly interaction for dashboard controls. */
+.cp-app-shell button,
+.cp-app-shell a[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 260ms cubic-bezier(.22,1.5,.45,1), filter 260ms ease;
+}
+.cp-app-shell button:active,
+.cp-app-shell a[role="button"]:active {
+  transform: scale(.92, 1.08) rotate(-2deg);
+  filter: brightness(1.13);
+}
+@keyframes plf-jelly-wiggle {
+  0% { transform: scale(1); }
+  22% { transform: scale(1.11,.87) rotate(-3deg); }
+  45% { transform: scale(.92,1.1) rotate(2deg); }
+  68% { transform: scale(1.04,.96) rotate(-1deg); }
+  85% { transform: scale(.985,1.02); }
+  100% { transform: scale(1); }
+}
+.cp-app-shell .plf-jelly-tapped {
+  animation: plf-jelly-wiggle 520ms cubic-bezier(.25,.7,.25,1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .cp-app-shell button,
+  .cp-app-shell a[role="button"] { transition: none; }
+  .cp-app-shell .plf-jelly-tapped { animation: none; }
+}
