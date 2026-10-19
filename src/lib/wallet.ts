@@ -65,18 +65,31 @@ export function createStoryWallet(chatId: string, personaId: string): StoryWalle
     personaId,
     currency: 'USD',
     accounts: [
-      { id: 'vault', name: 'Private vault', type: 'vault', balanceCents: 0 },
-      { id: 'cash', name: 'Cash balance', type: 'cash', balanceCents: 0 },
+      { id: 'vault', name: 'Private vault', type: 'vault', balanceCents: 2500000 },
+      { id: 'cash', name: 'Cash balance', type: 'cash', balanceCents: STARTING_CASH_CENTS },
       { id: 'black-card', name: 'Black card', type: 'credit', balanceCents: 0, creditLimitCents: 100000000 },
-      { id: 'checking', name: 'Bank account', type: 'bank', balanceCents: 0 },
+      { id: 'checking', name: 'Bank account', type: 'bank', balanceCents: 1000000 },
     ],
     transactions: [],
     assets: [],
   };
 }
 
+export const STARTING_CASH_CENTS = 75000;
+
+export function ensureWalletHasFunds(wallet: StoryWallet): StoryWallet {
+  const hasLiquidFunds = wallet.accounts.some((account) => account.type !== 'credit' && account.balanceCents > 0);
+  if (hasLiquidFunds) return wallet;
+  const cashAccount = wallet.accounts.find((account) => account.type === 'cash');
+  if (cashAccount) {
+    return { ...wallet, accounts: wallet.accounts.map((account) => account.id === cashAccount.id ? { ...account, balanceCents: STARTING_CASH_CENTS } : account) };
+  }
+  return { ...wallet, accounts: [...wallet.accounts, { id: 'cash', name: 'Cash balance', type: 'cash', balanceCents: STARTING_CASH_CENTS }] };
+}
+
 export function getWalletForScope(wallets: StoryWallet[], chatId: string, personaId: string): StoryWallet {
-  return wallets.find((wallet) => wallet.chatId === chatId && wallet.personaId === personaId) || createStoryWallet(chatId, personaId);
+  const existing = wallets.find((wallet) => wallet.chatId === chatId && wallet.personaId === personaId);
+  return existing ? ensureWalletHasFunds(existing) : createStoryWallet(chatId, personaId);
 }
 
 export function recordIncomingTransfer(wallet: StoryWallet, input: {
