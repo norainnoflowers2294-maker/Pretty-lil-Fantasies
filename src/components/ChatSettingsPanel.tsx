@@ -57,6 +57,17 @@ export const ChatSettingsPanel: React.FC<Props> = ({ chat, characters, personas,
                 <option value="immersive">Immersive prose</option><option value="balanced">Balanced</option><option value="dialogue">Dialogue-forward</option><option value="screenplay">Screenplay</option>
               </select>
             </label>
+            <label className={labelClass}>Mock model voice
+              <select className={selectClass} value={draft.mockStyle || 'chatgpt'} onChange={(event) => setDraft({ ...draft, mockStyle: event.target.value as NonNullable<Chat['mockStyle']> })}>
+                <option value="chatgpt">Mock ChatGPT</option><option value="gemini">Mock Gemini</option><option value="deepseek">Mock DeepSeek</option><option value="grok">Mock Grok</option>
+              </select>
+              <span className="mt-1 block text-[10px] font-normal normal-case text-white/45">Changes the reply tone, not the connected model.</span>
+            </label>
+            <label className={labelClass}>Assistant helper
+              <select className={selectClass} value={draft.helperMode || 'roleplay'} onChange={(event) => setDraft({ ...draft, helperMode: event.target.value as NonNullable<Chat['helperMode']> })}>
+                <option value="roleplay">Roleplay</option><option value="internet">Internet research</option><option value="coder">Coder</option><option value="ideas">Idea creator</option><option value="story">Story writer</option>
+              </select>
+            </label>
             <label className={labelClass}>Reply length
               <select className={selectClass} value={draft.replyLength || 'medium'} onChange={(event) => setDraft({ ...draft, replyLength: event.target.value as Chat['replyLength'] })}>
                 <option value="short">Short</option><option value="medium">Medium</option><option value="long">Long</option><option value="custom">Custom prose target</option>
