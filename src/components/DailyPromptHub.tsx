@@ -52,8 +52,10 @@ export function DailyPromptHub({ characters, personas, onPlay, onStartBot, onOpe
         <button type="button" onClick={() => setOpen(true)} className="flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-white/90 bg-gradient-to-r from-[#ffd5e5] via-[#f4aec9] to-[#ffe8f0] px-6 py-3 font-bold text-[#211019] shadow-[0_6px_16px_rgba(115,44,74,.14)] transition hover:brightness-105"><Compass className="h-4 w-4" />Play now<ChevronRight className="h-4 w-4" /></button>
       </div>
     </section>
-    <section aria-label="Create something new" className="mx-4 sm:mx-6 overflow-hidden rounded-[26px] border border-white/90 bg-gradient-to-br from-white/85 via-[#ffe1ed]/90 to-[#f4d8ff]/80 p-4 text-[#1d1017] shadow-[0_10px_28px_rgba(115,44,74,.14)] backdrop-blur-xl">
-      <div className="mb-3 flex items-center gap-2">
+    <section aria-label="Create something new" className="relative mx-4 sm:mx-6 overflow-hidden rounded-[26px] border border-white/90 bg-gradient-to-br from-white/85 via-[#ffe1ed]/90 to-[#f4d8ff]/80 p-4 text-[#1d1017] shadow-[0_10px_28px_rgba(115,44,74,.14)] backdrop-blur-xl">
+      <span aria-hidden="true" className="pointer-events-none absolute -right-1 top-1 text-3xl text-[#e5a9c2]/45">✿</span>
+      <span aria-hidden="true" className="pointer-events-none absolute bottom-0 left-1 text-lg text-[#e5a9c2]/35">✿</span>
+      <div className="relative z-[1] mb-3 flex items-center gap-2">
         <span className="grid h-8 w-8 place-items-center rounded-full border border-white/90 bg-gradient-to-br from-[#fffafd] to-[#ffd5e5] text-[#211019] shadow-[inset_0_1px_5px_white,0_3px_8px_rgba(115,44,74,.13)]"><Sparkles className="h-4 w-4" /></span>
         <div><h3 className="text-sm font-extrabold">Create Something New</h3><p className="text-[11px] text-[#543645]/80">Swipe to choose your next idea</p></div>
         <span aria-hidden="true" className="ml-auto text-[10px] font-semibold text-[#543645]/75">SWIPE →</span>
