@@ -345,9 +345,9 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
   />;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-0 backdrop-blur-md animate-in fade-in duration-200 sm:p-4">
-      <div className="plf-settings-theme relative flex h-[100dvh] max-h-[calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom))] w-full max-w-2xl flex-col overflow-hidden border-2 border-[#079AF0]/45 bg-[#140410] shadow-[0_0_50px_rgba(7,154,240,0.28)] sm:h-auto sm:max-h-[90dvh] sm:rounded-3xl">
-        <div className="flex shrink-0 items-center justify-between border-b border-[#8AABF4]/30 bg-[#0d020b] px-4 py-4 sm:px-6">
+    <div className="cp-settings-overlay fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-0 backdrop-blur-md animate-in fade-in duration-200 sm:p-4">
+      <div className="plf-settings-theme cp-settings-panel relative box-border flex h-[100svh] max-h-[100svh] w-full max-w-2xl flex-col overflow-hidden border border-[#d987a7]/40 bg-[#fff5f9] shadow-[0_12px_36px_rgba(112,40,72,.18)] sm:h-auto sm:max-h-[90dvh] sm:rounded-3xl">
+        <div className="cp-settings-header flex shrink-0 items-center justify-between border-b border-[#8AABF4]/30 bg-[#0d020b] px-4 py-4 pt-[calc(env(safe-area-inset-top)+.75rem)] sm:px-6 sm:pt-4">
           <div className="flex items-center gap-2 min-w-0">
             <button
               type="button"
@@ -359,7 +359,7 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
               <ArrowLeft className="h-5 w-5" />
               <span className="hidden text-xs font-semibold sm:inline">Back</span>
             </button>
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#079AF0] via-[#B12FA7] to-[#FF3B04] flex items-center justify-center text-white shadow-[0_0_15px_rgba(7,154,240,0.4)]">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#f8d7e5] via-[#eea7c2] to-[#d56a91] flex items-center justify-center text-[#211019] shadow-[0_0_15px_rgba(213,106,145,0.22)]">
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
@@ -379,7 +379,7 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
           </button>
         </div>
 
-        <div className="flex shrink-0 gap-1 overflow-x-auto overscroll-x-contain border-b border-[#8AABF4]/30 bg-[#1a0515]/60 px-3 pt-2 [scrollbar-width:thin] sm:px-6">
+        <div className="cp-settings-tabs flex shrink-0 gap-1 overflow-x-auto overscroll-x-contain border-b border-[#8AABF4]/30 bg-[#1a0515]/60 px-3 pt-2 [scrollbar-width:thin] sm:px-6">
           <button type="button" onClick={() => setShowPreferences(true)} className="min-h-11 shrink-0 whitespace-nowrap px-3 pb-3 text-xs font-bold text-[#9be3d5]">App settings</button>
           <button
             onClick={() => setActiveTab('openrouter')}
@@ -440,7 +440,7 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
           </button>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain space-y-6 px-4 pb-8 pt-4 text-xs text-[#ffd6eb] sm:p-6">
+        <div className="cp-settings-content min-h-0 flex-1 overflow-y-auto overscroll-contain space-y-6 px-4 pb-8 pt-4 text-xs text-[#ffd6eb] sm:p-6">
           {activeTab === 'openrouter' && (
             <div className="space-y-5">
               <div
@@ -816,7 +816,7 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
           )}
         </div>
 
-        <div className="flex shrink-0 items-center justify-between gap-3 border-t border-[#8AABF4]/30 bg-[#0d020b] px-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-4 sm:px-6">
+        <div className="cp-settings-footer flex shrink-0 items-center justify-between gap-3 border-t border-[#8AABF4]/30 bg-[#0d020b] px-4 pb-[calc(env(safe-area-inset-bottom)+.75rem)] pt-3 sm:px-6 sm:pb-4">
           <div className="text-[11px] text-[#ffd6eb]/60">
             OpenRouter AI &bull; Firebase &bull; Pretty Little Fantasies
           </div>
