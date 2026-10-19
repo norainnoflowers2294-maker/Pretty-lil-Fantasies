@@ -1823,6 +1823,20 @@ export const ChatView: React.FC<ChatViewProps> = ({
               <button type="button" aria-label="Close tools drawer" onClick={() => setIsRightDrawerOpen(false)} className="rounded-xl bg-white/10 p-2 text-white hover:bg-white/20"><X className="h-4 w-4" /></button>
             </div>
             <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-3">
+              <section className="rounded-xl border border-[#ff66b2]/45 bg-[#ff007f]/10 p-3">
+                <h3 className="mb-2 text-[10px] font-bold uppercase tracking-widest text-[#ff99cc]">AI voice &amp; helpers</h3>
+                <label className="mb-3 block text-[10px] font-semibold text-white/75">Mock model voice
+                  <select aria-label="Choose a mock model voice" value={chat.mockStyle || 'chatgpt'} onChange={(event) => onUpdateChat({ ...chat, mockStyle: event.target.value as NonNullable<Chat['mockStyle']>, updatedAt: new Date().toISOString() })} className="mt-1 w-full rounded-lg border border-[#ff66b2]/40 bg-[#1e0818] p-2 text-xs text-white">
+                    <option value="chatgpt">Mock ChatGPT · friendly &amp; clear</option><option value="gemini">Mock Gemini · curious &amp; creative</option><option value="deepseek">Mock DeepSeek · analytical</option><option value="grok">Mock Grok · witty &amp; direct</option>
+                  </select>
+                </label>
+                <label className="block text-[10px] font-semibold text-white/75">Helper mode
+                  <select aria-label="Choose an assistant helper mode" value={chat.helperMode || 'roleplay'} onChange={(event) => onUpdateChat({ ...chat, helperMode: event.target.value as NonNullable<Chat['helperMode']>, updatedAt: new Date().toISOString() })} className="mt-1 w-full rounded-lg border border-[#ff66b2]/40 bg-[#1e0818] p-2 text-xs text-white">
+                    <option value="roleplay">Roleplay</option><option value="internet">Internet research · web search</option><option value="coder">Coder</option><option value="ideas">Idea creator</option><option value="story">Story writer</option>
+                  </select>
+                </label>
+                <p className="mt-2 text-[10px] leading-relaxed text-[#ffd6eb]/60">{chat.helperMode === 'internet' ? 'Uses OpenRouter web search when the model needs current information. Search calls may use account credits.' : chat.helperMode === 'coder' ? 'Ask for code, debugging, or a step-by-step implementation.' : chat.helperMode === 'ideas' ? 'Ask for fresh options, names, scenes, or creative directions.' : chat.helperMode === 'story' ? 'Ask for a scene, character arc, plot, or story polish.' : 'Choose a helper to shape the next reply.'}</p>
+              </section>
               <section className="rounded-xl border border-[#ff66b2]/30 bg-white/5 p-3">
                 <h3 className="mb-2 text-[10px] font-bold uppercase tracking-widest text-[#ff99cc]">Social Media world</h3>
                 <p className="mb-2 text-[11px] leading-relaxed text-[#ffd6eb]/65">This world stays separate unless you turn it on for this chat.</p>
