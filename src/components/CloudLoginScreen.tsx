@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { auth, prepareFirebaseGoogleSignIn, signInWithGoogle } from '../lib/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
+import { prepareFirebaseGoogleSignIn, signInWithGoogle } from '../lib/firebase';
 
 /**
  * Optional account entry. Local access stays available until the cloud account
@@ -13,8 +12,7 @@ export function CloudLoginScreen({ onContinueLocal }: { onContinueLocal: () => v
   const [error, setError] = useState('');
   useEffect(() => {
     void prepareFirebaseGoogleSignIn().catch(() => undefined);
-    return onAuthStateChanged(auth, (user) => { if (user) onContinueLocal(); });
-  }, [onContinueLocal]);
+  }, []);
 
   const login = async () => {
     setBusy(true);
