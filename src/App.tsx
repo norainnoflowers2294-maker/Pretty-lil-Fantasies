@@ -41,7 +41,7 @@ import { DualTrackOverlay } from './components/DualTrackOverlay';
 import { Columns, House, MessageCircle, Plus, UserRound } from 'lucide-react';
 import { WalletModal } from './components/WalletModal';
 import { CharacterPhoneModal } from './components/CharacterPhoneModal';
-import { getWalletForScope, type StoryWallet } from './lib/wallet';
+import { formatWalletMoney, getWalletForScope, recordIncomingTransfer, type StoryWallet, type StoryWalletTransaction } from './lib/wallet';
 import { DEFAULT_SOCIAL_WORLD, formatSocialWorldContext } from './lib/socialMedia';
 import { formatPhoneStoryContext, mergePhoneSystemData } from './lib/phoneSystem';
 import { mergeStoryMemories } from './lib/storyMemory';
@@ -150,6 +150,8 @@ export default function App() {
   const [isYouTubePlayerOpen, setIsYouTubePlayerOpen] = useState(false);
   const [isCreatorBotOpen, setIsCreatorBotOpen] = useState(false);
   const [walletView, setWalletView] = useState<'dashboard' | 'activity'>('dashboard');
+  const [moneyAlert, setMoneyAlert] = useState<StoryWalletTransaction | null>(null);
+  const [moneyCycle, setMoneyCycle] = useState(0);
 
   // Persona Page & Creator Mode
   const [isPersonaCreatorOpen, setIsPersonaCreatorOpen] = useState(false);
@@ -805,6 +807,50 @@ export default function App() {
   const activeWalletPersona = activeChat ? (data.personas.find((item) => item.id === activeChat.personaId) || data.personas[0]) : undefined;
   const activeWallet = activeChat && activeWalletPersona ? getWalletForScope(data.wallets, activeChat.id, activeWalletPersona.id) : null;
   const walletSenderName = activeChat ? (data.characters.find((item) => activeChat.characterIds.includes(item.id))?.name || 'Story character') : 'Story character';
+  const luciousCharacter = data.characters.find((character) => /lucious/i.test(character.name));
+  const luciousChat = luciousCharacter ? data.chats.find((chat) => chat.characterIds.includes(luciousCharacter.id)) : undefined;
+
+  const showIncomingMoneyAlert = (transaction: StoryWalletTransaction) => {
+    if (!/lucious/i.test(transaction.sender)) return;
+    setMoneyAlert(transaction);
+  };
+
+  useEffect(() => {
+    if (!moneyAlert) return;
+    const timeout = window.setTimeout(() => setMoneyAlert((current) => current?.eventId === moneyAlert.eventId ? null : current), 7000);
+    return () => window.clearTimeout(timeout);
+  }, [moneyAlert?.eventId]);
+
+  // Fictional surprise payments from Lucious arrive while the app is open. The alert is in-app only and silent.
+  useEffect(() => {
+    if (!storageHydrated || !luciousChat || !luciousCharacter) return;
+    const delay = 4 * 60_000 + Math.random() * 8 * 60_000;
+    const timer = window.setTimeout(() => {
+      const currentData = dataRef.current;
+      const targetChat = currentData.chats.find((chat) => chat.id === luciousChat.id);
+      const sender = currentData.characters.find((character) => character.id === luciousCharacter.id);
+      if (!targetChat || !sender) return;
+      const recipient = currentData.personas.find((persona) => persona.id === targetChat.personaId) || currentData.personas.find((persona) => persona.is_default) || currentData.personas[0];
+      const wallet = getWalletForScope(currentData.wallets, targetChat.id, recipient?.id || 'persona_default');
+      const amountCents = [2500, 5000, 10000, 25000, 50000][Math.floor(Math.random() * 5)];
+      const notes = ['Something pretty for you, sweetheart.', 'Get yourself a little treat.', 'Because you deserve it, darling.', 'A little surprise from me.'];
+      const next = recordIncomingTransfer(wallet, {
+        eventId: 'lucious-gift-' + targetChat.id + '-' + Date.now(),
+        sender: sender.name,
+        recipient: recipient?.name || 'The Muse',
+        amountCents,
+        memo: notes[Math.floor(Math.random() * notes.length)],
+        timestamp: Date.now(),
+      });
+      const wallets = currentData.wallets.some((item) => item.id === next.id)
+        ? currentData.wallets.map((item) => item.id === next.id ? next : item)
+        : [...currentData.wallets, next];
+      void updateData({ ...currentData, wallets });
+      showIncomingMoneyAlert(next.transactions[0]);
+      setMoneyCycle((cycle) => cycle + 1);
+    }, delay);
+    return () => window.clearTimeout(timer);
+  }, [storageHydrated, luciousChat?.id, luciousCharacter?.id, moneyCycle]);
 
   // Show cloud sign-in on a fresh visit without locking away local stories.
   // Once Google auth restores, the existing Firebase hydration flow takes over.
@@ -886,6 +932,10 @@ export default function App() {
   if (inChatMode && activeChat) {
     return (
       <>
+        {moneyAlert && <div className="cp-money-alert fixed left-1/2 top-4 z-[120] flex w-[min(92vw,28rem)] -translate-x-1/2 items-center gap-3 rounded-2xl border px-4 py-3 shadow-xl" role="status" aria-live="polite">
+          <span aria-hidden="true">💸</span><span className="min-w-0 flex-1"><strong className="block">{moneyAlert.sender} sent you {formatWalletMoney(moneyAlert.amountCents, moneyAlert.currency)}</strong><small className="block truncate">{moneyAlert.memo}</small></span>
+          <button type="button" aria-label="Dismiss money alert" onClick={() => setMoneyAlert(null)}>×</button>
+        </div>}
         <ChatView
           chat={activeChat}
           allChats={data.chats}
@@ -1033,6 +1083,7 @@ export default function App() {
           personaName={activeWalletPersona.name}
           characterName={walletSenderName}
           onSaveWallet={handleSaveWallet}
+          onIncomingPayment={showIncomingMoneyAlert}
         />}
       </>
     );
@@ -1087,6 +1138,7 @@ export default function App() {
           activeTab={activeTab}
           chats={data.chats}
           activeChat={activeChat}
+          walletBalance={activeWallet ? formatWalletMoney(activeWallet.accounts.filter((account) => account.type !== 'credit').reduce((total, account) => total + account.balanceCents, 0), activeWallet.currency) : '—'}
           onNavigate={(tab) => {
             setActiveTab(tab);
             if (tab === 'chats') setInChatMode(false);
@@ -1273,6 +1325,10 @@ export default function App() {
         )}
       </main>
 
+      {moneyAlert && <div className="cp-money-alert fixed left-1/2 top-4 z-[120] flex w-[min(92vw,28rem)] -translate-x-1/2 items-center gap-3 rounded-2xl border px-4 py-3 shadow-xl" role="status" aria-live="polite">
+        <span aria-hidden="true">💸</span><span className="min-w-0 flex-1"><strong className="block">{moneyAlert.sender} sent you {formatWalletMoney(moneyAlert.amountCents, moneyAlert.currency)}</strong><small className="block truncate">{moneyAlert.memo}</small></span>
+        <button type="button" aria-label="Dismiss money alert" onClick={() => setMoneyAlert(null)}>×</button>
+      </div>}
       <QuickBottomToolbar
         active={activeTab === 'characters' ? 'characters' : activeTab === 'home' ? 'home' : undefined}
         onCharacters={() => { setIsCreateCharacterOpen(false); setCharacterToEdit(null); setInChatMode(false); setActiveTab('characters'); }}
