@@ -3318,3 +3318,18 @@ body {
   color: #211019 !important;
   stroke: #211019 !important;
 }
+
+
+/* Explicitly lift the remaining dark chat pills above the legacy rounded-border rule. */
+#root .cp-chat button[class*="rounded-"][class*="bg-"] {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  background-color: #ffd5e7 !important;
+  background-image: linear-gradient(135deg, #fff8fb, #ffd3e5 58%, #e5d8f3) !important;
+  border-color: rgba(255,255,255,.98) !important;
+  box-shadow: 0 4px 12px rgba(103,39,74,.14), inset 0 1px 0 #fff !important;
+}
+#root .cp-chat button[class*="rounded-"][class*="bg-"] svg {
+  color: #211019 !important;
+  stroke: #211019 !important;
+}
