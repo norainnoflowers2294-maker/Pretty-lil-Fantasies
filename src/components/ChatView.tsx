@@ -1709,7 +1709,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
                   return;
                 }
               }}
-              className="w-full bg-[#1e0818] border border-[#ff3399]/40 focus:border-[#ff3399] rounded-2xl px-4 py-3 text-xs sm:text-sm text-white placeholder-white/40 focus:outline-none resize-none shadow-inner"
+              className="w-full bg-[#ffe5ef] border border-[#d987a7]/50 focus:border-[#c85d88] rounded-2xl px-4 py-3 text-xs sm:text-sm text-black placeholder:text-[#654552] caret-black focus:outline-none resize-none shadow-inner" style={{ color: "#111111", WebkitTextFillColor: "#111111", caretColor: "#111111" }}
             />
           </div>
 
