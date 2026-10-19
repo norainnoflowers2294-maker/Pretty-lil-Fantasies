@@ -1836,14 +1836,14 @@ export const ChatView: React.FC<ChatViewProps> = ({
             aria-modal="true"
             aria-label="Chat tools drawer"
             onClick={(event) => event.stopPropagation()}
-            className={`absolute inset-y-0 right-0 flex w-[min(88vw,22rem)] flex-col border-l border-[#ff66b2]/60 bg-[#140410] shadow-[-10px_0_40px_rgba(255,0,128,0.35)] transition-transform duration-300 ${isRightDrawerOpen ? 'translate-x-0' : 'translate-x-full'}`}
+            className={`absolute inset-y-0 right-0 z-[2] flex w-[min(88vw,22rem)] flex-col border-l border-[#ff66b2]/60 bg-[#140410] shadow-[-10px_0_40px_rgba(255,0,128,0.35)] transition-transform duration-300 ${isRightDrawerOpen ? 'translate-x-0' : 'translate-x-full'}`}
           >
             <div className="flex items-center justify-between border-b border-[#ff3399]/30 p-4">
               <div>
                 <h2 className="text-base font-bold text-white">Chat Tools</h2>
                 <p className="text-[11px] text-[#ffd6eb]/65">Characters, settings, and extras</p>
               </div>
-              <button type="button" aria-label="Close tools drawer" onClick={() => setIsRightDrawerOpen(false)} className="rounded-xl bg-white/10 p-2 text-white hover:bg-white/20"><X className="h-4 w-4" /></button>
+              <button type="button" aria-label="Close tools drawer" onClick={(event) => { event.stopPropagation(); setIsRightDrawerOpen(false); }} className="relative z-10 grid min-h-11 min-w-11 place-items-center rounded-full border border-white/90 bg-white/85 p-2 text-[#211019] shadow-lg hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pink-500"><X className="h-5 w-5" /></button>
             </div>
             <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-3">
               <section className="rounded-xl border border-[#ff66b2]/45 bg-[#ff007f]/10 p-3">
