@@ -347,7 +347,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
     skipCheck = false,
     allowNarrator = false,
     onResponseInfo?: (info: OpenRouterResponseInfo) => void,
-  ) => sendAssistantReply(
+  ) => sendCheckedCharacterReply(
     { ...config, webSearch: chat.helperMode === 'internet' },
     messages,
     selectedCharacters,
