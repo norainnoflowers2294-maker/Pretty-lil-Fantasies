@@ -48,8 +48,8 @@ export const CategoryPills: React.FC<CategoryPillsProps> = ({
 
   return (
     <div className="w-full px-4 sm:px-6 py-2">
-      <div className="bg-white/70 backdrop-blur-xl border border-white/90 rounded-3xl p-3 shadow-[0_8px_24px_rgba(115,44,74,.13)] overflow-x-auto no-scrollbar">
-        <div className="flex items-center justify-between min-w-[700px] gap-2">
+      <div className="plf-category-strip bg-white/70 backdrop-blur-xl border border-white/90 rounded-3xl p-3 shadow-[0_8px_24px_rgba(115,44,74,.13)] overflow-x-auto no-scrollbar">
+        <div className="plf-category-strip-items flex items-center justify-between min-w-[700px] gap-2">
           {categories.map((cat) => {
             const isActive = activeCategory === cat.id;
             return (
@@ -60,14 +60,14 @@ export const CategoryPills: React.FC<CategoryPillsProps> = ({
                 className="plf-category-pill flex flex-col items-center justify-center space-y-1.5 group flex-1 py-1 transition-all"
               >
                 <div
-                  className={`plf-category-icon-ring relative p-0.5 rounded-full transition-all duration-300 ${
+                  className={`plf-category-icon-ring relative p-1 rounded-full transition-all duration-300 ${
                     isActive
-                      ? 'bg-gradient-to-tr from-white via-[#ffd3e5] to-[#f4a9c6] scale-110 shadow-[0_0_16px_rgba(219,94,146,.35)]'
-                      : 'bg-white/70 hover:bg-white group-hover:scale-105'
+                      ? 'bg-gradient-to-tr from-white via-[#ffd3e5] to-[#c6ecf5] scale-110 shadow-[0_0_16px_rgba(219,94,146,.35)]'
+                      : 'bg-white/35 hover:bg-white/55 group-hover:scale-105'
                   }`}
                 >
                   <div
-                    className={`plf-category-icon w-11 h-11 rounded-full bg-gradient-to-br from-[#fffafd] via-[#ffe1ed] to-[#f4aec9] flex items-center justify-center text-[#211019] border border-white/90 shadow-inner`}
+                    className={`plf-category-icon w-11 h-11 rounded-full flex items-center justify-center text-[#211019] border border-white/90 shadow-inner`}
                   >
                     {cat.icon}
                   </div>
