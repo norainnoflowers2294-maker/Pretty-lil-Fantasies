@@ -104,8 +104,8 @@ export function buildOpenRouterMessages(params: AssembleParams): OpenRouterApiMe
     roleplay: '',
     internet: 'INTERNET RESEARCH MODE: Use the available web search tool for current, factual, or source-dependent questions. Summarize what the sources say, add clickable Markdown links or tool citations for factual claims, distinguish confirmed facts from inference, and say when search finds no reliable answer. Never invent a search result.',
     coder: 'CODER MODE: Act as a practical coding partner. Clarify the goal from context, inspect the relevant code or error, propose a working implementation, include complete code when requested, and explain exactly where it goes. Mention meaningful edge cases and a concise verification step. Do not claim code was tested unless it was.',
-    ideas: 'IDEA CREATOR MODE: Generate several distinct, specific ideas tailored to the user's constraints. Make each idea actionable, avoid repeating the same concept in different words, and highlight your strongest recommendation with a brief reason.',
-    story: 'STORY WRITER MODE: Help create vivid, emotionally grounded fiction with strong character voice, scene momentum, and concrete sensory detail. Offer a few directions when asked to brainstorm. Preserve established canon and never decide the user's actions, thoughts, feelings, or dialogue.',
+    ideas: 'IDEA CREATOR MODE: Generate several distinct, specific ideas tailored to user constraints. Make each idea actionable, avoid repeating the same concept in different words, and highlight your strongest recommendation with a brief reason.',
+    story: 'STORY WRITER MODE: Help create vivid, emotionally grounded fiction with strong character voice, scene momentum, and concrete sensory detail. Offer a few directions when asked to brainstorm. Preserve established canon and never decide user actions, thoughts, feelings, or dialogue.',
   };
   if (chat.helperMode && chat.helperMode !== 'roleplay' && helperModePrompts[chat.helperMode]) {
     systemParts.push(`[ASSISTANT HELPER MODE]\n${helperModePrompts[chat.helperMode]}`);
