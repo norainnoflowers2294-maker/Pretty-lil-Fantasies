@@ -2503,7 +2503,7 @@ body {
 
 /* Settings uses fixed header and action rows around a properly scrollable body. */
 #root .cp-settings-overlay { background: rgba(255,233,242,.76) !important; }
-#root .cp-settings-panel { height: 100svh !important; max-height: 100svh !important; padding-bottom: env(safe-area-inset-bottom, 0px); color: #211019 !important; background: linear-gradient(145deg, rgba(255,250,253,.99), rgba(255,226,239,.98)) !important; border-color: rgba(196,104,145,.48) !important; }
+#root .cp-settings-panel { height: 100svh !important; max-height: 100svh !important; padding-bottom: 0; color: #211019 !important; background: linear-gradient(145deg, rgba(255,250,253,.99), rgba(255,226,239,.98)) !important; border-color: rgba(196,104,145,.48) !important; }
 #root .cp-settings-header { padding-top: calc(env(safe-area-inset-top, 0px) + .75rem) !important; color: #211019 !important; background: linear-gradient(145deg, #fffafd, #ffe5ef) !important; border-color: rgba(196,104,145,.32) !important; }
 #root .cp-settings-tabs { background: rgba(255,237,245,.98) !important; border-color: rgba(196,104,145,.32) !important; }
 #root .cp-settings-content { min-height: 0 !important; overscroll-behavior: contain; color: #211019 !important; background: transparent !important; }
