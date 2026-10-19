@@ -1091,13 +1091,13 @@ export default function App() {
 
   // Dashboard View (Faithfully matching the uploaded image + Dual Track System)
   return (
-    <div data-screen={activeTab} className="cp-app-shell min-h-screen bg-[#ff1493] text-[#ffd6eb] flex flex-col font-sans selection:bg-[#ff007f]/40 relative overflow-x-hidden" style={{
+    <div data-screen={activeTab} className="cp-app-shell min-h-screen bg-[#f8dbe7] text-[#211019] flex flex-col font-sans selection:bg-[#ff007f]/40 relative overflow-x-hidden" style={{
       '--plf-screen-background': `url("${import.meta.env.BASE_URL}backgrounds/${({ home: 'line-art-flowers.webp', chats: 'line-art-flowers.webp', characters: 'line-art-flowers.webp', lorebooks: 'line-art-flowers.webp', personas: 'line-art-flowers.webp', gallery: 'line-art-flowers.webp', files: 'line-art-flowers.webp', perchance: 'line-art-flowers.webp', social: 'line-art-flowers.webp', journal: 'line-art-flowers.webp', marketplace: 'line-art-flowers.webp', 'memory-map': 'line-art-flowers.webp', more: 'line-art-flowers.webp' } as Record<NavTab, string>)[activeTab]}")`,
       ...(preferences.dashboardBackground ? { backgroundImage: `url("${preferences.dashboardBackground.replace(/"/g, '%22')}")`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' } : {}),
     } as React.CSSProperties}>
       {/* Background Neon Glow Orbs */}
       <div className="fixed top-0 left-1/4 w-[500px] h-[500px] bg-[#ff007f]/10 rounded-full blur-[140px] pointer-events-none" />
-      <div className="fixed bottom-0 right-1/4 w-[500px] h-[500px] bg-[#9b51e0]/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="fixed bottom-0 right-1/4 w-[500px] h-[500px] bg-[#ff1493]/10 rounded-full blur-[140px] pointer-events-none" />
 
       {/* 1. Pretty Little Fantasies header */}
       <ColorPopHeader />
@@ -1160,10 +1160,10 @@ export default function App() {
         {/* Prominent Track Screen Button on Dashboard */}
         <button
           onClick={() => setIsDualTrackOpen(true)}
-          className="shrink-0 px-3.5 py-2 rounded-full bg-gradient-to-r from-[#ff007f]/30 to-[#9b51e0]/30 hover:from-[#ff007f]/50 hover:to-[#9b51e0]/50 border border-[#ff3399]/60 text-white font-bold text-xs shadow-[0_0_15px_rgba(255,0,128,0.4)] flex items-center space-x-1.5 transition-all hover:scale-105"
+          className="shrink-0 px-3.5 py-2 rounded-full bg-gradient-to-r from-[#fffafd] via-[#ffddeb] to-[#fff1f7] hover:from-[#ffe7f0] hover:to-[#f4aec9] border border-white/90 text-[#211019] font-bold text-xs shadow-[0_5px_14px_rgba(115,44,74,.13)] flex items-center space-x-1.5 transition-all hover:scale-105"
           title="Open Dual Track Screen (Slide-over panels on left and right)"
         >
-          <Columns className="w-4 h-4 text-[#ff99cc]" />
+          <Columns className="w-4 h-4 text-[#211019]" />
           <span className="hidden sm:inline">Track Screen</span>
         </button>
         </div>
