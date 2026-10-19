@@ -3538,3 +3538,15 @@ body {
   -webkit-text-fill-color: #211019 !important;
   background-color: transparent !important;
 }
+
+
+/* Keep page and section headings in their authored title case across the app. */
+#root .cp-app-shell :is(h1,h2,h3,h4,h5,h6),
+#root .cp-chat :is(h1,h2,h3,h4,h5,h6),
+#root .cp-preferences :is(h1,h2,h3,h4,h5,h6),
+#root .cp-settings-panel :is(h1,h2,h3,h4,h5,h6),
+#root .cp-app-drawer-panel :is(h1,h2,h3,h4,h5,h6),
+#root aside[role="dialog"] :is(h1,h2,h3,h4,h5,h6),
+#root .cp-brand-header {
+  text-transform: none !important;
+}
