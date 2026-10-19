@@ -49,7 +49,7 @@ export const CharacterModal: React.FC<CharacterModalProps> = ({
         window.alert(String(parsed.customFields.importWarning));
       }
       const now = new Date().toISOString();
-      const fallbackName = file.name.replace(/\\.[^/.]+$/, '').replace(/[-_]/g, ' ').trim() || 'Imported Character';
+      const fallbackName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ').trim() || 'Imported Character';
       const matchingCharacter = characters.find((character) =>
         character.name.trim().toLocaleLowerCase() === String(parsed.name || fallbackName).trim().toLocaleLowerCase()
       );
