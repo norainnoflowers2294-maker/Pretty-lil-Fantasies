@@ -1041,7 +1041,7 @@ export default function App() {
   // Dashboard View (Faithfully matching the uploaded image + Dual Track System)
   return (
     <div data-screen={activeTab} className="cp-app-shell min-h-screen bg-[#ff1493] text-[#ffd6eb] flex flex-col font-sans selection:bg-[#ff007f]/40 relative overflow-x-hidden" style={{
-      '--plf-screen-background': `url("${import.meta.env.BASE_URL}backgrounds/${({ home: 'feather-dark.webp', chats: 'pastel-blur.webp', characters: 'line-art-flowers.webp', lorebooks: 'flower-candles-alt.webp', personas: 'neon-floral.webp', gallery: 'painted-flowers.webp', files: 'fluid-color.webp', perchance: 'fluid-color.webp', social: 'neon-floral.webp', journal: 'flower-candles.webp', marketplace: 'flower-candles-alt.webp', 'memory-map': 'feather-dark.webp', more: 'pastel-blur.webp' } as Record<NavTab, string>)[activeTab]}")`,
+      '--plf-screen-background': `url("${import.meta.env.BASE_URL}backgrounds/${({ home: 'line-art-flowers.webp', chats: 'line-art-flowers.webp', characters: 'line-art-flowers.webp', lorebooks: 'line-art-flowers.webp', personas: 'line-art-flowers.webp', gallery: 'line-art-flowers.webp', files: 'line-art-flowers.webp', perchance: 'line-art-flowers.webp', social: 'line-art-flowers.webp', journal: 'line-art-flowers.webp', marketplace: 'line-art-flowers.webp', 'memory-map': 'line-art-flowers.webp', more: 'line-art-flowers.webp' } as Record<NavTab, string>)[activeTab]}")`,
       ...(preferences.dashboardBackground ? { backgroundImage: `url("${preferences.dashboardBackground.replace(/"/g, '%22')}")`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' } : {}),
     } as React.CSSProperties}>
       {/* Background Neon Glow Orbs */}
