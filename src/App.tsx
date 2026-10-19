@@ -8,7 +8,7 @@ import { testOpenRouterConnection } from './lib/openrouter';
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { ColorPopHeader } from './components/ColorPopHeader';
+import { ColorPopHeader, ColorPopHeaderActions } from './components/ColorPopHeader';
 import { TopNavPill, NavTab } from './components/TopNavPill';
 import { AppDrawers } from './components/AppDrawers';
 import { DailyPromptHub } from './components/DailyPromptHub';
@@ -1100,21 +1100,11 @@ export default function App() {
       <div className="fixed bottom-0 right-1/4 w-[500px] h-[500px] bg-[#9b51e0]/10 rounded-full blur-[140px] pointer-events-none" />
 
       {/* 1. Pretty Little Fantasies header */}
-      <ColorPopHeader
-        diagnostic={diagnostic}
-        firebaseConnected={Boolean(firebaseUser)}
-        onOpenSettings={() => setIsSettingsOpen(true)}
-        onOpenSearch={() => setIsCharModalOpen(true)}
-        onOpenFavorites={() => setIsSavedMessagesOpen(true)}
-        onOpenGitPush={() => setIsGitSyncOpen(true)}
-        onOpenYouTubePlayer={() => setIsYouTubePlayerOpen(true)}
-        userAvatar={(activeChat && data.personas.find((persona) => persona.id === activeChat.personaId)?.avatar) || firebaseUser?.photoURL || '/colorpop_hero.jpg'}
-        userName={firebaseUser?.displayName || 'The Muse'}
-      />
+      <ColorPopHeader />
 
       {/* 2. Top Navigation Pill with Dual Track Trigger */}
-      <div className="w-full max-w-4xl mx-auto px-4 flex items-center justify-between gap-2">
-        <div className="min-w-0 flex-1">
+      <div className="plf-top-row w-full max-w-full overflow-x-auto overflow-y-hidden overscroll-x-contain px-0 pb-2 touch-pan-x">
+        <div className="flex w-max min-w-full items-center gap-2 px-3">
           <TopNavPill
             activeTab={activeTab}
             onChangeTab={(t) => {
@@ -1131,8 +1121,20 @@ export default function App() {
               }
             }}
             onOpenMoreMenu={() => setIsSettingsOpen(true)}
+            utilityActions={<ColorPopHeaderActions
+              diagnostic={diagnostic}
+              firebaseConnected={Boolean(firebaseUser)}
+              onOpenSettings={() => setIsSettingsOpen(true)}
+              onOpenSearch={() => setIsCharModalOpen(true)}
+              onOpenFavorites={() => setIsSavedMessagesOpen(true)}
+              onOpenGitPush={() => setIsGitSyncOpen(true)}
+              onOpenYouTubePlayer={() => setIsYouTubePlayerOpen(true)}
+              userAvatar={(activeChat && data.personas.find((persona) => persona.id === activeChat.personaId)?.avatar) || firebaseUser?.photoURL || '/colorpop_hero.jpg'}
+              userName={firebaseUser?.displayName || 'The Muse'}
+            />}
           />
         </div>
+      </div>
 
         <AppDrawers
           activeTab={activeTab}
