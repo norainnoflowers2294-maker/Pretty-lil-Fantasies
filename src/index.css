@@ -409,3 +409,26 @@ body {
   #root .cp-app-shell button,
   #root .cp-chat button { transition: none !important; }
 }
+
+
+/* Bright hot-pink canvas visible through the glass surfaces. */
+html,
+body,
+#root {
+  background-color: #ff1493 !important;
+}
+body {
+  background-image:
+    radial-gradient(ellipse at 12% 12%, rgba(255, 123, 203, .82), transparent 34%),
+    radial-gradient(ellipse at 88% 18%, rgba(255, 0, 170, .72), transparent 36%),
+    radial-gradient(ellipse at 70% 86%, rgba(232, 0, 133, .72), transparent 42%),
+    linear-gradient(135deg, #ff56b2 0%, #ff1493 42%, #ff008c 72%, #e90083 100%) !important;
+  background-attachment: fixed;
+}
+#root .cp-app-shell,
+#root .cp-chat {
+  background: transparent !important;
+}
+#root .cp-chat > div.absolute.inset-0.bg-gradient-to-b {
+  background-image: linear-gradient(180deg, rgba(255, 20, 147, .38), rgba(255, 20, 147, .2) 48%, rgba(232, 0, 133, .34)) !important;
+}
