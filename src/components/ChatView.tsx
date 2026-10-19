@@ -181,6 +181,7 @@ interface ChatViewProps {
   onOpenSettings: () => void;
   onOpenPlugins: () => void;
   onOpenCharacterModal: () => void;
+  onEditCharacter: (character: Character) => void;
   onOpenLorebookModal: () => void;
   onOpenPersonaModal: () => void;
   onOpenStoryNotesModal: () => void;
@@ -214,6 +215,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
   onOpenSettings,
   onOpenPlugins,
   onOpenCharacterModal,
+  onEditCharacter,
   onOpenLorebookModal,
   onOpenPersonaModal,
   onOpenStoryNotesModal,
@@ -1238,12 +1240,20 @@ export const ChatView: React.FC<ChatViewProps> = ({
           <div className="flex items-center space-x-2 pl-1">
             <div className="flex -space-x-2 overflow-hidden">
               {activeCharacters.map((c) => (
-                <img
+                <button
                   key={c.id}
-                  src={resolveImageUrl(c.avatar)}
-                  alt={c.name}
-                  className="inline-block h-8 w-8 rounded-full ring-2 ring-[#ff007f] object-cover"
-                />
+                  type="button"
+                  onClick={() => onEditCharacter(c)}
+                  aria-label={`Edit ${c.name}`}
+                  title={`Edit ${c.name}`}
+                  className="shrink-0 rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#ff1493] transition-transform hover:scale-110 active:scale-95"
+                >
+                  <img
+                    src={resolveImageUrl(c.avatar)}
+                    alt={c.name}
+                    className="inline-block h-9 w-9 rounded-full ring-2 ring-[#ff007f] object-cover"
+                  />
+                </button>
               ))}
             </div>
 
