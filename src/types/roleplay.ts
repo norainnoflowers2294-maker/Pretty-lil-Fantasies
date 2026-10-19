@@ -205,6 +205,8 @@ export interface Chat {
   contextResetAt?: number;
   openingPending?: boolean;
   pinned?: boolean;
+  mockStyle?: 'chatgpt' | 'gemini' | 'deepseek' | 'grok';
+  helperMode?: 'roleplay' | 'internet' | 'coder' | 'ideas' | 'story';
   relationshipScore?: number;
   inventory?: string[];
   weather?: string;
@@ -259,6 +261,7 @@ export interface OpenRouterConfig {
   siteUrl: string;
   siteName: string;
   supportedParameters?: string[];
+  webSearch?: boolean;
 }
 
 export interface SupabaseConfig {
