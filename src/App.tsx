@@ -85,6 +85,16 @@ const FloatingBubbles: React.FC = () => {
     { size: 34, left: '94%', top: '82%', delay: '-10s', duration: '24s' },
     { size: 16, left: '4%', top: '89%', delay: '-6s', duration: '20s' },
     { size: 20, left: '96%', top: '8%', delay: '-17s', duration: '26s' },
+    { size: 12, left: '7%', top: '31%', delay: '-9s', duration: '18s' },
+    { size: 14, left: '91%', top: '38%', delay: '-14s', duration: '22s' },
+    { size: 10, left: '5%', top: '58%', delay: '-2s', duration: '17s' },
+    { size: 15, left: '89%', top: '65%', delay: '-11s', duration: '24s' },
+    { size: 11, left: '8%', top: '78%', delay: '-5s', duration: '20s' },
+    { size: 13, left: '92%', top: '91%', delay: '-16s', duration: '23s' },
+    { size: 9, left: '14%', top: '13%', delay: '-7s', duration: '19s' },
+    { size: 12, left: '84%', top: '16%', delay: '-4s', duration: '21s' },
+    { size: 10, left: '12%', top: '94%', delay: '-13s', duration: '25s' },
+    { size: 14, left: '86%', top: '47%', delay: '-18s', duration: '26s' },
   ];
 
   return (
