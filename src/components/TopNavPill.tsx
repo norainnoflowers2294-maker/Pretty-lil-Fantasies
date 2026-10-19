@@ -20,12 +20,14 @@ interface TopNavPillProps {
   activeTab: NavTab;
   onChangeTab: (tab: NavTab) => void;
   onOpenMoreMenu: () => void;
+  utilityActions?: React.ReactNode;
 }
 
 export const TopNavPill: React.FC<TopNavPillProps> = ({
   activeTab,
   onChangeTab,
   onOpenMoreMenu,
+  utilityActions,
 }) => {
   const tabs: Array<{ id: NavTab; label: string; icon: React.ReactNode }> = [
     { id: 'home', label: 'Home', icon: <Home className="w-4 h-4" /> },
@@ -42,8 +44,8 @@ export const TopNavPill: React.FC<TopNavPillProps> = ({
   ];
 
   return (
-    <nav className="plf-top-navigation min-w-0 w-full max-w-4xl mx-auto overflow-x-auto px-4 py-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-      <div className="min-w-max bg-[#12040e]/90 backdrop-blur-md border border-[#ff4d94]/40 rounded-full p-1.5 flex items-center justify-between shadow-[0_0_25px_rgba(255,51,153,0.3)]">
+    <nav className="plf-top-navigation shrink-0 w-max max-w-none overflow-visible px-0 py-0">
+      <div className="plf-top-navigation-track flex w-max items-center gap-1.5 rounded-full border border-[#ef9dbd]/55 bg-white/70 p-1.5 shadow-[0_8px_22px_rgba(130,45,78,.14)] backdrop-blur-xl">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
@@ -74,6 +76,7 @@ export const TopNavPill: React.FC<TopNavPillProps> = ({
           <MoreHorizontal className="w-4 h-4" />
           <span className="hidden sm:inline">More</span>
         </button>
+        {utilityActions && <div className="plf-top-utility-actions ml-1 flex shrink-0 items-center border-l border-[#cf7d9d]/35 pl-1.5">{utilityActions}</div>}
       </div>
     </nav>
   );
