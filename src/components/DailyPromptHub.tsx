@@ -52,7 +52,7 @@ export function DailyPromptHub({ characters, personas, onPlay, onStartBot, onOpe
     <section className="mx-4 sm:mx-6">
       <div className="mb-3 flex items-end justify-between"><div><h3 className="text-lg font-bold text-white">Your dedicated bots</h3><p className="text-xs text-[#ffd6eb]/60">Swipe to explore your story companions</p></div><span className="text-[10px] text-[#ffd6eb]/50">SCROLL →</span></div>
       <div className="flex snap-x gap-3 overflow-x-auto pb-2 [scrollbar-width:thin]">
-        {bots.map((bot) => <button type="button" key={bot.id} onClick={() => bot.id === 'creator' ? onOpenCreator() : setSelectedBot(bot.id)} className={`min-w-[245px] snap-start rounded-2xl border border-white/15 bg-gradient-to-br ${bot.color} p-4 text-left text-white shadow-lg transition hover:-translate-y-0.5 hover:border-[#ff99cc]/60`}>
+        {bots.map((bot) => <button type="button" key={bot.id} onClick={() => bot.id === 'creator' ? onOpenCreator() : onStartBot(bot.id as 'horoscope' | 'chatgpt')} className={`min-w-[245px] snap-start rounded-2xl border border-white/15 bg-gradient-to-br ${bot.color} p-4 text-left text-white shadow-lg transition hover:-translate-y-0.5 hover:border-[#ff99cc]/60`}>
           <span className="mb-3 inline-flex rounded-xl border border-white/15 bg-black/20 p-2 text-[#ffd6eb]">{bot.icon}</span><span className="block font-bold">{bot.name}</span><span className="mt-1 block text-xs text-white/65">{bot.desc}</span>
         </button>)}
       </div>
