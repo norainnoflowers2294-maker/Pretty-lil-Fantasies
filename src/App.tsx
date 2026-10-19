@@ -75,6 +75,38 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 
 
 
+const FloatingBubbles: React.FC = () => {
+  const bubbles = [
+    { size: 26, left: '5%', top: '20%', delay: '-3s', duration: '21s' },
+    { size: 42, left: '88%', top: '14%', delay: '-12s', duration: '25s' },
+    { size: 18, left: '11%', top: '48%', delay: '-8s', duration: '19s' },
+    { size: 34, left: '92%', top: '43%', delay: '-5s', duration: '23s' },
+    { size: 23, left: '7%', top: '73%', delay: '-15s', duration: '27s' },
+    { size: 48, left: '84%', top: '78%', delay: '-10s', duration: '24s' },
+    { size: 15, left: '30%', top: '89%', delay: '-6s', duration: '20s' },
+    { size: 21, left: '68%', top: '9%', delay: '-17s', duration: '26s' },
+  ];
+
+  return (
+    <div className="plf-bubbles-layer" aria-hidden="true">
+      {bubbles.map((bubble, index) => (
+        <span
+          key={index}
+          className="plf-floating-bubble"
+          style={{
+            left: bubble.left,
+            top: bubble.top,
+            width: bubble.size,
+            height: bubble.size,
+            animationDelay: bubble.delay,
+            animationDuration: bubble.duration,
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
 const QuickBottomToolbar: React.FC<{
   active?: 'characters' | 'create' | 'home' | 'recent';
   onCharacters: () => void;
@@ -1095,6 +1127,7 @@ export default function App() {
       '--plf-screen-background': `url("${import.meta.env.BASE_URL}backgrounds/${({ home: 'line-art-flowers.webp', chats: 'line-art-flowers.webp', characters: 'line-art-flowers.webp', lorebooks: 'line-art-flowers.webp', personas: 'line-art-flowers.webp', gallery: 'line-art-flowers.webp', files: 'line-art-flowers.webp', perchance: 'line-art-flowers.webp', social: 'line-art-flowers.webp', journal: 'line-art-flowers.webp', marketplace: 'line-art-flowers.webp', 'memory-map': 'line-art-flowers.webp', more: 'line-art-flowers.webp' } as Record<NavTab, string>)[activeTab]}")`,
       ...(preferences.dashboardBackground ? { backgroundImage: `url("${preferences.dashboardBackground.replace(/"/g, '%22')}")`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' } : {}),
     } as React.CSSProperties}>
+      <FloatingBubbles />
       {/* Background Neon Glow Orbs */}
       <div className="fixed top-0 left-1/4 w-[500px] h-[500px] bg-[#ff007f]/10 rounded-full blur-[140px] pointer-events-none" />
       <div className="fixed bottom-0 right-1/4 w-[500px] h-[500px] bg-[#ff1493]/10 rounded-full blur-[140px] pointer-events-none" />
