@@ -1133,8 +1133,6 @@ export default function App() {
               userName={firebaseUser?.displayName || 'The Muse'}
             />}
           />
-        </div>
-      </div>
 
         <AppDrawers
           activeTab={activeTab}
@@ -1168,6 +1166,7 @@ export default function App() {
           <Columns className="w-4 h-4 text-[#ff99cc]" />
           <span className="hidden sm:inline">Track Screen</span>
         </button>
+        </div>
       </div>
 
       {/* Main Dashboard Body */}
