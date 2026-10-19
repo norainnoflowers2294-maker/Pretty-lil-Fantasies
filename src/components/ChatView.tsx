@@ -1184,7 +1184,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
 
       {/* Top Chat Bar */}
       <header
-        className="cp-chat-header relative px-2 sm:px-5 pb-2.5 bg-[#140410]/95 backdrop-blur-md border-b border-[#ff3399]/40 flex flex-wrap items-center justify-between gap-y-2 z-30 shadow-[0_0_25px_rgba(255,0,128,0.3)]"
+        className="cp-chat-header cp-chat-topbar relative px-2 sm:px-5 pb-2.5 bg-[#140410]/95 backdrop-blur-md border-b border-[#ff3399]/40 flex flex-wrap items-center justify-between gap-y-2 z-30 shadow-[0_0_25px_rgba(255,0,128,0.3)]"
       >
         <div className="flex min-w-0 flex-1 items-center space-x-1.5 sm:space-x-3">
           <button
@@ -1380,7 +1380,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
       />}
 
       {/* Scenario / Lore / Atmosphere Bar */}
-      <div className="relative z-20 px-4 py-1.5 bg-[#1b0516]/85 border-b border-[#ff3399]/20 flex items-center justify-between text-[11px] text-[#ffd6eb]/80">
+      <div className="cp-chat-scenario relative z-20 px-4 py-1.5 bg-[#1b0516]/85 border-b border-[#ff3399]/20 flex items-center justify-between text-[11px] text-[#ffd6eb]/80">
         <div className="truncate flex items-center gap-1.5">
           <Sparkles className="w-3.5 h-3.5 text-[#ff66b2] shrink-0" />
           <span className="truncate">
@@ -1608,7 +1608,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
       </div>
 
       {/* Chat Input Bar */}
-      <div className="relative z-40 shrink-0 p-3 sm:p-4 bg-[#140410]/95 backdrop-blur-md border-t border-[#ff3399]/40" style={{ paddingBottom: "calc(.75rem + env(safe-area-inset-bottom, 0px))" }}>
+      <div className="cp-chat-composer relative z-40 shrink-0 p-3 sm:p-4 bg-[#140410]/95 backdrop-blur-md border-t border-[#ff3399]/40" style={{ paddingBottom: "calc(.75rem + env(safe-area-inset-bottom, 0px))" }}>
         {lastModelUsed && <><style>{'@keyframes plf-model-name-scroll { to { transform: translateX(var(--plf-model-name-end)); } }'}</style><div ref={modelLineViewportRef} className="mx-auto mb-2 max-w-4xl overflow-hidden whitespace-nowrap text-[10px] text-[#ffd6eb]/55" aria-label={'Last reply routed through OpenRouter · ' + lastModelUsed.model + (lastModelUsed.provider ? ' · ' + lastModelUsed.provider : '')}><span ref={modelLineTextRef} className="block w-max whitespace-nowrap" style={modelLineScroll > 2 ? ({ '--plf-model-name-end': '-' + modelLineScroll + 'px', animation: 'plf-model-name-scroll 44s ease-in-out infinite alternate' } as React.CSSProperties) : undefined}>Last reply routed through OpenRouter · {lastModelUsed.model}{lastModelUsed.provider ? ` · ${lastModelUsed.provider}` : ''}</span></div></>}
       <div className="max-w-4xl mx-auto mb-2">
         <div className="flex justify-end">
