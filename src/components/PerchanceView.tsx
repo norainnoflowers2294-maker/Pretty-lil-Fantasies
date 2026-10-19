@@ -8,7 +8,6 @@ interface PerchanceLink { id: string; name: string; url: string; }
 
 const DEFAULT_PERCHANCE_LINKS: PerchanceLink[] = [
   { id: 'perchance-prompt-forge-sd', name: 'Prompt Forge for Stable Diffusion', url: 'https://perchance.org/111-prompt---forge' },
-  { id: 'perchance-prompt-forge-edit', name: 'Prompt Forge (edit)', url: 'https://perchance.org/d0arzy2yav#edit' },
   { id: 'perchance-ink-and-ivy', name: 'Ink and Ivy - Creative', url: 'https://perchance.org/soulphone' },
 ];
 
@@ -21,9 +20,13 @@ function readSavedLinks(): PerchanceLink[] {
       if (Array.isArray(parsed)) {
         const existing = parsed.filter((item): item is PerchanceLink =>
           item && typeof item.id === 'string' && typeof item.name === 'string' && typeof item.url === 'string');
-        if (defaultsSeeded) return existing;
-        const existingUrls = new Set(existing.map((item) => item.url));
-        const next = [...existing, ...DEFAULT_PERCHANCE_LINKS.filter((item) => !existingUrls.has(item.url))];
+        const withoutUnrequestedEditLink = existing.filter((item) => item.id !== 'perchance-prompt-forge-edit' && item.url !== 'https://perchance.org/d0arzy2yav#edit');
+        if (defaultsSeeded) {
+          if (withoutUnrequestedEditLink.length !== existing.length) localStorage.setItem(PERCHANCE_LINKS_KEY, JSON.stringify(withoutUnrequestedEditLink));
+          return withoutUnrequestedEditLink;
+        }
+        const existingUrls = new Set(withoutUnrequestedEditLink.map((item) => item.url));
+        const next = [...withoutUnrequestedEditLink, ...DEFAULT_PERCHANCE_LINKS.filter((item) => !existingUrls.has(item.url))];
         localStorage.setItem(PERCHANCE_LINKS_KEY, JSON.stringify(next));
         localStorage.setItem(PERCHANCE_DEFAULTS_SEEDED_KEY, 'true');
         return next;
