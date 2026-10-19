@@ -2576,3 +2576,29 @@ body {
   #root .cp-chat-composer textarea[placeholder^="Reply to"] { min-height: 3.25rem !important; max-height: 7rem !important; }
   #root .cp-app-drawer-panel, #root aside[role="dialog"][aria-label^="Chat "] { width: min(92vw, 22rem) !important; }
 }
+
+
+/* Clear blush input surfaces and dark readable text across the app. */
+#root .cp-app-shell input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="hidden"]),
+#root .cp-app-shell textarea,
+#root .cp-app-shell select {
+  background-color: #ffe6f0 !important;
+  color: #160b10 !important;
+  border-color: #d98daa !important;
+  caret-color: #160b10 !important;
+}
+#root .cp-app-shell input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="hidden"])::placeholder,
+#root .cp-app-shell textarea::placeholder {
+  color: #674654 !important;
+  opacity: 1 !important;
+}
+#root .cp-app-shell select option {
+  background-color: #ffe6f0 !important;
+  color: #160b10 !important;
+}
+#root .cp-app-shell textarea.cp-chat-composer,
+#root .cp-app-shell .cp-chat-composer textarea {
+  background-color: #ffe6f0 !important;
+  color: #160b10 !important;
+  -webkit-text-fill-color: #160b10 !important;
+}
