@@ -2685,7 +2685,7 @@ body {
 #root aside[role="dialog"] :is(h1,h2,h3,h4,h5,h6),
 #root .cp-brand-header {
   font-family: "Brovalgin", Georgia, serif !important;
-  text-transform: uppercase !important;
+  text-transform: none !important;
   letter-spacing: .035em;
 }
 
@@ -2859,7 +2859,7 @@ body {
 }
 #root .cp-create-character :is(h1,h2,h3,h4,h5,h6) {
   font-family: "Brovalgin", Georgia, serif !important;
-  text-transform: uppercase !important;
+  text-transform: none !important;
   color: #211019 !important;
   -webkit-text-fill-color: #211019 !important;
 }
