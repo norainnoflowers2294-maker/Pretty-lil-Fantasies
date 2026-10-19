@@ -646,6 +646,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
         persona: personaForMessage,
         lorebooks: activeLorebooks,
         plugins: activePlugins,
+        chats: allChats,
         chat: updatedChat,
         preferences, storyMemories, socialMediaContext, phoneContext,
       });
@@ -906,6 +907,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
         persona: activePersona,
         lorebooks: activeLorebooks,
         plugins: activePlugins,
+        chats: allChats,
         chat,
         preferences,
         storyMemories,
@@ -1101,6 +1103,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
         persona: activePersona,
         lorebooks: activeLorebooks,
         plugins: activePlugins,
+        chats: allChats,
         chat: contextChat,
         preferences,
         storyMemories,
