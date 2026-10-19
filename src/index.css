@@ -2663,7 +2663,7 @@ body {
   font-family: "Brovalgin";
   src: url("/Pretty-lil-Fantasies/fonts/Brovalgin.ttf") format("truetype");
   font-style: normal;
-  font-weight: 400 900;
+  font-weight: 400;
   font-display: swap;
 }
 #root .cp-app-shell,
