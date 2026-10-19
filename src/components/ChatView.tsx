@@ -1096,6 +1096,13 @@ export const ChatView: React.FC<ChatViewProps> = ({
     setTimeout(() => setCommandNotice(null), 2500);
   };
 
+  const handleResendUserMessage = (msg: ChatMessage) => {
+    if (loading) return;
+    setOpenMessageMenuId(null);
+    setInputText(msg.content);
+    window.setTimeout(() => inputRef.current?.form?.requestSubmit(), 50);
+  };
+
   const handleChangeSwipe = (msg: ChatMessage, direction: -1 | 1) => {
     const versions = msg.swipes?.length ? msg.swipes : [msg.content];
     const currentIndex = Math.min(msg.currentSwipeIndex ?? versions.length - 1, versions.length - 1);
@@ -1167,7 +1174,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
   };
 
   return (
-    <div data-compact={preferences.compactMode} data-bubble-motion={preferences.messageAnimations && !preferences.reducedMotion} className="cp-chat cp-page-transition relative w-full h-[100dvh] max-h-[100dvh] flex flex-col bg-[#0d020b] text-[#ffd6eb] overflow-hidden select-none">
+    <div data-compact={preferences.compactMode} data-bubble-motion={preferences.messageAnimations && !preferences.reducedMotion} className="cp-chat cp-page-transition relative w-full h-[100svh] max-h-[100svh] flex flex-col bg-[#0d020b] text-[#ffd6eb] overflow-hidden select-none">
       {/* Background Ambience with chat.bgImage */}
       <div
         className="absolute inset-0 bg-cover bg-center opacity-75 pointer-events-none transition-all duration-700"
@@ -1443,7 +1450,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
         onClick={() => {
           if (isDualTrackOpen) setIsDualTrackOpen(false);
         }}
-        className="cp-messages flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 relative z-10"
+        className="cp-messages min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6 space-y-4 relative z-10"
       >
         {(Boolean(chat.unsentMessages?.length || chat.flashbacks?.length || chat.continuityReports?.length) && <details className="mx-auto w-full max-w-3xl rounded-2xl border border-[#37B6A5]/40 bg-[#101d25]/80 p-3 text-xs">
           <summary className="cursor-pointer font-bold text-[#9ee7dc]">Story tools saved · {chat.unsentMessages?.length || 0} unsent · {chat.flashbacks?.length || 0} flashbacks · {chat.continuityReports?.length || 0} checks</summary>
@@ -1506,6 +1513,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
                       {openMessageMenuId === msg.id && <div role="menu" aria-label="Message options" className="cp-message-menu absolute right-0 top-full z-50 mt-1 w-52 rounded-xl border p-1.5 shadow-xl">
                         <button type="button" role="menuitem" onClick={(event) => { event.stopPropagation(); handleSpeakMessage(msg); setOpenMessageMenuId(null); }} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm"><Volume2 className="h-4 w-4" />Read aloud</button>
                         <button type="button" role="menuitem" onClick={(event) => { event.stopPropagation(); void handleCopyMessage(msg); setOpenMessageMenuId(null); }} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm"><Copy className="h-4 w-4" />Copy message</button>
+                        {isUser && <button type="button" role="menuitem" disabled={loading} onClick={(event) => { event.stopPropagation(); handleResendUserMessage(msg); }} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm disabled:opacity-40"><RefreshCw className="h-4 w-4" />Resend message</button>}
                         {!isUser && <button type="button" role="menuitem" disabled={loading} onClick={(event) => { event.stopPropagation(); void handleRegenerateMessage(msg); setOpenMessageMenuId(null); }} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm disabled:opacity-40">{regeneratingMsgId === msg.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}Regenerate reply</button>}
                         <button type="button" role="menuitem" disabled={loading} onClick={(event) => { event.stopPropagation(); setEditingMsgId(msg.id); setEditContent(msg.content); setOpenMessageMenuId(null); }} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm disabled:opacity-40"><Edit2 className="h-4 w-4" />Edit message</button>
                         <button type="button" role="menuitem" disabled={loading} onClick={(event) => {
@@ -1600,7 +1608,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
       </div>
 
       {/* Chat Input Bar */}
-      <div className="relative z-20 p-3 sm:p-4 bg-[#140410]/95 backdrop-blur-md border-t border-[#ff3399]/40" style={{ paddingBottom: "calc(1rem + env(safe-area-inset-bottom, 0px))" }}>
+      <div className="relative z-40 shrink-0 p-3 sm:p-4 bg-[#140410]/95 backdrop-blur-md border-t border-[#ff3399]/40" style={{ paddingBottom: "calc(.75rem + env(safe-area-inset-bottom, 0px))" }}>
         {lastModelUsed && <><style>{'@keyframes plf-model-name-scroll { to { transform: translateX(var(--plf-model-name-end)); } }'}</style><div ref={modelLineViewportRef} className="mx-auto mb-2 max-w-4xl overflow-hidden whitespace-nowrap text-[10px] text-[#ffd6eb]/55" aria-label={'Last reply routed through OpenRouter · ' + lastModelUsed.model + (lastModelUsed.provider ? ' · ' + lastModelUsed.provider : '')}><span ref={modelLineTextRef} className="block w-max whitespace-nowrap" style={modelLineScroll > 2 ? ({ '--plf-model-name-end': '-' + modelLineScroll + 'px', animation: 'plf-model-name-scroll 44s ease-in-out infinite alternate' } as React.CSSProperties) : undefined}>Last reply routed through OpenRouter · {lastModelUsed.model}{lastModelUsed.provider ? ` · ${lastModelUsed.provider}` : ''}</span></div></>}
       <div className="max-w-4xl mx-auto mb-2">
         <div className="flex justify-end">
