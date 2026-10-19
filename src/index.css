@@ -1492,3 +1492,19 @@ body {
   color: #1b1018 !important;
   -webkit-text-fill-color: #1b1018 !important;
 }
+
+/* User supplied display face for app headers. */
+@font-face {
+  font-family: "Helmida";
+  src: url("/Pretty-lil-Fantasies/fonts/Helmida.otf") format("opentype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+#root .cp-app-shell :is(h1,h2),
+#root .cp-app-shell > header h1,
+#root .cp-app-shell [data-screen-title] {
+  font-family: "Helmida", "Cooper Black", Georgia, serif !important;
+  font-weight: 400 !important;
+  letter-spacing: .01em !important;
+}
