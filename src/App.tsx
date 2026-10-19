@@ -1398,6 +1398,9 @@ export default function App() {
               characters={data.characters}
               personas={data.personas}
               onPlay={handleStartDailyPrompt}
+              recentChatTitle={[...data.chats].sort((a, b) => new Date(b.updatedAt || '').getTime() - new Date(a.updatedAt || '').getTime())[0]?.title}
+              onOpenRecentChat={handleOpenMostRecentChat}
+              onOpenRandomCharacter={handleStartChatWithCharacter}
               onStartBot={handleStartDedicatedBot}
               onOpenCreator={() => setIsCreatorBotOpen(true)}
               onCreateCharacter={() => handleOpenCreateCharacterPage(null)}
