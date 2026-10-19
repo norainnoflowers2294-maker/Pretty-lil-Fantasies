@@ -106,6 +106,7 @@ export async function sendOpenRouterChatDetailed(
     max_tokens: config.maxTokens,
     stream: false,
   };
+  if (config.webSearch) body.tools = [{ type: 'openrouter:web_search' }];
   if (!supported || supported.has('temperature')) body.temperature = config.temperature;
   if (!supported || supported.has('top_p')) body.top_p = config.topP;
   if (supported?.has('frequency_penalty')) body.frequency_penalty = config.frequencyPenalty ?? 0;
