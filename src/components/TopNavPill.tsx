@@ -42,7 +42,7 @@ export const TopNavPill: React.FC<TopNavPillProps> = ({
   ];
 
   return (
-    <nav className="min-w-0 w-full max-w-4xl mx-auto overflow-x-auto px-4 py-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <nav className="plf-top-navigation min-w-0 w-full max-w-4xl mx-auto overflow-x-auto px-4 py-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       <div className="min-w-max bg-[#12040e]/90 backdrop-blur-md border border-[#ff4d94]/40 rounded-full p-1.5 flex items-center justify-between shadow-[0_0_25px_rgba(255,51,153,0.3)]">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
