@@ -18,7 +18,7 @@ interface CharacterModalProps {
   isOpen: boolean;
   onClose: () => void;
   characters: Character[];
-  onSaveCharacter: (char: Character) => void;
+  onSaveCharacter: (char: Character) => void | Promise<{ localSaved: boolean; firebaseSaved: boolean; message: string }>;
   onDeleteCharacter?: (characterId: string) => void;
   onStartChatWithCharacter: (char: Character) => void;
   onOpenCreateCharacter?: (characterToEdit?: Character | null) => void;
@@ -66,9 +66,14 @@ export const CharacterModal: React.FC<CharacterModalProps> = ({
         updatedAt: now,
       } as Character;
 
-      // Save immediately so the imported card appears in the library without
-      // requiring a second save step in the editor.
-      onSaveCharacter(imported);
+      // Await device/Firebase persistence before treating the import as complete.
+      const saveResult = await onSaveCharacter(imported);
+      if (saveResult && !saveResult.localSaved && !saveResult.firebaseSaved) {
+        throw new Error(saveResult.message || 'The character could not be saved.');
+      }
+      if (saveResult?.localSaved && !saveResult.firebaseSaved) {
+        window.alert(`Saved on this device, but Firebase did not confirm the backup yet. ${saveResult.message}`);
+      }
       setSearch('');
       e.target.value = '';
     } catch (err) {
@@ -227,7 +232,7 @@ export const CharacterModal: React.FC<CharacterModalProps> = ({
                     className="px-4 py-1.5 bg-gradient-to-r from-[#ff007f] to-[#ff3399] hover:from-[#ff1a8c] hover:to-[#ff4da6] text-white text-xs font-bold rounded-xl shadow-[0_0_12px_rgba(255,0,128,0.5)] transition-all flex items-center space-x-1.5"
                   >
                     <MessageSquare className="w-3.5 h-3.5" />
-                    <span>Start Chat</span>
+                    <span>Chat Now</span>
                   </button>
                 </div>
               </div>
