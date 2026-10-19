@@ -3490,3 +3490,18 @@ body {
   opacity: 1 !important;
   filter: drop-shadow(0 1px 1px rgba(255,255,255,.45)) !important;
 }
+
+
+/* Keep the creator's calculated zodiac control in the same light pink form palette. */
+#root .cp-create-character main div[class*="rounded-xl"][class*="border"][class*="font-bold"][class*="flex"][class*="justify-between"] {
+  background-color: #ffe0ed !important;
+  background-image: linear-gradient(135deg, #fff8fb, #ffd5e7 58%, #e6d9f4) !important;
+  border-color: rgba(217,135,167,.82) !important;
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  box-shadow: inset 0 1px 3px rgba(133,53,88,.08), 0 3px 10px rgba(133,53,88,.1) !important;
+}
+#root .cp-create-character main div[class*="rounded-xl"][class*="border"][class*="font-bold"][class*="flex"][class*="justify-between"] svg {
+  color: #211019 !important;
+  stroke: #211019 !important;
+}
