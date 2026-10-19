@@ -89,7 +89,7 @@ export const ChatsLibraryView: React.FC<ChatsLibraryViewProps> = ({ chats, chara
                 </div>
               </button>
               <button type="button" onClick={() => onExportBundle(chat)} className="absolute left-3 top-3 z-10 inline-flex items-center gap-1.5 rounded-full border border-white/70 bg-white/90 px-3 py-2.5 text-[10px] font-bold text-[#211019] shadow-lg backdrop-blur-md transition hover:scale-105" aria-label={`Export ${chat.title || 'conversation'} with its character and persona cards`} title="Export chat with character and persona"><Download className="h-3.5 w-3.5" />Bundle</button>
-              <button type="button" aria-label={chat.pinned ? `Unpin ${chat.title || 'conversation'}`} title={chat.pinned ? 'Unpin conversation' : 'Pin conversation'} onClick={() => onTogglePin(chat)} className={`absolute right-3 top-3 z-10 rounded-full border border-white/25 p-2.5 text-white shadow-lg backdrop-blur-md transition hover:scale-105 ${chat.pinned ? 'bg-[#ff007f]/90' : 'bg-black/50 hover:bg-[#ff007f]/75'}`}>
+              <button type="button" aria-label={chat.pinned ? `Unpin ${chat.title || 'conversation'}` : `Pin ${chat.title || 'conversation'}`} title={chat.pinned ? 'Unpin conversation' : 'Pin conversation'} onClick={() => onTogglePin(chat)} className={`absolute right-3 top-3 z-10 rounded-full border border-white/25 p-2.5 text-white shadow-lg backdrop-blur-md transition hover:scale-105 ${chat.pinned ? 'bg-[#ff007f]/90' : 'bg-black/50 hover:bg-[#ff007f]/75'}`}>
                 {chat.pinned ? <PinOff className="h-4 w-4" /> : <Pin className="h-4 w-4" />}
               </button>
             </div>
