@@ -350,7 +350,8 @@ export default function App() {
         let localAccountId = '';
         try { localAccountId = localStorage.getItem(lastAccountKey) || ''; } catch { /* storage may be restricted */ }
         const useCloudSnapshot = Boolean(remote && (
-          (localAccountId && localAccountId !== user.uid) ||
+          !localAccountId ||
+          localAccountId !== user.uid ||
           shouldPreferFirebaseSnapshot(remoteUpdatedAt, getLocalDataSavedAt())
         ));
         const merged: StorageData = remote && useCloudSnapshot ? {
