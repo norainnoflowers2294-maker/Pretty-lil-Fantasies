@@ -2492,3 +2492,24 @@ body {
   -webkit-text-fill-color: #654552 !important;
   opacity: 1 !important;
 }
+
+
+/* Mobile chat composer must remain in the flex layout and above scrolling messages. */
+#root .cp-chat { height: 100svh !important; max-height: 100svh !important; }
+#root .cp-chat .cp-messages { min-height: 0 !important; flex: 1 1 0% !important; overflow-y: auto !important; }
+#root .cp-chat > div.relative.z-40 { flex: 0 0 auto !important; position: relative !important; z-index: 40 !important; background: rgba(255,245,249,.98) !important; border-color: rgba(196,104,145,.45) !important; }
+#root .cp-chat form { flex: 0 0 auto !important; }
+#root .cp-chat textarea[placeholder^="Reply to"] { min-height: 3.25rem !important; max-height: 9rem !important; color: #111 !important; -webkit-text-fill-color: #111 !important; background: #ffe5ef !important; }
+
+/* Settings uses fixed header and action rows around a properly scrollable body. */
+#root .cp-settings-overlay { background: rgba(255,233,242,.76) !important; }
+#root .cp-settings-panel { height: 100svh !important; max-height: 100svh !important; padding-bottom: env(safe-area-inset-bottom, 0px); color: #211019 !important; background: linear-gradient(145deg, rgba(255,250,253,.99), rgba(255,226,239,.98)) !important; border-color: rgba(196,104,145,.48) !important; }
+#root .cp-settings-header { padding-top: calc(env(safe-area-inset-top, 0px) + .75rem) !important; color: #211019 !important; background: linear-gradient(145deg, #fffafd, #ffe5ef) !important; border-color: rgba(196,104,145,.32) !important; }
+#root .cp-settings-tabs { background: rgba(255,237,245,.98) !important; border-color: rgba(196,104,145,.32) !important; }
+#root .cp-settings-content { min-height: 0 !important; overscroll-behavior: contain; color: #211019 !important; background: transparent !important; }
+#root .cp-settings-footer { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + .75rem) !important; color: #211019 !important; background: linear-gradient(145deg, #fffafd, #ffe5ef) !important; border-color: rgba(196,104,145,.32) !important; }
+#root .cp-settings-panel :is(h1,h2,h3,h4,p,label,span,small,strong) { color: #211019 !important; -webkit-text-fill-color: #211019 !important; }
+#root .cp-settings-panel :is(button,a,[role="button"],[role="tab"]) { min-height: 2.75rem; color: #211019 !important; -webkit-text-fill-color: #211019 !important; background: linear-gradient(145deg,#fffafd,#ffddeb 58%,#fff1f7) !important; border-color: rgba(196,104,145,.42) !important; box-shadow: 0 4px 12px rgba(115,44,74,.12), inset 0 1px 0 #fff !important; }
+#root .cp-settings-panel :is(input,textarea,select) { color: #111 !important; -webkit-text-fill-color: #111 !important; background: #ffeaf2 !important; }
+#root .cp-settings-panel :is(section,article,[class*="rounded-2xl"][class*="border"]) { border-color: rgba(196,104,145,.38) !important; background-color: rgba(255,250,253,.92) !important; color: #211019 !important; }
+@media (min-width: 640px) { #root .cp-settings-panel { height: auto !important; max-height: 90dvh !important; padding-bottom: 0; } #root .cp-settings-header { padding-top: 1rem !important; } }
