@@ -2928,3 +2928,31 @@ body {
 @media (max-width: 640px) {
   #root .cp-create-character { padding-bottom: calc(12rem + env(safe-area-inset-bottom, 0px)) !important; }
 }
+
+
+/* Keep pearl accents visible, with very slow movement and no click interception. */
+#root .cp-app-shell .plf-bubbles-layer { z-index: 1 !important; pointer-events: none !important; }
+#root .cp-app-shell .plf-floating-bubble {
+  opacity: .26 !important;
+  border-color: rgba(255,255,255,.9) !important;
+  background:
+    radial-gradient(circle at 28% 22%, rgba(255,255,255,.98), rgba(255,246,251,.52) 33%, rgba(190,236,245,.18) 61%, rgba(237,173,211,.08) 78%) !important;
+  box-shadow:
+    inset -3px -4px 11px rgba(196,104,145,.16),
+    inset 2px 2px 9px rgba(255,255,255,.82),
+    0 4px 16px rgba(255,255,255,.22) !important;
+}
+#root .cp-app-shell a,
+#root .cp-create-character a,
+#root .cp-app-drawer-panel a,
+#root .cp-chat a {
+  color: #781248 !important;
+  text-decoration-color: rgba(213,27,121,.48);
+}
+#root .cp-app-shell a:hover,
+#root .cp-create-character a:hover,
+#root .cp-app-drawer-panel a:hover,
+#root .cp-chat a:hover { color: #c21872 !important; }
+@media (prefers-reduced-motion: reduce) {
+  #root .cp-app-shell .plf-floating-bubble { opacity: .2 !important; }
+}
