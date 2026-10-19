@@ -3788,3 +3788,139 @@ body {
 #root .cp-chats-library-card > div:first-child > div:nth-child(2) {
   background: linear-gradient(to top, rgba(255, 218, 235, .34), rgba(222, 218, 255, .02) 76%, transparent) !important;
 }
+
+
+/* Soap-glass bubbles and floating pearls over the rainbow wallpaper. */
+#root .cp-app-shell .plf-floating-bubble {
+  opacity: .58 !important;
+  border: 1px solid rgba(255,255,255,.92) !important;
+  background:
+    radial-gradient(circle at 28% 22%, rgba(255,255,255,.96), rgba(255,245,251,.44) 29%, rgba(170,222,255,.24) 52%, rgba(255,161,211,.22) 75%, rgba(255,255,255,.08)) !important;
+  box-shadow: inset -3px -4px 11px rgba(157,100,182,.15), inset 2px 2px 9px rgba(255,255,255,.78), 0 4px 18px rgba(255,255,255,.26) !important;
+}
+#root .cp-app-shell .plf-floating-pearl {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  opacity: .9;
+  border: 1px solid rgba(255,255,255,.96);
+  background:
+    radial-gradient(circle at 28% 24%, #fff 0%, rgba(255,255,255,.98) 16%, rgba(255,228,241,.92) 37%, rgba(220,211,255,.86) 62%, rgba(186,235,239,.88) 82%, rgba(255,255,255,.9) 100%);
+  box-shadow: inset -2px -3px 7px rgba(158,94,143,.15), inset 2px 2px 6px rgba(255,255,255,.98), 0 3px 12px rgba(255,255,255,.4);
+  animation-name: plf-pearl-drift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  will-change: transform;
+}
+#root .cp-app-shell .plf-drift-a { animation-name: plf-drift-a !important; }
+#root .cp-app-shell .plf-drift-b { animation-name: plf-drift-b !important; }
+#root .cp-app-shell .plf-drift-c { animation-name: plf-drift-c !important; }
+#root .cp-app-shell .plf-drift-d { animation-name: plf-drift-d !important; }
+@keyframes plf-drift-a {
+  0% { transform: translate3d(-2px, 10px, 0) scale(.96); }
+  40% { transform: translate3d(14px, -16px, 0) scale(1.04); }
+  72% { transform: translate3d(-5px, -33px, 0) scale(.99); }
+  100% { transform: translate3d(10px, -48px, 0) scale(1.02); }
+}
+@keyframes plf-drift-b {
+  0% { transform: translate3d(4px, -10px, 0) scale(1); }
+  35% { transform: translate3d(-12px, -22px, 0) scale(.95); }
+  70% { transform: translate3d(-3px, -38px, 0) scale(1.04); }
+  100% { transform: translate3d(15px, -52px, 0) scale(.98); }
+}
+@keyframes plf-drift-c {
+  0% { transform: translate3d(0, 12px, 0) scale(.97); }
+  45% { transform: translate3d(-15px, -13px, 0) scale(1.03); }
+  75% { transform: translate3d(7px, -36px, 0) scale(.96); }
+  100% { transform: translate3d(-9px, -50px, 0) scale(1.02); }
+}
+@keyframes plf-drift-d {
+  0% { transform: translate3d(2px, -6px, 0) scale(1.02); }
+  32% { transform: translate3d(12px, -24px, 0) scale(.97); }
+  67% { transform: translate3d(-10px, -37px, 0) scale(1.04); }
+  100% { transform: translate3d(4px, -54px, 0) scale(.96); }
+}
+@keyframes plf-pearl-drift {
+  from { transform: translate3d(-4px, 8px, 0) scale(.94); }
+  to { transform: translate3d(9px, -28px, 0) scale(1.06); }
+}
+#root .cp-app-shell::before {
+  content: "";
+  position: fixed;
+  inset: -8%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .22;
+  mix-blend-mode: soft-light;
+  background:
+    repeating-radial-gradient(ellipse at 28% 38%, transparent 0 42px, rgba(255,255,255,.54) 46px, transparent 52px 92px),
+    repeating-radial-gradient(ellipse at 72% 62%, transparent 0 58px, rgba(255,255,255,.38) 62px, transparent 68px 126px);
+  filter: blur(7px);
+  animation: plf-rainbow-ripple 28s ease-in-out infinite alternate;
+}
+@keyframes plf-rainbow-ripple {
+  0% { transform: translate3d(-1.2%, .5%, 0) scale(1); background-position: 0 0, 30px 18px; }
+  100% { transform: translate3d(1.2%, -.5%, 0) scale(1.035); background-position: 36px -22px, -24px 34px; }
+}
+
+/* Remove the white square tray behind library filters; each icon stays a single floating soap bubble. */
+#root .cp-app-shell main .plf-category-strip {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  padding-inline: 0 !important;
+}
+#root .cp-app-shell main .plf-category-strip-items {
+  justify-content: flex-start !important;
+  gap: 1rem !important;
+}
+#root .cp-app-shell main .plf-category-icon-ring {
+  padding: 3px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+#root .cp-app-shell main .plf-category-icon {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  background:
+    radial-gradient(circle at 27% 20%, rgba(255,255,255,.98), rgba(255,255,255,.52) 18%, transparent 39%),
+    linear-gradient(138deg, rgba(255,194,222,.9), rgba(222,203,255,.83) 43%, rgba(180,228,246,.78) 72%, rgba(204,244,230,.82)) !important;
+  border: 1px solid rgba(255,255,255,.96) !important;
+  box-shadow: inset -3px -4px 9px rgba(138,80,125,.14), inset 2px 2px 8px rgba(255,255,255,.86), 0 5px 15px rgba(100,55,100,.17) !important;
+}
+#root .cp-app-shell main .plf-category-icon svg {
+  display: block !important;
+  width: 21px !important;
+  height: 21px !important;
+  color: #211019 !important;
+  stroke: #211019 !important;
+  stroke-width: 2.3px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+#root .cp-app-shell main .plf-category-pill[aria-pressed="true"] .plf-category-icon {
+  background:
+    radial-gradient(circle at 27% 20%, #fff, rgba(255,255,255,.5) 18%, transparent 39%),
+    linear-gradient(138deg, #ffb4d5, #d8bfff 45%, #aee6ee 76%, #bdf0db) !important;
+  box-shadow: inset -3px -4px 9px rgba(138,80,125,.14), inset 2px 2px 8px rgba(255,255,255,.92), 0 0 17px rgba(226,110,171,.32) !important;
+}
+#root .cp-app-shell main .plf-category-pill > span {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  #root .cp-app-shell::before,
+  #root .cp-app-shell .plf-floating-bubble,
+  #root .cp-app-shell .plf-floating-pearl {
+    animation: none !important;
+  }
+  #root .cp-app-shell .plf-floating-bubble,
+  #root .cp-app-shell .plf-floating-pearl { opacity: .32 !important; }
+}
