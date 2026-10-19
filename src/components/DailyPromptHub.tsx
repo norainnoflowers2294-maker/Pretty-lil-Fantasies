@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Bot, Cake, ChevronRight, Compass, Sparkles, WandSparkles, UserRound, Contact, BookOpen, Feather } from 'lucide-react';
+import { Bot, Cake, ChevronRight, Compass, Sparkles, WandSparkles, UserRound, Contact, BookOpen, Feather, Pencil, MessageCircle, Shuffle } from 'lucide-react';
 import type { Character, Persona } from '../types/roleplay';
 
 const prompts = [
@@ -22,11 +22,39 @@ interface Props {
   onCreateCharacter: () => void;
   onCreatePersona: () => void;
   onCreateLorebook: () => void;
+  recentChatTitle?: string;
+  onOpenRecentChat: () => void;
+  onOpenRandomCharacter: (character: Character) => void;
 }
-export function DailyPromptHub({ characters, personas, onPlay, onStartBot, onOpenCreator, onCreateCharacter, onCreatePersona, onCreateLorebook }: Props) {
+export function DailyPromptHub({ characters, personas, onPlay, onStartBot, onOpenCreator, onCreateCharacter, onCreatePersona, onCreateLorebook, recentChatTitle, onOpenRecentChat, onOpenRandomCharacter }: Props) {
   const [todayDate, setTodayDate] = useState(() => new Date());
   useEffect(() => { const timer = window.setInterval(() => setTodayDate(new Date()), 60_000); return () => window.clearInterval(timer); }, []);
-  const prompt = prompts[dayIndex(todayDate)];
+  const dailyPrompt = prompts[dayIndex(todayDate)];
+  const [customPrompt, setCustomPrompt] = useState<{ title: string; scene: string; mood: string } | null>(() => {
+    try { const stored = localStorage.getItem('plf_dashboard_custom_prompt'); return stored ? JSON.parse(stored) : null; } catch { return null; }
+  });
+  const prompt = customPrompt || dailyPrompt;
+  const [isEditingPrompt, setIsEditingPrompt] = useState(false);
+  const [draftPrompt, setDraftPrompt] = useState(prompt);
+  const [randomCharacterId, setRandomCharacterId] = useState<string | null>(() => {
+    try { return sessionStorage.getItem('plf_random_character_id'); } catch { return null; }
+  });
+  const randomCharacter = characters.find(c => c.id === randomCharacterId) || characters[0];
+  const shuffleCharacter = () => {
+    if (!characters.length) return;
+    const candidates = characters.filter(c => c.id !== randomCharacter?.id);
+    const pool = candidates.length ? candidates : characters;
+    const chosen = pool[Math.floor(Math.random() * pool.length)];
+    setRandomCharacterId(chosen.id);
+    try { sessionStorage.setItem('plf_random_character_id', chosen.id); } catch {}
+  };
+  const savePrompt = () => {
+    const next = { title: draftPrompt.title.trim() || 'My prompt', scene: draftPrompt.scene.trim(), mood: draftPrompt.mood.trim() || 'Custom scene' };
+    if (!next.scene) return;
+    setCustomPrompt(next);
+    try { localStorage.setItem('plf_dashboard_custom_prompt', JSON.stringify(next)); } catch {}
+    setIsEditingPrompt(false);
+  };
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<string[]>(characters[0] ? [characters[0].id] : []);
   const [personaId, setPersonaId] = useState(personas.find((p) => p.is_default)?.id || personas[0]?.id || '');
@@ -42,16 +70,56 @@ export function DailyPromptHub({ characters, personas, onPlay, onStartBot, onOpe
   ];
   return <>
     <section className="mx-4 sm:mx-6 overflow-hidden rounded-3xl border border-white/90 bg-gradient-to-br from-[#fff7fa] via-[#ffe1ed] to-[#fff6fa] text-[#211019] shadow-[0_10px_28px_rgba(115,44,74,.14)]">
-      <div className="grid gap-5 p-5 sm:p-7 md:grid-cols-[1fr_auto] md:items-end">
-        <div>
-          <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.24em] text-[#654552]"><Sparkles className="h-4 w-4" /> Daily prompt <span className="text-[#654552]/70">· {today}</span></p>
-          <h2 className="mt-2 text-2xl font-black text-[#211019] sm:text-3xl">{prompt.title}</h2>
-          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[#33212a]">{prompt.scene}</p>
-          <span className="mt-3 inline-flex rounded-full border border-[#d68eaa]/35 bg-white/75 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#211019]">{prompt.mood}</span>
-        </div>
-        <button type="button" onClick={() => setOpen(true)} className="flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-white/90 bg-gradient-to-r from-[#ffd5e5] via-[#f4aec9] to-[#ffe8f0] px-6 py-3 font-bold text-[#211019] shadow-[0_6px_16px_rgba(115,44,74,.14)] transition hover:brightness-105"><Compass className="h-4 w-4" />Play now<ChevronRight className="h-4 w-4" /></button>
+      <div className="flex items-center justify-between px-5 pt-4">
+        <div><p className="text-sm font-bold">Your story carousel</p><p className="text-xs text-[#654552]">Swipe the cards to explore</p></div>
+        <span className="text-xs text-[#654552]">Swipe →</span>
+      </div>
+      <div aria-label="Dashboard swipeable cards" className="flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain gap-3 p-4 sm:p-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" style={{ WebkitOverflowScrolling: 'touch' }}>
+        <article className="relative flex min-w-[85%] sm:min-w-[360px] max-w-[480px] snap-center flex-col justify-between rounded-[24px] border border-white bg-gradient-to-br from-white/85 via-[#ffe0f0] to-[#f9bfdf] p-5 shadow-md">
+          <div>
+            <p className="flex items-center gap-2 text-xs font-semibold text-[#654552]"><MessageCircle className="h-4 w-4" /> Most recent chat</p>
+            <h2 className="mt-3 text-2xl font-bold">{recentChatTitle || 'Your next conversation'}</h2>
+            <p className="mt-2 text-sm text-[#543645]">{recentChatTitle ? 'Pick up right where your story left off.' : 'Start a story and it will appear here.'}</p>
+          </div>
+          <button type="button" onClick={onOpenRecentChat} disabled={!recentChatTitle} className="mt-5 flex min-h-11 items-center justify-center gap-2 rounded-full bg-[#ff1493] px-5 font-bold text-white disabled:opacity-40">Continue chat <ChevronRight className="h-4 w-4" /></button>
+        </article>
+        <article className="relative flex min-w-[85%] sm:min-w-[360px] max-w-[480px] snap-center flex-col justify-between rounded-[24px] border border-white bg-gradient-to-br from-[#fffafd] via-[#ffe1ed] to-[#e4d7ff] p-5 shadow-md">
+          <div>
+            <p className="flex items-center gap-2 text-xs font-semibold text-[#654552]"><Pencil className="h-4 w-4" /> Edit your prompt</p>
+            <h2 className="mt-3 text-2xl font-bold">{prompt.title}</h2>
+            <p className="mt-2 line-clamp-3 text-sm text-[#543645]">{prompt.scene}</p>
+          </div>
+          <div className="mt-5 flex gap-2">
+            <button type="button" onClick={() => { setDraftPrompt({ ...prompt }); setIsEditingPrompt(true); }} className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full bg-[#ff1493] px-4 font-bold text-white"><Pencil className="h-4 w-4" /> Edit prompt</button>
+            <button type="button" onClick={() => setOpen(true)} className="min-h-11 rounded-full border border-[#ff1493]/40 bg-white/80 px-4 font-bold">Play</button>
+          </div>
+        </article>
+        <article className="relative flex min-w-[85%] sm:min-w-[360px] max-w-[480px] snap-center flex-col justify-between rounded-[24px] border border-white bg-gradient-to-br from-[#fffafd] via-[#ffd9eb] to-[#d7f2ee] p-5 shadow-md">
+          <div>
+            <p className="flex items-center gap-2 text-xs font-semibold text-[#654552]"><Shuffle className="h-4 w-4" /> Random character</p>
+            <div className="mt-3 flex items-center gap-3">{randomCharacter?.avatar && <img src={randomCharacter.avatar} alt="" className="h-16 w-16 rounded-full border-2 border-white object-cover shadow" />}<h2 className="text-2xl font-bold">{randomCharacter?.name || 'Find a character'}</h2></div>
+            <p className="mt-2 text-sm text-[#543645]">Discover someone from your character library.</p>
+          </div>
+          <div className="mt-5 flex gap-2">
+            <button type="button" onClick={shuffleCharacter} disabled={!characters.length} className="min-h-11 rounded-full border border-[#ff1493]/40 bg-white/80 px-4 font-bold disabled:opacity-40"><Shuffle className="inline h-4 w-4" /> Shuffle</button>
+            <button type="button" onClick={() => randomCharacter && onOpenRandomCharacter(randomCharacter)} disabled={!randomCharacter} className="min-h-11 flex-1 rounded-full bg-[#ff1493] px-4 font-bold text-white disabled:opacity-40">Chat now</button>
+          </div>
+        </article>
       </div>
     </section>
+    {isEditingPrompt && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4">
+      <section role="dialog" aria-modal="true" aria-label="Edit your prompt" className="w-full max-w-lg rounded-3xl border border-[#ff1493]/40 bg-[#fff6fa] p-5 text-[#211019] shadow-2xl">
+        <h2 className="text-xl font-bold">Edit your prompt</h2>
+        <label className="mt-4 block text-sm font-semibold">Title<input value={draftPrompt.title} onChange={e => setDraftPrompt({ ...draftPrompt, title: e.target.value })} className="mt-1 w-full rounded-xl border border-[#e89aba] bg-white p-3 text-black" /></label>
+        <label className="mt-3 block text-sm font-semibold">Story prompt<textarea rows={6} value={draftPrompt.scene} onChange={e => setDraftPrompt({ ...draftPrompt, scene: e.target.value })} className="mt-1 w-full rounded-xl border border-[#e89aba] bg-white p-3 text-black" /></label>
+        <label className="mt-3 block text-sm font-semibold">Mood<input value={draftPrompt.mood} onChange={e => setDraftPrompt({ ...draftPrompt, mood: e.target.value })} className="mt-1 w-full rounded-xl border border-[#e89aba] bg-white p-3 text-black" /></label>
+        <div className="mt-5 flex flex-wrap gap-2">
+          <button type="button" onClick={() => setIsEditingPrompt(false)} className="rounded-full border border-[#e89aba] px-5 py-3 font-semibold">Cancel</button>
+          <button type="button" onClick={() => { setCustomPrompt(null); try { localStorage.removeItem('plf_dashboard_custom_prompt'); } catch {} setIsEditingPrompt(false); }} className="rounded-full border border-[#e89aba] px-5 py-3 font-semibold">Daily default</button>
+          <button type="button" disabled={!draftPrompt.scene.trim()} onClick={savePrompt} className="ml-auto rounded-full bg-[#ff1493] px-5 py-3 font-bold text-white disabled:opacity-40">Save prompt</button>
+        </div>
+      </section>
+    </div>}
     <section aria-label="Create something new" className="plf-create-something relative mx-4 sm:mx-6 overflow-hidden rounded-[26px] border border-white/90 p-4 text-[#130810] shadow-[0_10px_28px_rgba(115,44,74,.18)] backdrop-blur-xl">
       <span aria-hidden="true" className="pointer-events-none absolute -right-1 top-1 text-3xl text-[#e5a9c2]/45">✿</span>
       <span aria-hidden="true" className="pointer-events-none absolute bottom-0 left-1 text-lg text-[#e5a9c2]/35">✿</span>
