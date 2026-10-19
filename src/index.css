@@ -3741,3 +3741,35 @@ body {
     transition: transform .24s ease, box-shadow .24s ease, border-color .24s ease, background .24s ease !important;
   }
 }
+
+/* Strengthen the visible rainbow wash inside My Chats while keeping the text crisp. */
+#root .cp-app-shell:has(.cp-chats-library) {
+  background-image:
+    radial-gradient(ellipse at 5% 10%, rgba(255, 91, 165, .5), transparent 34%),
+    radial-gradient(ellipse at 95% 5%, rgba(92, 202, 255, .48), transparent 34%),
+    radial-gradient(ellipse at 12% 53%, rgba(168, 119, 255, .43), transparent 34%),
+    radial-gradient(ellipse at 87% 58%, rgba(71, 219, 190, .36), transparent 36%),
+    radial-gradient(ellipse at 40% 100%, rgba(255, 184, 112, .34), transparent 35%),
+    linear-gradient(120deg, #fac5dc 0%, #d5c7fa 30%, #bfe8fa 56%, #c9f1e6 77%, #ffe1c5 100%) !important;
+}
+#root .cp-chats-library {
+  background-image:
+    linear-gradient(118deg, rgba(255, 204, 225, .72) 0%, rgba(228, 205, 255, .7) 32%, rgba(201, 231, 255, .68) 57%, rgba(207, 245, 231, .7) 78%, rgba(255, 227, 201, .72) 100%),
+    radial-gradient(ellipse at 4% 4%, rgba(255, 255, 255, .76), transparent 35%),
+    radial-gradient(ellipse at 96% 90%, rgba(255, 255, 255, .5), transparent 38%) !important;
+}
+#root .cp-chats-library::after {
+  color: rgba(188, 54, 126, .2) !important;
+  -webkit-text-fill-color: rgba(188, 54, 126, .2) !important;
+  opacity: .7 !important;
+}
+#root .cp-chats-library-card > div:first-child > img {
+  opacity: .94 !important;
+  mix-blend-mode: normal !important;
+}
+#root .cp-chats-library-card > div:first-child > div:nth-child(2) {
+  background: linear-gradient(to top, rgba(255, 228, 240, .5), rgba(225, 218, 255, .04) 76%, rgba(255, 255, 255, .02)) !important;
+}
+#root .cp-chats-library-card > div:nth-child(2) {
+  background: linear-gradient(118deg, rgba(255, 227, 240, .96) 0%, rgba(241, 224, 255, .96) 36%, rgba(222, 237, 255, .96) 66%, rgba(220, 247, 237, .97) 100%) !important;
+}
