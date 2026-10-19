@@ -994,3 +994,20 @@ body {
 @media (max-width: 640px) {
   #root .cp-app-shell::before { background-position: center center; }
 }
+
+
+/* Chat reply composer: light pink surface with high-contrast black text. */
+#root .cp-chat textarea[placeholder^="Reply to"] {
+  background-color: #f8c9df !important;
+  background-image: none !important;
+  color: #111 !important;
+  border-color: #ec78ae !important;
+  caret-color: #111 !important;
+  -webkit-text-fill-color: #111 !important;
+  box-shadow: inset 0 1px 3px rgba(90, 20, 55, .12), 0 0 0 1px rgba(255, 255, 255, .45) !important;
+}
+#root .cp-chat textarea[placeholder^="Reply to"]::placeholder {
+  color: #4b303d !important;
+  -webkit-text-fill-color: #4b303d !important;
+  opacity: 1 !important;
+}
