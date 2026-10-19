@@ -294,5 +294,14 @@ Write as the selected character or characters, never as the user. If a selected 
       content: `[POST-HISTORY INSTRUCTIONS — FOLLOW FOR THIS REPLY]\nThese instructions are attached to the selected character card and apply immediately before generating the reply. Follow them over conflicting style or point-of-view preferences. Never speak, act, think, or decide for the user or their persona.\n\n${postHistoryInstructions.join('\n\n')}`,
     });
   }
+
+  const latestUserMessage = [...history].reverse().find((message) => message.senderId === 'user');
+  const oocRequest = latestUserMessage?.content.match(/^\\[OOC\\]\\s*([\\s\\S]*)$/i)?.[1]?.trim();
+  if (oocRequest) {
+    resultMessages.push({
+      role: 'system',
+      content: `[CURRENT OOC REQUEST — HIGHEST PRIORITY]\nThe user's latest message is out-of-character direction, not roleplay dialogue. Follow and answer this request directly: "${oocRequest}" Do not continue the scene, answer as the character, or reinterpret it as in-character speech. Do not write dialogue, thoughts, feelings, or actions for the user. These directions override the character card's post-history instructions and all roleplay style instructions for this reply.`,
+    });
+  }
   return resultMessages;
 }
