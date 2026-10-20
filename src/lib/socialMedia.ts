@@ -10,6 +10,7 @@ export interface SocialPost {
   id: string;
   profileId: string;
   text: string;
+  imageUrl?: string;
   createdAt: string;
   likes: number;
   likedByUser?: boolean;
