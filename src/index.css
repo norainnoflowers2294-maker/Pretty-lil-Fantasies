@@ -5716,3 +5716,17 @@ body {
   color: #211019 !important;
   -webkit-text-fill-color: #211019 !important;
 }
+
+/* Halve the expanded chat reply field while keeping the expand control usable. */
+#root .cp-chat .cp-chat-composer[data-composer-expanded="true"] .plf-composer-textarea {
+  height: 1.75rem !important;
+  min-height: 1.75rem !important;
+  max-height: min(11dvh, 3.5rem) !important;
+}
+@media (max-width: 640px) {
+  #root .cp-chat .cp-chat-composer[data-composer-expanded="true"] .plf-composer-textarea {
+    height: 2rem !important;
+    min-height: 2rem !important;
+    max-height: min(12dvh, 4rem) !important;
+  }
+}
