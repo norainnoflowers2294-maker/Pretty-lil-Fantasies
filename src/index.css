@@ -4043,7 +4043,7 @@ body {
     radial-gradient(ellipse at 45% 42%, rgba(255,169,205,.79) 0%, rgba(255,169,205,0) 46%),
     radial-gradient(ellipse at 17% 82%, rgba(255,230,164,.8) 0%, rgba(255,230,164,0) 40%),
     radial-gradient(ellipse at 88% 78%, rgba(164,239,216,.75) 0%, rgba(164,239,216,0) 40%),
-    linear-gradient(140deg,#f8ecf5 0%,#f2edfc 48%,#eaf8fa 100%) !important;
+    linear-gradient(140deg,#f8ecf5 0%,#f2edfc 48%,#eaf8fa 100%);
   background-size: cover,cover,cover,cover,cover,cover !important;
   filter: saturate(1.08) blur(3px);
   transform: scale(1.025);
