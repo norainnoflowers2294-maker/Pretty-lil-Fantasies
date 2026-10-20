@@ -3,6 +3,29 @@ import { Heart, MessageCircle, Plus, UsersRound, X } from 'lucide-react';
 import type { Character, Chat, Persona } from '../types/roleplay';
 import type { SocialMediaWorld, SocialPost, SocialProfile } from '../lib/socialMedia';
 
+const prepareSocialImage = (file: File): Promise<string> => new Promise((resolve, reject) => {
+  if (!file.type.startsWith('image/')) { reject(new Error('Choose an image file.')); return; }
+  if (file.size > 12 * 1024 * 1024) { reject(new Error('Choose an image under 12 MB.')); return; }
+  const reader = new FileReader();
+  reader.onerror = () => reject(new Error('This image could not be opened.'));
+  reader.onload = () => {
+    const image = new Image();
+    image.onerror = () => reject(new Error('This image could not be opened.'));
+    image.onload = () => {
+      const scale = Math.min(1, 1080 / Math.max(image.naturalWidth, image.naturalHeight));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+      canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+      const context = canvas.getContext('2d');
+      if (!context) { reject(new Error('Image editing is unavailable on this device.')); return; }
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL('image/jpeg', 0.72));
+    };
+    image.src = String(reader.result || '');
+  };
+  reader.readAsDataURL(file);
+});
+
 interface SocialMediaViewProps {
   world: SocialMediaWorld;
   characters: Character[];
@@ -18,6 +41,9 @@ export const SocialMediaView: React.FC<SocialMediaViewProps> = ({
 }) => {
   const [selectedProfileId, setSelectedProfileId] = useState('all');
   const [postText, setPostText] = useState('');
+  const [postImageUrl, setPostImageUrl] = useState('');
+  const [imageError, setImageError] = useState('');
+  const [imageBusy, setImageBusy] = useState(false);
   const [postingAs, setPostingAs] = useState(world.profiles[0]?.id || '');
   const [showComposer, setShowComposer] = useState(false);
 
@@ -67,12 +93,14 @@ export const SocialMediaView: React.FC<SocialMediaViewProps> = ({
   const publishPost = (event: React.FormEvent) => {
     event.preventDefault();
     const text = postText.trim();
-    if (!text || !postingAs) return;
+    if ((!text && !postImageUrl) || !postingAs) return;
     onUpdateWorld({
       ...world,
-      posts: [{ id: `social_post_${Date.now()}`, profileId: postingAs, text, createdAt: new Date().toISOString(), likes: 0 }, ...world.posts],
+      posts: [{ id: `social_post_${Date.now()}`, profileId: postingAs, text, imageUrl: postImageUrl || undefined, createdAt: new Date().toISOString(), likes: 0 }, ...world.posts],
     });
     setPostText('');
+    setPostImageUrl('');
+    setImageError('');
     setShowComposer(false);
   };
 
@@ -119,7 +147,8 @@ export const SocialMediaView: React.FC<SocialMediaViewProps> = ({
               <img src={profileAvatar(profile)} alt="" className="h-11 w-11 rounded-full border border-[#ff66b2]/60 object-cover" />
               <div className="min-w-0 flex-1"><h3 className="truncate text-sm font-bold">{profile.name}</h3><p className="truncate text-[10px] text-[#ffd6eb]/55">{profile.relationship || 'Member'} · {new Date(post.createdAt).toLocaleString()}</p></div>
             </div>
-            <p className="whitespace-pre-wrap py-4 text-sm leading-relaxed text-white/90">{post.text}</p>
+            {post.text && <p className="whitespace-pre-wrap py-4 text-sm leading-relaxed text-white/90">{post.text}</p>}
+            {post.imageUrl && <img src={post.imageUrl} alt={`Photo shared by ${profile.name}`} className="my-2 max-h-[560px] w-full rounded-2xl border border-white/10 bg-black/10 object-cover" />}
             <div className="flex items-center gap-4 border-t border-white/10 pt-3">
               <button type="button" aria-pressed={Boolean(post.likedByUser)} onClick={() => updatePost({ ...post, likedByUser: !post.likedByUser, likes: Math.max(0, post.likes + (post.likedByUser ? -1 : 1)) })} className={`flex items-center gap-1.5 text-xs ${post.likedByUser ? 'text-pink-300' : 'text-white/65 hover:text-pink-300'}`}><Heart className={`h-4 w-4 ${post.likedByUser ? 'fill-current' : ''}`} />{post.likes} likes</button>
               <span className="flex items-center gap-1.5 text-xs text-white/45"><MessageCircle className="h-4 w-4" />Comments are coming later</span>
@@ -135,8 +164,14 @@ export const SocialMediaView: React.FC<SocialMediaViewProps> = ({
           <label className="block text-xs font-semibold">Post as</label>
           <select value={postingAs} onChange={(event) => setPostingAs(event.target.value)} className="w-full rounded-xl border border-white/15 bg-[#1e0818] p-3 text-sm">{world.profiles.map((profile) => <option key={profile.id} value={profile.id}>{profile.name}</option>)}</select>
           <label className="block text-xs font-semibold">What's happening?</label>
-          <textarea autoFocus maxLength={1200} rows={4} value={postText} onChange={(event) => setPostText(event.target.value)} placeholder="Write a post..." className="w-full resize-y rounded-xl border border-white/15 bg-[#1e0818] p-3 text-sm" />
-          <div className="flex justify-end"><button type="submit" disabled={!postText.trim()} className="rounded-xl bg-[#ff007f] px-4 py-2 text-sm font-bold disabled:opacity-50">Post</button></div>
+          <textarea autoFocus maxLength={1200} rows={4} value={postText} onChange={(event) => setPostText(event.target.value)} placeholder="Write a post..." className={\`w-full resize-y rounded-xl border border-white/15 p-3 text-sm \${phoneMode ? 'bg-white/75 text-[#211019] placeholder:text-[#654552]/65' : 'bg-[#1e0818] text-white'}\`} />
+          <div className={\`flex flex-wrap items-center justify-between gap-3 rounded-xl border p-3 \${phoneMode ? 'border-[#d987a7]/40 bg-white/55' : 'border-white/10 bg-white/5'}\`}>
+            <label className={\`inline-flex cursor-pointer items-center gap-2 rounded-full px-3 py-2 text-xs font-bold \${phoneMode ? 'bg-[#ff007f]/10 text-[#7a3155]' : 'bg-white/10 text-white'}\`}><span>＋ Add photo</span><input aria-label="Add a photo to your post" type="file" accept="image/*" className="sr-only" disabled={imageBusy} onChange={async (event) => { const file = event.currentTarget.files?.[0]; event.currentTarget.value = ''; if (!file) return; setImageBusy(true); setImageError(''); try { setPostImageUrl(await prepareSocialImage(file)); } catch (error) { setImageError(error instanceof Error ? error.message : 'Could not use this photo.'); } finally { setImageBusy(false); } }} /></label>
+            <span className={\`text-[10px] \${phoneMode ? 'text-[#654552]/70' : 'text-white/45'}\`}>{imageBusy ? 'Preparing photo…' : 'Photo is resized to fit your story feed'}</span>
+          </div>
+          {imageError && <p role="alert" className="text-xs text-rose-300">{imageError}</p>}
+          {postImageUrl && <div className="relative w-fit"><img src={postImageUrl} alt="Post preview" className="max-h-40 max-w-full rounded-xl border border-[#ff66b2]/40 object-cover" /><button type="button" aria-label="Remove attached photo" onClick={() => setPostImageUrl('')} className="absolute right-1 top-1 rounded-full bg-black/75 px-2 py-1 text-xs text-white">×</button></div>}
+          <div className="flex justify-end"><button type="submit" disabled={imageBusy || (!postText.trim() && !postImageUrl)} className="rounded-xl bg-[#ff007f] px-4 py-2 text-sm font-bold disabled:opacity-50">Share post</button></div>
         </form>
       </div>}
     </section>
