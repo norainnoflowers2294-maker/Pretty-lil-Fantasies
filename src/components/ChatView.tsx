@@ -32,6 +32,7 @@ import {
   ExternalLink,
   Volume2,
   VolumeX,
+  Mic,
   Copy,
   MoreVertical,
   ChevronLeft,
@@ -306,6 +307,8 @@ export const ChatView: React.FC<ChatViewProps> = ({
   const [voiceImportError, setVoiceImportError] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const speechRequestRef = useRef(0);
+  const speechRecognitionRef = useRef<any>(null);
+  const [isListening, setIsListening] = useState(false);
   const [regeneratingMsgId, setRegeneratingMsgId] = useState<string | null>(null);
   const [openMessageMenuId, setOpenMessageMenuId] = useState<string | null>(null);
   const [commandSuggestionIndex, setCommandSuggestionIndex] = useState(0);
@@ -392,6 +395,8 @@ export const ChatView: React.FC<ChatViewProps> = ({
     speechRequestRef.current += 1;
     audioRef.current?.pause();
     audioRef.current = null;
+    speechRecognitionRef.current?.stop?.();
+    speechRecognitionRef.current = null;
   }, []);
 
 
@@ -1060,6 +1065,57 @@ export const ChatView: React.FC<ChatViewProps> = ({
     window.speechSynthesis.speak(utterance);
   };
 
+  const handleReadLatestAloud = () => {
+    const latestReply = [...chat.messages].reverse().find((message) => message.senderId !== 'user' && message.content.trim());
+    if (!latestReply) {
+      setCommandNotice('There is no reply to read aloud yet.');
+      setTimeout(() => setCommandNotice(null), 3000);
+      return;
+    }
+    void handleSpeakMessage(latestReply);
+  };
+
+  const toggleVoiceInput = () => {
+    if (isListening) {
+      speechRecognitionRef.current?.stop?.();
+      setIsListening(false);
+      return;
+    }
+    const SpeechRecognitionApi = typeof window !== 'undefined' ? (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition : null;
+    if (!SpeechRecognitionApi) {
+      setCommandNotice('Voice input is not available in this browser.');
+      setTimeout(() => setCommandNotice(null), 3500);
+      return;
+    }
+    const recognition = new SpeechRecognitionApi();
+    speechRecognitionRef.current = recognition;
+    recognition.lang = typeof navigator !== 'undefined' ? navigator.language || 'en-US' : 'en-US';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.onresult = (event: any) => {
+      const transcript = Array.from(event.results as ArrayLike<any>).slice(event.resultIndex || 0).map((result: any) => result[0]?.transcript || '').join(' ').trim();
+      if (transcript) setInputText((current) => current.trim() ? current.trimEnd() + ' ' + transcript : transcript);
+    };
+    recognition.onerror = () => {
+      setIsListening(false);
+      speechRecognitionRef.current = null;
+      setCommandNotice('Could not hear that. Tap the microphone to try again.');
+      setTimeout(() => setCommandNotice(null), 3500);
+    };
+    recognition.onend = () => {
+      setIsListening(false);
+      if (speechRecognitionRef.current === recognition) speechRecognitionRef.current = null;
+    };
+    try {
+      recognition.start();
+      setIsListening(true);
+    } catch {
+      setIsListening(false);
+      speechRecognitionRef.current = null;
+      setCommandNotice('Microphone could not start. Check browser microphone access.');
+      setTimeout(() => setCommandNotice(null), 3500);
+    }
+  };
   const handleImportVoiceSample = async () => {
     setVoiceImportError(null);
     if (!elevenLabsApiKey.trim()) {
@@ -1556,8 +1612,8 @@ export const ChatView: React.FC<ChatViewProps> = ({
           ))}
         </div>}
       </div>
-        <div className="pointer-events-none relative z-0 mx-auto -mb-3 flex h-[58px] w-full max-w-6xl justify-center overflow-hidden sm:h-[68px]" aria-hidden="true"><img src={`${import.meta.env.BASE_URL}plf-chat-floral.svg`} alt="" className="h-[110px] w-[230px] -translate-y-2 object-contain opacity-75 sm:h-[132px] sm:w-[280px]" /></div>
-        <form onSubmit={handleSendMessage} className="mx-auto flex w-full max-w-6xl flex-col gap-2 rounded-[26px] border border-[#d987a7]/65 bg-[linear-gradient(135deg,rgba(255,247,251,.94),rgba(247,234,251,.88),rgba(227,249,249,.84))] p-3 shadow-[0_10px_30px_rgba(96,45,72,.16)] backdrop-blur-xl">
+        <div className="plf-chat-floral-decal pointer-events-none relative z-0 mx-auto -mb-3 flex h-[58px] w-full max-w-6xl justify-center overflow-hidden sm:h-[68px]" aria-hidden="true"><img src={`${import.meta.env.BASE_URL}plf-chat-floral.svg`} alt="" className="h-[110px] w-[230px] -translate-y-2 object-contain opacity-75 sm:h-[132px] sm:w-[280px]" /></div>
+        <form onSubmit={handleSendMessage} className="plf-chat-composer-form mx-auto flex w-full max-w-6xl flex-col gap-2 rounded-[26px] border border-[#d987a7]/65 bg-[linear-gradient(135deg,rgba(255,247,251,.94),rgba(247,234,251,.88),rgba(227,249,249,.84))] p-3 shadow-[0_10px_30px_rgba(96,45,72,.16)] backdrop-blur-xl">
           {/* Text Input */}
           <div className="relative w-full">
             {slashSuggestions.length > 0 && <div role="listbox" aria-label="Slash commands" className="absolute bottom-full left-0 right-0 z-40 mb-2 max-h-56 overflow-y-auto rounded-2xl border border-[#ff66b2]/40 bg-[#170411]/98 p-1.5 shadow-[0_0_24px_rgba(255,0,128,0.25)]">
@@ -1568,6 +1624,15 @@ export const ChatView: React.FC<ChatViewProps> = ({
                 </button>
               ))}
             </div>}
+            <div className="plf-composer-top-controls absolute left-3 top-2 z-10 flex items-center gap-2">
+              <button type="button" onClick={toggleVoiceInput} aria-label={isListening ? 'Stop voice input' : 'Start voice input'} aria-pressed={isListening} title={isListening ? 'Stop voice input' : 'Voice input'} className={`grid h-9 w-9 place-items-center rounded-full border transition ${isListening ? 'border-[#c94783] bg-[#f5a8ce] text-[#4b1732] shadow-[0_0_0_4px_rgba(217,90,152,.16)]' : 'border-[#d987a7]/40 bg-white/75 text-[#70435b] hover:bg-white'}`}>
+                <Mic className="h-[18px] w-[18px]" />
+              </button>
+              <button type="button" onClick={handleReadLatestAloud} aria-label={speakingMessageId ? 'Stop Read Aloud' : 'Read latest reply aloud'} title={speakingMessageId ? 'Stop Read Aloud' : 'Read Aloud'} className="grid h-9 w-9 place-items-center rounded-full border border-[#d987a7]/40 bg-white/75 text-[#70435b] transition hover:bg-white">
+                {speakingMessageId ? <VolumeX className="h-[18px] w-[18px]" /> : <Volume2 className="h-[18px] w-[18px]" />}
+              </button>
+              <span className="plf-composer-control-label text-[11px] font-medium tracking-wide">VOICE &amp; READ ALOUD</span>
+            </div>
             <textarea
               ref={inputRef}
               rows={3}
@@ -1588,7 +1653,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
                   return;
                 }
               }}
-              className="min-h-[108px] max-h-[240px] w-full resize-y rounded-[20px] border border-transparent bg-transparent px-4 py-3 text-sm leading-relaxed text-[#211019] placeholder:text-[#654552]/75 focus:border-[#d987a7]/35 focus:bg-white/25 focus:outline-none sm:text-base" style={{ color: "#211019", WebkitTextFillColor: "#211019", caretColor: "#211019" }}
+              className="plf-composer-textarea min-h-[154px] max-h-[300px] w-full resize-y rounded-[20px] border border-transparent bg-transparent px-4 pb-4 pt-14 text-sm leading-relaxed text-[#211019] placeholder:text-[#654552]/75 focus:border-[#d987a7]/35 focus:bg-white/25 focus:outline-none sm:min-h-[176px] sm:text-base" style={{ color: "#211019", WebkitTextFillColor: "#211019", caretColor: "#211019" }}
             />
           </div>
 
