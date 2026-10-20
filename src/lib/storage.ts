@@ -419,7 +419,7 @@ export async function syncToFirebase(data: StorageData): Promise<void> {
   }
 }
 
-export async function loadFromFirebase(): Promise<Partial<StorageData> | null> {
+export async function loadFromFirebase(): Promise<(Partial<StorageData> & { updatedAt?: string }) | null> {
   const user = auth.currentUser;
   if (!user) return null;
 
