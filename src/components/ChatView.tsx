@@ -1554,7 +1554,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
           ))}
         </div>}
       </div>
-        <div className="pointer-events-none relative z-0 mx-auto -mb-3 flex h-[58px] w-full max-w-6xl justify-center overflow-hidden sm:h-[68px]" aria-hidden="true"><img src="/plf-chat-floral.svg" alt="" className="h-[110px] w-[230px] -translate-y-2 object-contain opacity-75 sm:h-[132px] sm:w-[280px]" /></div>
+        <div className="pointer-events-none relative z-0 mx-auto -mb-3 flex h-[58px] w-full max-w-6xl justify-center overflow-hidden sm:h-[68px]" aria-hidden="true"><img src={`${import.meta.env.BASE_URL}plf-chat-floral.svg`} alt="" className="h-[110px] w-[230px] -translate-y-2 object-contain opacity-75 sm:h-[132px] sm:w-[280px]" /></div>
         <form onSubmit={handleSendMessage} className="mx-auto flex w-full max-w-6xl flex-col gap-2 rounded-[26px] border border-[#d987a7]/65 bg-[linear-gradient(135deg,rgba(255,247,251,.94),rgba(247,234,251,.88),rgba(227,249,249,.84))] p-3 shadow-[0_10px_30px_rgba(96,45,72,.16)] backdrop-blur-xl">
           {/* Text Input */}
           <div className="relative w-full">
