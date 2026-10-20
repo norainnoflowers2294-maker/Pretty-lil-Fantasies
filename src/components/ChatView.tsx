@@ -1651,6 +1651,15 @@ export const ChatView: React.FC<ChatViewProps> = ({
                 </button>
               ))}
             </div>}
+            <button type="button" aria-expanded={!quickActionsCollapsed} aria-label={quickActionsCollapsed ? 'Show chat buttons' : 'Hide chat buttons'} title={quickActionsCollapsed ? 'Show chat buttons' : 'Hide chat buttons'} aria-controls="chat-quick-actions" onClick={() => setQuickActionsCollapsed((collapsed) => !collapsed)} className="plf-composer-quick-toggle absolute right-2 top-2 z-20 grid h-8 w-8 place-items-center rounded-full border">
+              {quickActionsCollapsed ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+            </button>
+            <button type="button" aria-expanded={composerExpanded} aria-label={composerExpanded ? 'Make message box smaller' : 'Make message box larger'} title={composerExpanded ? 'Make message box smaller' : 'Make message box larger'} onMouseDown={(event) => event.preventDefault()} onClick={() => setComposerExpanded((expanded) => !expanded)} className="plf-composer-resize absolute bottom-2 left-2 z-20 grid h-10 w-10 place-items-center rounded-full border">
+              {composerExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+            </button>
+            <button type="submit" disabled={loading || !inputText.trim()} aria-label="Send message" title="Send message" className="plf-composer-send absolute bottom-2 right-2 z-20 grid h-11 w-11 place-items-center rounded-full border disabled:cursor-not-allowed disabled:opacity-50">
+              <Send className="h-[18px] w-[18px]" />
+            </button>
             <textarea
               ref={inputRef}
               rows={3}
@@ -1663,16 +1672,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
               onKeyDown={(e) => {
                 if (slashSuggestions.length > 0 && e.key === 'ArrowDown') {
                   e.preventDefault();
-                  setComma            <button type="button" aria-expanded={!quickActionsCollapsed} aria-label={quickActionsCollapsed ? 'Show chat buttons' : 'Hide chat buttons'} title={quickActionsCollapsed ? 'Show chat buttons' : 'Hide chat buttons'} aria-controls="chat-quick-actions" onClick={() => setQuickActionsCollapsed((collapsed) => !collapsed)} className="plf-composer-quick-toggle absolute right-2 top-2 z-20 grid h-8 w-8 place-items-center rounded-full border">
-              {quickActionsCollapsed ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-            </button>
-            <button type="button" aria-expanded={composerExpanded} aria-label={composerExpanded ? 'Make message box smaller' : 'Make message box larger'} title={composerExpanded ? 'Make message box smaller' : 'Make message box larger'} onMouseDown={(event) => event.preventDefault()} onClick={() => setComposerExpanded((expanded) => !expanded)} className="plf-composer-resize absolute bottom-2 left-2 z-20 grid h-10 w-10 place-items-center rounded-full border">
-              {composerExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
-            </button>
-            <button type="submit" disabled={loading || !inputText.trim()} aria-label="Send message" title="Send message" className="plf-composer-send absolute bottom-2 right-2 z-20 grid h-11 w-11 place-items-center rounded-full border disabled:cursor-not-allowed disabled:opacity-50">
-              <Send className="h-[18px] w-[18px]" />
-            </button>
-ndSuggestionIndex((index) => (index + 1) % slashSuggestions.length);
+                  setCommandSuggestionIndex((index) => (index + 1) % slashSuggestions.length);
                   return;
                 }
                 if (slashSuggestions.length > 0 && e.key === 'ArrowUp') {
