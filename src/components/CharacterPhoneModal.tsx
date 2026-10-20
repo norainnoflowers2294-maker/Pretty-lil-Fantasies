@@ -3,29 +3,7 @@ import { X, Smartphone, MessageCircle, PhoneCall, Image as ImageIcon, Users, Bel
 import { addPhoneItem, ensureFictionalPhone, formatPhoneStoryContext, recordPhoneDiscovery, type PhoneSystemState, type FictionalPhone, type FictionalPhoneItem, type FictionalPhoneItemKind } from '../lib/phoneSystem';
 import { recordIncomingTransfer, type StoryWallet } from '../lib/wallet';
 import type { SocialMediaWorld } from '../lib/socialMedia';
-const preparePhoneSocialImage = (file: File): Promise<string> => new Promise((resolve, reject) => {
-  if (!file.type.startsWith('image/')) { reject(new Error('Choose an image file.')); return; }
-  if (file.size > 12 * 1024 * 1024) { reject(new Error('Choose an image under 12 MB.')); return; }
-  const reader = new FileReader();
-  reader.onerror = () => reject(new Error('This image could not be opened.'));
-  reader.onload = () => {
-    const image = new Image();
-    image.onerror = () => reject(new Error('This image could not be opened.'));
-    image.onload = () => {
-      const scale = Math.min(1, 1080 / Math.max(image.naturalWidth, image.naturalHeight));
-      const canvas = document.createElement('canvas');
-      canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
-      canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
-      const context = canvas.getContext('2d');
-      if (!context) { reject(new Error('Image editing is unavailable on this device.')); return; }
-      context.drawImage(image, 0, 0, canvas.width, canvas.height);
-      resolve(canvas.toDataURL('image/jpeg', 0.72));
-    };
-    image.src = String(reader.result || '');
-  };
-  reader.readAsDataURL(file);
-});
-
+import { storeSocialPostImage } from '../lib/socialMediaImages';
 import type { Chat, Character, OpenRouterConfig, Persona, Lorebook, Plugin, StoryMemory } from '../types/roleplay';
 import type { AppPreferences } from '../lib/preferences';
 import { sendOpenRouterChat } from '../lib/openrouter';
@@ -299,7 +277,7 @@ export const CharacterPhoneModal: React.FC<CharacterPhoneModalProps> = ({
                   <select aria-label="Post as" value={socialPostingAs} onChange={(event) => setSocialPostingAs(event.target.value)} style={controlStyle}>{(socialWorld?.profiles || []).map((profile) => <option key={profile.id} value={profile.id}>{profile.name}</option>)}</select>
                   <textarea aria-label="Instagram caption" value={socialDraftText} onChange={(event) => setSocialDraftText(event.target.value)} rows={2} maxLength={1200} placeholder="Write a caption…" style={{ ...controlStyle, width: '100%', resize: 'vertical' }} />
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap' }}>
-                    <label style={{ ...buttonStyle, background: '#ff008022', fontSize: 12, display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}><ImageIcon size={15}/> Add photo<input aria-label="Choose photo for Instagram post" type="file" accept="image/*" style={{ position: 'absolute', width: 1, height: 1, opacity: 0 }} onChange={async (event) => { const file = event.currentTarget.files?.[0]; event.currentTarget.value = ''; if (!file) return; try { setSocialImageError(''); setSocialDraftImage(await preparePhoneSocialImage(file)); } catch (error) { setSocialImageError(error instanceof Error ? error.message : 'Could not use this photo.'); } }} /></label>
+                    <label style={{ ...buttonStyle, background: '#ff008022', fontSize: 12, display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}><ImageIcon size={15}/> Add photo<input aria-label="Choose photo for Instagram post" type="file" accept="image/*" style={{ position: 'absolute', width: 1, height: 1, opacity: 0 }} onChange={async (event) => { const file = event.currentTarget.files?.[0]; event.currentTarget.value = ''; if (!file) return; try { setSocialImageError(''); setSocialDraftImage(await storeSocialPostImage(file)); } catch (error) { setSocialImageError(error instanceof Error ? error.message : 'Could not use this photo.'); } }} /></label>
                     <button type="submit" disabled={!socialDraftText.trim() && !socialDraftImage} style={{ ...buttonStyle, background: '#FF0080', opacity: !socialDraftText.trim() && !socialDraftImage ? .5 : 1 }}>Share post</button>
                   </div>
                   {socialImageError && <p role="alert" style={{ margin: 0, color: '#ff8daa', fontSize: 12 }}>{socialImageError}</p>}
