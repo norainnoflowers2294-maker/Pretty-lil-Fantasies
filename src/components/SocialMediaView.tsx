@@ -1,8 +1,16 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { resolveImageUrl } from '../utils/imageUrl';
 import { Heart, MessageCircle, Plus, UsersRound, X } from 'lucide-react';
 import type { Character, Chat, Persona } from '../types/roleplay';
 import type { SocialMediaWorld, SocialPost, SocialProfile } from '../lib/socialMedia';
 import { storeSocialPostImage } from '../lib/socialMediaImages';
+
+const ProfileAvatar: React.FC<{ src: string; name: string; className: string }> = ({ src, name, className }) => {
+  const [failed, setFailed] = useState(false);
+  useEffect(() => { setFailed(false); }, [src]);
+  if (failed) return <span role="img" aria-label={name + ' profile photo unavailable'} className={className + ' grid place-items-center bg-[linear-gradient(135deg,#ffe2f1,#eadfff,#d8fbfa)] font-bold text-[#61304f]'}>{name.trim().charAt(0).toUpperCase() || '?'}</span>;
+  return <img src={src} alt={name + ' profile'} className={className} onError={() => setFailed(true)} />;
+};
 
 interface SocialMediaViewProps {
   world: SocialMediaWorld;
@@ -62,7 +70,7 @@ export const SocialMediaView: React.FC<SocialMediaViewProps> = ({
       matt: '/characters/matt.svg',
       val: '/characters/val.svg',
     };
-    return profile.avatar || defaults[profile.id] || '/colorpop_hero.jpg';
+    return resolveImageUrl(profile.avatar || defaults[profile.id] || '/colorpop_hero.jpg') || '';
   };
   const posts = useMemo(() => [...world.posts]
     .filter((post) => selectedProfileId === 'all' || post.profileId === selectedProfileId)
@@ -110,7 +118,7 @@ export const SocialMediaView: React.FC<SocialMediaViewProps> = ({
           {world.profiles.map((profile) => (
             <button key={profile.id} type="button" onClick={() => setSelectedProfileId(profile.id)} aria-pressed={selectedProfileId === profile.id}
               className={`flex min-w-[76px] flex-col items-center gap-1 rounded-xl p-2 ${selectedProfileId === profile.id ? 'bg-[#ff007f]/20' : 'hover:bg-white/5'}`}>
-              <img src={profileAvatar(profile)} alt="" className="h-12 w-12 rounded-full border-2 border-[#ff66b2]/70 object-cover" /><span className="max-w-[72px] truncate text-[10px]">{profile.name}</span>
+              <ProfileAvatar src={profileAvatar(profile)} name={profile.name} className="h-12 w-12 rounded-full border-2 border-white object-cover shadow-[0_2px_7px_rgba(88,47,81,.22)]" /><span className="max-w-[72px] truncate text-[10px]">{profile.name}</span>
             </button>
           ))}
         </div>
@@ -122,7 +130,7 @@ export const SocialMediaView: React.FC<SocialMediaViewProps> = ({
           if (!profile) return null;
           return <article key={post.id} className="rounded-3xl border border-[#ff66b2]/25 bg-[#140410]/90 p-4 shadow-[0_8px_24px_rgba(0,0,0,.2)]">
             <div className="flex items-center gap-3">
-              <img src={profileAvatar(profile)} alt="" className="h-11 w-11 rounded-full border border-[#ff66b2]/60 object-cover" />
+              <ProfileAvatar src={profileAvatar(profile)} name={profile.name} className="h-11 w-11 rounded-full border border-white object-cover shadow-[0_2px_7px_rgba(88,47,81,.22)]" />
               <div className="min-w-0 flex-1"><h3 className="truncate text-sm font-bold">{profile.name}</h3><p className="truncate text-[10px] text-[#ffd6eb]/55">{profile.relationship || 'Member'} · {new Date(post.createdAt).toLocaleString()}</p></div>
             </div>
             {post.text && <p className="whitespace-pre-wrap py-4 text-sm leading-relaxed text-white/90">{post.text}</p>}
