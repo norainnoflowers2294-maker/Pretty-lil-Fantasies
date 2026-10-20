@@ -4690,3 +4690,58 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+
+/* Chat status, typing, and saved-message states stay inside the same pearly palette. */
+#root .cp-chat [data-testid="typing-indicator"] > div:last-child {
+  max-width: min(86%, 34rem) !important;
+  border: 1px solid rgba(255,255,255,.94) !important;
+  border-radius: 1.35rem 1.35rem 1.35rem .42rem !important;
+  color: #392338 !important;
+  background:
+    radial-gradient(ellipse at 18% 0%,rgba(255,255,255,.94),transparent 46%),
+    linear-gradient(135deg,rgba(255,248,252,.88),rgba(239,226,250,.78),rgba(215,243,243,.75)) !important;
+  box-shadow: 0 7px 20px rgba(100,70,117,.13),inset 0 1px 0 #fff !important;
+  -webkit-backdrop-filter: blur(20px) saturate(145%) !important;
+  backdrop-filter: blur(20px) saturate(145%) !important;
+}
+#root .cp-chat [data-testid="typing-indicator"] :is(span,div) { color: #55344b !important; }
+#root .cp-chat [data-testid="typing-indicator"] > div:last-child > div:first-child {
+  border-bottom-color: rgba(148,95,133,.18) !important;
+}
+#root .cp-chat [data-testid="typing-indicator"] > div:first-child img {
+  border: 2px solid rgba(255,255,255,.96) !important;
+  border-radius: 50% !important;
+  box-shadow: 0 4px 14px rgba(105,62,103,.18),0 0 0 2px rgba(237,199,235,.5) !important;
+}
+#root .cp-chat [class*="bg-rose-950"],
+#root .cp-chat [class*="bg-emerald-950"],
+#root .cp-chat [class*="bg-violet-950"],
+#root .cp-chat [class*="bg-[#310d28]"] {
+  border: 1px solid rgba(255,255,255,.88) !important;
+  border-radius: 1.2rem !important;
+  color: #42283b !important;
+  background: linear-gradient(130deg,rgba(255,247,251,.94),rgba(247,224,239,.9),rgba(226,224,249,.88)) !important;
+  box-shadow: 0 6px 18px rgba(114,60,101,.13),inset 0 1px 0 #fff !important;
+}
+#root .cp-chat [class*="bg-rose-950"] :is(p,div,strong),
+#root .cp-chat [class*="bg-emerald-950"] :is(p,div,strong),
+#root .cp-chat [class*="bg-violet-950"] :is(p,div,strong),
+#root .cp-chat [class*="bg-[#310d28]"] :is(p,div,strong) { color: #42283b !important; }
+#root .cp-chat details.mx-auto {
+  border: 1px solid rgba(255,255,255,.92) !important;
+  border-radius: 1.25rem !important;
+  color: #42283b !important;
+  background: linear-gradient(135deg,rgba(255,249,252,.9),rgba(240,229,250,.84),rgba(221,244,242,.82)) !important;
+  box-shadow: 0 5px 16px rgba(114,60,101,.12),inset 0 1px 0 #fff !important;
+}
+#root .cp-chat details.mx-auto summary { color: #54334a !important; }
+#root .cp-chat details.mx-auto article {
+  color: #42283b !important;
+  border-color: rgba(255,255,255,.84) !important;
+  background: rgba(255,255,255,.42) !important;
+}
+#root .cp-chat details.mx-auto article :is(p,button) { color: #42283b !important; }
+#root .cp-chat .cp-chat-composer > div[aria-label^="Last reply routed"] {
+  color: rgba(73,49,67,.68) !important;
+}
