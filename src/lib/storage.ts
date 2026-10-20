@@ -39,7 +39,7 @@ const STORAGE_KEY = 'colorpop_roleplay_app_data_v2';
 
 export const DEFAULT_OPENROUTER_CONFIG: OpenRouterConfig = {
   apiKey: '',
-  model: 'gryphe/mythomax-l2-13b',
+  model: 'gryphe/mythomax-l2-13b:free',
   temperature: 0.85,
   maxTokens: 1024,
   topP: 0.95,
@@ -165,7 +165,13 @@ function normalizeStoredData(parsed: any): StorageData {
     plugins: mergeDefaultPlugins(parsed.plugins?.length ? parsed.plugins : INITIAL_PLUGINS),
     chats: parsed.chats?.length ? parsed.chats : INITIAL_CHATS,
     activeChatId: parsed.activeChatId || (parsed.chats?.[0]?.id ?? INITIAL_CHATS[0]?.id),
-    openRouterConfig: { ...DEFAULT_OPENROUTER_CONFIG, ...(parsed.openRouterConfig || {}) },
+    openRouterConfig: {
+      ...DEFAULT_OPENROUTER_CONFIG,
+      ...(parsed.openRouterConfig || {}),
+      model: parsed.openRouterConfig?.model === 'gryphe/mythomax-l2-13b'
+        ? DEFAULT_OPENROUTER_CONFIG.model
+        : (parsed.openRouterConfig?.model || DEFAULT_OPENROUTER_CONFIG.model),
+    },
     supabaseConfig: { ...DEFAULT_SUPABASE_CONFIG, ...(parsed.supabaseConfig || {}) },
     storyMemories: parsed.storyMemories || DEFAULT_MEMORIES,
     wallets: Array.isArray(parsed.wallets) ? parsed.wallets : DEFAULT_WALLETS,
