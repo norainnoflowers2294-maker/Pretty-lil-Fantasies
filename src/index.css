@@ -5692,14 +5692,14 @@ body {
 /* Keep the expanded reply input compact while preserving its text styling. */
 #root .cp-chat .cp-chat-composer[data-composer-expanded="true"] .plf-composer-textarea {
   box-sizing: border-box !important;
-  height: 4.5rem !important;
-  min-height: 4.5rem !important;
-  max-height: min(26dvh, 9rem) !important;
+  height: 3.5rem !important;
+  min-height: 3.5rem !important;
+  max-height: min(22dvh, 7rem) !important;
 }
 @media (max-width: 640px) {
   #root .cp-chat .cp-chat-composer[data-composer-expanded="true"] .plf-composer-textarea {
-    height: 5rem !important;
-    min-height: 5rem !important;
-    max-height: min(28dvh, 10rem) !important;
+    height: 4rem !important;
+    min-height: 4rem !important;
+    max-height: min(24dvh, 8rem) !important;
   }
 }
