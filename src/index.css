@@ -4988,3 +4988,61 @@ body {
   #root .cp-chat .plf-social-phone-device,
   #root .cp-chat .plf-social-phone-screen { scroll-behavior: auto !important; }
 }
+
+
+/* Bubbles now make broad, looping cross-screen journeys instead of short back-and-forth bobbing. */
+@media (prefers-reduced-motion: no-preference) {
+  #root .cp-app-shell .plf-bubbles-layer { overflow: visible !important; }
+  #root .cp-app-shell .plf-floating-bubble,
+  #root .cp-app-shell .plf-floating-pearl {
+    animation-timing-function: ease-in-out !important;
+    animation-iteration-count: infinite !important;
+    animation-direction: normal !important;
+    will-change: transform;
+  }
+  #root .cp-app-shell .plf-drift-a { animation-name: plf-cross-screen-a !important; }
+  #root .cp-app-shell .plf-drift-b { animation-name: plf-cross-screen-b !important; }
+  #root .cp-app-shell .plf-drift-c { animation-name: plf-cross-screen-c !important; }
+  #root .cp-app-shell .plf-drift-d { animation-name: plf-cross-screen-d !important; }
+
+  #root .cp-app-shell .plf-floating-bubble:nth-child(4n + 1),
+  #root .cp-app-shell .plf-floating-pearl:nth-child(4n + 1) { animation-duration: 13s !important; }
+  #root .cp-app-shell .plf-floating-bubble:nth-child(4n + 2),
+  #root .cp-app-shell .plf-floating-pearl:nth-child(4n + 2) { animation-duration: 17s !important; }
+  #root .cp-app-shell .plf-floating-bubble:nth-child(4n + 3),
+  #root .cp-app-shell .plf-floating-pearl:nth-child(4n + 3) { animation-duration: 14.5s !important; }
+  #root .cp-app-shell .plf-floating-bubble:nth-child(4n),
+  #root .cp-app-shell .plf-floating-pearl:nth-child(4n) { animation-duration: 18s !important; }
+}
+@keyframes plf-cross-screen-a {
+  0% { transform: translate3d(-18vw, 5vh, 0) scale(.92); }
+  22% { transform: translate3d(8vw, -18vh, 0) scale(1.05); }
+  46% { transform: translate3d(35vw, 16vh, 0) scale(.96); }
+  72% { transform: translate3d(8vw, 54vh, 0) scale(1.11); }
+  88% { transform: translate3d(-28vw, 25vh, 0) scale(1.02); }
+  100% { transform: translate3d(-18vw, 5vh, 0) scale(.92); }
+}
+@keyframes plf-cross-screen-b {
+  0% { transform: translate3d(28vw, -28vh, 0) scale(1.02); }
+  23% { transform: translate3d(-8vw, -6vh, 0) scale(.93); }
+  49% { transform: translate3d(-38vw, 19vh, 0) scale(1.1); }
+  74% { transform: translate3d(-12vw, 49vh, 0) scale(.96); }
+  90% { transform: translate3d(32vw, 18vh, 0) scale(1.06); }
+  100% { transform: translate3d(28vw, -28vh, 0) scale(1.02); }
+}
+@keyframes plf-cross-screen-c {
+  0% { transform: translate3d(-32vw, 40vh, 0) scale(.95); }
+  24% { transform: translate3d(3vw, 5vh, 0) scale(1.1); }
+  50% { transform: translate3d(34vw, -25vh, 0) scale(.96); }
+  74% { transform: translate3d(22vw, -55vh, 0) scale(1.07); }
+  90% { transform: translate3d(-20vw, -35vh, 0) scale(.93); }
+  100% { transform: translate3d(-32vw, 40vh, 0) scale(.95); }
+}
+@keyframes plf-cross-screen-d {
+  0% { transform: translate3d(20vw, 50vh, 0) scale(1.06); }
+  23% { transform: translate3d(-12vw, 20vh, 0) scale(.94); }
+  49% { transform: translate3d(-36vw, -10vh, 0) scale(1.1); }
+  74% { transform: translate3d(-28vw, -47vh, 0) scale(.97); }
+  90% { transform: translate3d(18vw, -18vh, 0) scale(1.04); }
+  100% { transform: translate3d(20vw, 50vh, 0) scale(1.06); }
+}
