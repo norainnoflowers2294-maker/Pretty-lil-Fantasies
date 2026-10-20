@@ -23,7 +23,9 @@ export class OpenRouterError extends Error {
       : status === 429 ? 'Rate limit reached. Wait before trying again.'
       : status === 404 ? 'This model is unavailable. Choose a current model ID from OpenRouter.'
       : status === 403 ? 'Check the provider message and your OpenRouter privacy settings.'
-      : 'Check your internet connection and selected model, then try again.';
+      : status >= 500 || /non-JSON/i.test(message) ? 'OpenRouter was reached, but the provider or gateway returned an unreadable response. Retry or choose another model/provider.'
+      : status === 0 ? 'Check your internet connection, then try again.'
+      : 'Retry the request or choose another model/provider.';
   }
 }
 
@@ -40,12 +42,30 @@ async function request(path: string, apiKey: string, body?: object) {
       ...(body ? { body: JSON.stringify(body) } : {}),
       signal: controller.signal,
     });
-    const data = await response.json().catch(() => null);
+    const responseText = await response.text();
+    let data: any = null;
+    if (responseText.trim()) {
+      try {
+        data = JSON.parse(responseText);
+      } catch {
+        const contentType = response.headers.get('content-type')?.split(';')[0] || 'unknown content type';
+        throw new OpenRouterError(
+          `OpenRouter returned a non-JSON response (HTTP ${response.status}, ${contentType}). The API was reached, but its response could not be read. Retry or select another model/provider.`,
+          response.status,
+        );
+      }
+    }
     if (!response.ok || data?.error) {
       const message = typeof data?.error === 'string' ? data.error : data?.error?.message;
       throw new OpenRouterError(message || `OpenRouter returned HTTP ${response.status}.`, Number(data?.error?.code) || response.status);
     }
-    if (!data || typeof data !== 'object') throw new OpenRouterError('OpenRouter returned an unreadable response.');
+    if (!data || typeof data !== 'object') {
+      const contentType = response.headers.get('content-type')?.split(';')[0] || 'unknown content type';
+      throw new OpenRouterError(
+        `OpenRouter returned an empty or invalid response (HTTP ${response.status}, ${contentType}). Retry or select another model/provider.`,
+        response.status,
+      );
+    }
     return data;
   } catch (error) {
     if (error instanceof OpenRouterError) throw error;
