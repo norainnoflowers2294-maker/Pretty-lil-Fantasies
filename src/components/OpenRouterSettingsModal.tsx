@@ -680,9 +680,9 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
                     </button>
                   </div>
                 )}
-                {firebaseSyncMessage && <p role="status" className="mt-3 rounded-lg bg-white/5 px-3 py-2 text-[11px] text-[#ffd6eb]/80">{firebaseSyncMessage}</p>}
+                {firebaseSyncMessage && <p role="status" className="plf-settings-callout mt-3 rounded-lg bg-white/5 px-3 py-2 text-[11px] text-[#ffd6eb]/80">{firebaseSyncMessage}</p>}
                 {firebaseLastSync && <p className="text-[10px] text-[#ffd6eb]/55">Last successful Firebase sync: {new Date(firebaseLastSync).toLocaleString()}</p>}
-                {firebaseSignInError && <p role="alert" className="rounded-lg border border-rose-400/30 bg-rose-500/10 px-3 py-2 text-[11px] leading-relaxed text-rose-200">{firebaseSignInError}</p>}
+                {firebaseSignInError && <p role="alert" className="plf-settings-callout rounded-lg border border-rose-400/30 bg-rose-500/10 px-3 py-2 text-[11px] leading-relaxed text-rose-200">{firebaseSignInError}</p>}
                 {firebaseUser && <button type="button" onClick={() => void handleSyncFirebase()} disabled={firebaseSyncing} className="w-full min-h-11 rounded-xl border border-[#8AABF4]/40 bg-[#07128F]/35 px-3 py-2 text-xs font-bold text-white disabled:opacity-60">{firebaseSyncing ? 'Saving to Firebase…' : 'Save latest app data to Firebase now'}</button>}
               </div>
 
@@ -691,7 +691,7 @@ export const OpenRouterSettingsModal: React.FC<OpenRouterSettingsModalProps> = (
                 <p className="text-[11px] leading-relaxed text-[#ffd6eb]/80">
                   Open Firebase’s usage page for the actual counts on this project. The app cannot read account-wide billing metrics from the client, so the Firebase console is the source of truth.
                 </p>
-                <div className="rounded-xl bg-white/5 p-3 text-[11px] leading-relaxed text-[#ffd6eb]/75">
+                <div className="plf-settings-callout rounded-xl bg-white/5 p-3 text-[11px] leading-relaxed text-[#ffd6eb]/75">
                   <p><strong className="text-white">Cloud Firestore Standard no-cost quota:</strong> 50,000 document reads per day, 20,000 writes per day, and 1 GiB of stored data. Edition, region, and other Firebase products can have different quotas.</p>
                   <p className="mt-2">Blaze can charge for usage beyond no-cost quotas. A billing budget sends alerts; it does not stop service or cap charges.</p>
                 </div>
