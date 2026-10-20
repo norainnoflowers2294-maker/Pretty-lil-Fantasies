@@ -10,10 +10,11 @@ interface SocialMediaViewProps {
   activeChat: Chat | null;
   onUpdateWorld: (world: SocialMediaWorld) => void;
   onToggleChat: (enabled: boolean) => void;
+  phoneMode?: boolean;
 }
 
 export const SocialMediaView: React.FC<SocialMediaViewProps> = ({
-  world, characters, personas, activeChat, onUpdateWorld, onToggleChat,
+  world, characters, personas, activeChat, onUpdateWorld, onToggleChat, phoneMode = false,
 }) => {
   const [selectedProfileId, setSelectedProfileId] = useState('all');
   const [postText, setPostText] = useState('');
@@ -76,7 +77,7 @@ export const SocialMediaView: React.FC<SocialMediaViewProps> = ({
   };
 
   return (
-    <section className="mx-auto w-full max-w-5xl space-y-4 px-4 py-5 text-white">
+    <section className={`plf-social-media-view mx-auto w-full max-w-5xl space-y-4 px-4 py-5 text-white ${phoneMode ? "plf-social-media-phone-mode h-full max-w-none space-y-3 overflow-y-auto px-2 py-2 text-[#211019]" : ""}`}>
       <header className="rounded-3xl border border-[#ff66b2]/35 bg-gradient-to-br from-[#1e0818] via-[#140410] to-[#231036] p-5 shadow-[0_0_28px_rgba(255,0,128,0.12)]">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-start gap-3">
@@ -128,8 +129,8 @@ export const SocialMediaView: React.FC<SocialMediaViewProps> = ({
         {!posts.length && <p className="rounded-2xl border border-white/10 bg-white/5 p-5 text-center text-sm text-[#ffd6eb]/65">No posts for this profile yet.</p>}
       </div>
 
-      {showComposer && <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm" onClick={() => setShowComposer(false)}>
-        <form role="dialog" aria-modal="true" aria-label="Create social media post" onClick={(event) => event.stopPropagation()} onSubmit={publishPost} className="w-full max-w-lg space-y-3 rounded-2xl border border-[#ff66b2]/45 bg-[#140410] p-5">
+      {showComposer && <div className={`${phoneMode ? "absolute inset-0 z-[8] flex items-center justify-center bg-[rgba(74,39,69,.42)] p-2 backdrop-blur-md" : "fixed inset-0 z-[90] flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm"}`} onClick={() => setShowComposer(false)}>
+        <form role="dialog" aria-modal="true" aria-label="Create social media post" onClick={(event) => event.stopPropagation()} onSubmit={publishPost} className={`${phoneMode ? "w-full max-w-full space-y-3 rounded-[1.3rem] border border-white/90 bg-[linear-gradient(145deg,rgba(255,248,252,.98),rgba(241,228,250,.98))] p-3 text-[#211019] shadow-xl" : "w-full max-w-lg space-y-3 rounded-2xl border border-[#ff66b2]/45 bg-[#140410] p-5"}`}>
           <div className="flex items-center justify-between"><h2 className="font-bold">Create a post</h2><button type="button" aria-label="Close post composer" onClick={() => setShowComposer(false)} className="rounded-lg bg-white/10 p-2"><X className="h-4 w-4" /></button></div>
           <label className="block text-xs font-semibold">Post as</label>
           <select value={postingAs} onChange={(event) => setPostingAs(event.target.value)} className="w-full rounded-xl border border-white/15 bg-[#1e0818] p-3 text-sm">{world.profiles.map((profile) => <option key={profile.id} value={profile.id}>{profile.name}</option>)}</select>
