@@ -255,7 +255,7 @@ export async function loadLocalDataAsync(): Promise<StorageData> {
   return localParsed ? normalizeStoredData(localParsed) : defaultLocalData();
 }
 
-export function saveLocalData(data: StorageData): Promise<void> {
+export async function saveLocalData(data: StorageData): Promise<void> {
   const savedAt = Math.max(Date.now(), lastLocalSavedAt + 1);
   lastLocalSavedAt = savedAt;
   let localSaved = false;
