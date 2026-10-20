@@ -416,7 +416,14 @@ export default function App() {
           phoneSystem: remote.phoneSystem || current.phoneSystem,
           journalPages: Array.isArray(remote.journalPages) ? remote.journalPages : current.journalPages,
           activeChatId: remote.activeChatId || current.activeChatId,
-          openRouterConfig: { ...(current.openRouterConfig || {}), ...(remote.openRouterConfig || {}), apiKey: remote.openRouterConfig?.apiKey || current.openRouterConfig.apiKey || '' },
+          openRouterConfig: {
+            ...(current.openRouterConfig || {}),
+            ...(remote.openRouterConfig || {}),
+            model: remote.openRouterConfig?.model === 'gryphe/mythomax-l2-13b'
+              ? 'gryphe/mythomax-l2-13b:free'
+              : (remote.openRouterConfig?.model || current.openRouterConfig.model),
+            apiKey: remote.openRouterConfig?.apiKey || current.openRouterConfig.apiKey || '',
+          },
           supabaseConfig: current.supabaseConfig,
         } : current;
         const activeChatId = merged.chats.some((chat) => chat.id === merged.activeChatId)
