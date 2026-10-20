@@ -11,8 +11,8 @@ interface Props {
   onClose: () => void;
 }
 
-const fieldClass = 'mt-1 w-full rounded-lg border border-white/15 bg-[#1b0817] px-3 py-2 text-sm text-white outline-none focus:border-pink-400';
-const labelClass = 'block text-xs font-semibold uppercase tracking-wide text-pink-100/75';
+const fieldClass = 'mt-1 w-full rounded-xl border border-[#c979a2]/50 bg-white/90 px-3 py-2.5 text-sm text-[#211019] outline-none focus:border-[#d94691] focus:ring-2 focus:ring-[#e99bc3]/30';
+const labelClass = 'block text-xs font-semibold uppercase tracking-wide text-[#533346]';
 
 export const ChatSettingsPanel: React.FC<Props> = ({ chat, characters, personas, onSave, onClearContext, onClose }) => {
   const [draft, setDraft] = useState<Chat>({ ...chat, characterIds: [...chat.characterIds] });
@@ -26,7 +26,7 @@ export const ChatSettingsPanel: React.FC<Props> = ({ chat, characters, personas,
   const selectClass = fieldClass;
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-3 backdrop-blur-sm" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
-      <section role="dialog" aria-modal="true" aria-labelledby="chat-settings-title" className="max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-2xl border border-pink-400/30 bg-[#24091d] p-5 text-white shadow-2xl shadow-pink-950/40">
+      <section role="dialog" aria-modal="true" aria-labelledby="chat-settings-title" className="plf-chat-settings-panel max-h-[92dvh] w-full max-w-xl overflow-y-auto rounded-[1.6rem] border border-white/90 bg-[linear-gradient(145deg,rgba(255,250,253,.98),rgba(255,220,236,.96),rgba(225,238,248,.95))] p-5 text-[#211019] shadow-[0_18px_52px_rgba(65,23,49,.3)]">
         <header className="mb-5 flex items-center justify-between">
           <div className="flex items-center gap-2"><SlidersHorizontal className="h-5 w-5 text-pink-300" /><h2 id="chat-settings-title" className="text-lg font-bold">Chat settings</h2></div>
           <button type="button" onClick={onClose} aria-label="Close chat settings" className="rounded-lg p-2 text-white/70 hover:bg-white/10"><X className="h-4 w-4" /></button>
