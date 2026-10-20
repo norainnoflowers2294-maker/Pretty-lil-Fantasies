@@ -3968,3 +3968,15 @@ body {
   68% { transform: translate3d(6px, -76px, 0) scale(1.08); }
   100% { transform: translate3d(-30px, -112px, 0) scale(.98); }
 }
+
+/* Compact chat chrome: match the blush glass reference and give the conversation more room. */
+#root .cp-chat-header.cp-chat-topbar { min-height: 3rem !important; height: 3rem !important; padding-top: .25rem !important; padding-bottom: .25rem !important; }
+#root .cp-chat .cp-message-row { width: 100% !important; max-width: 100% !important; }
+#root .cp-chat .cp-message-bubble { min-width: 0 !important; }
+#root .cp-chat-composer[data-quick-actions-collapsed="true"] textarea[placeholder^="Reply to"] {
+  min-height: 2.5rem !important;
+  max-height: 3.5rem !important;
+  padding-top: .5rem !important;
+  padding-bottom: .5rem !important;
+}
+#root .cp-chat-composer[data-quick-actions-collapsed="true"] form > button[aria-label="Send message"] { height: 2.5rem !important; width: 2.5rem !important; }
