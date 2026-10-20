@@ -330,6 +330,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
     } catch {}
   }, [elevenLabsApiKey, customTtsVoices, selectedTtsVoiceId]);
 
+  const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const messagesViewportRef = useRef<HTMLDivElement>(null);
@@ -1255,12 +1256,12 @@ export const ChatView: React.FC<ChatViewProps> = ({
 
       {/* Scenario / Lore / Atmosphere Bar */}
       <div className="cp-chat-scenario relative z-20 px-4 py-1.5 bg-[#1b0516]/85 border-b border-[#ff3399]/20 flex items-center justify-between text-[11px] text-[#ffd6eb]/80">
-        <div className="truncate flex items-center gap-1.5">
+        <button type="button" onClick={() => setIsChatSettingsOpen(true)} aria-label="Edit chat scenario" title="Tap to edit the scenario in Chat Settings" className="min-w-0 truncate flex items-center gap-1.5 rounded-full px-2 py-1 text-left transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#ff66b2]">
           <Sparkles className="w-3.5 h-3.5 text-[#ff66b2] shrink-0" />
           <span className="truncate">
             <strong>Scenario:</strong> {chat.scenario || 'Late night luxury penthouse encounters.'}
           </span>
-        </div>
+        </button>
 
         <div className="hidden md:flex items-center space-x-3 shrink-0 font-mono text-[10px]">
           <span className="flex items-center gap-1 text-sky-300">
@@ -1319,7 +1320,9 @@ export const ChatView: React.FC<ChatViewProps> = ({
         ref={messagesViewportRef}
         onScroll={(event) => {
           const element = event.currentTarget;
-          shouldAutoScrollRef.current = element.scrollHeight - element.scrollTop - element.clientHeight < 120;
+          const nearBottom = element.scrollHeight - element.scrollTop - element.clientHeight < 120;
+          shouldAutoScrollRef.current = nearBottom;
+          setShowScrollToBottom(!nearBottom && chat.messages.length > 0);
         }}
         onClick={() => {
           if (isDualTrackOpen) setIsDualTrackOpen(false);
@@ -1479,6 +1482,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
         )}
 
         <div ref={messagesEndRef} />
+        {showScrollToBottom && <button type="button" aria-label="Scroll to latest message" title="Scroll to latest message" onClick={() => { shouldAutoScrollRef.current = true; setShowScrollToBottom(false); messagesEndRef.current?.scrollIntoView({ behavior: preferences.reducedMotion ? 'auto' : 'smooth', block: 'end' }); }} className="absolute bottom-4 left-1/2 z-30 grid h-11 w-11 -translate-x-1/2 place-items-center rounded-full border border-[#d987a7]/70 bg-white/90 text-[#6a3e50] shadow-[0_8px_24px_rgba(70,30,54,.2)] backdrop-blur-md transition hover:scale-105"><ChevronDown className="h-5 w-5" /></button>}
       </div>
 
       {/* Chat Input Bar */}
@@ -1550,19 +1554,10 @@ export const ChatView: React.FC<ChatViewProps> = ({
           ))}
         </div>}
       </div>
-        <form onSubmit={handleSendMessage} className="mx-auto flex w-full max-w-6xl items-center gap-2">
-          {/* Quick Dice Roll Action */}
-          <button
-            type="button"
-            onClick={handleQuickDiceRoll}
-            className="p-3 rounded-2xl bg-white/10 hover:bg-white/20 text-[#ffd6eb] transition-all hover:scale-105"
-            title="Roll d20 Action Check"
-          >
-            <Dices className="w-5 h-5 text-emerald-400" />
-          </button>
-
+        <div className="pointer-events-none relative z-0 mx-auto -mb-3 flex h-[58px] w-full max-w-6xl justify-center overflow-hidden sm:h-[68px]" aria-hidden="true"><img src="/plf-chat-floral.svg" alt="" className="h-[110px] w-[230px] -translate-y-2 object-contain opacity-75 sm:h-[132px] sm:w-[280px]" /></div>
+        <form onSubmit={handleSendMessage} className="mx-auto flex w-full max-w-6xl flex-col gap-2 rounded-[26px] border border-[#d987a7]/65 bg-[linear-gradient(135deg,rgba(255,247,251,.94),rgba(247,234,251,.88),rgba(227,249,249,.84))] p-3 shadow-[0_10px_30px_rgba(96,45,72,.16)] backdrop-blur-xl">
           {/* Text Input */}
-          <div className="relative flex-1">
+          <div className="relative w-full">
             {slashSuggestions.length > 0 && <div role="listbox" aria-label="Slash commands" className="absolute bottom-full left-0 right-0 z-40 mb-2 max-h-56 overflow-y-auto rounded-2xl border border-[#ff66b2]/40 bg-[#170411]/98 p-1.5 shadow-[0_0_24px_rgba(255,0,128,0.25)]">
               {slashSuggestions.map((suggestion, index) => (
                 <button key={suggestion.name} type="button" role="option" aria-selected={index === commandSuggestionIndex} onMouseDown={(event) => event.preventDefault()} onClick={() => { setInputText(suggestion.usage + ' '); setCommandSuggestionIndex(index); }} className={`flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left text-xs ${index === commandSuggestionIndex ? 'bg-[#ff007f]/25 text-white' : 'text-[#ffd6eb]/80 hover:bg-white/5'}`}>
@@ -1573,7 +1568,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
             </div>}
             <textarea
               ref={inputRef}
-              rows={quickActionsCollapsed ? 1 : 2}
+              rows={3}
               placeholder={`Reply to ${activeCharacters.map((c) => c.name).join(' & ')} as ${
                 activePersona?.name || 'yourself'
               }... Type / for commands, @assistant to summon help`}
@@ -1591,20 +1586,18 @@ export const ChatView: React.FC<ChatViewProps> = ({
                   return;
                 }
               }}
-              className={`w-full rounded-2xl border border-[#d987a7]/50 bg-[#ffe5ef] px-4 ${quickActionsCollapsed ? 'min-h-10 py-2' : 'min-h-14 py-3'} text-xs text-black placeholder:text-[#654552] caret-black shadow-inner focus:border-[#c85d88] focus:outline-none resize-none sm:text-sm`} style={{ color: "#111111", WebkitTextFillColor: "#111111", caretColor: "#111111" }}
+              className="min-h-[108px] max-h-[240px] w-full resize-y rounded-[20px] border border-transparent bg-transparent px-4 py-3 text-sm leading-relaxed text-[#211019] placeholder:text-[#654552]/75 focus:border-[#d987a7]/35 focus:bg-white/25 focus:outline-none sm:text-base" style={{ color: "#211019", WebkitTextFillColor: "#211019", caretColor: "#211019" }}
             />
           </div>
 
-          {/* Send Button */}
-          <button
-            type="submit"
-            disabled={loading || !inputText.trim()}
-            aria-label="Send message"
-            title="Send message"
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/80 bg-[#f7ddeb] text-[#654552] shadow-sm transition hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <Send className="h-4 w-4" />
-          </button>
+          <div className="flex w-full items-center justify-between gap-2 border-t border-[#d987a7]/25 px-1 pt-2">
+            <div className="flex items-center gap-2">
+              <button type="button" onClick={handleQuickDiceRoll} aria-label="Roll d20 action check" title="Roll d20" className="grid h-10 w-10 place-items-center rounded-full border border-[#d987a7]/35 bg-white/55 text-[#705064] transition hover:scale-105 hover:bg-white/80"><Dices className="h-5 w-5 text-[#a95c90]" /></button>
+              <button type="button" onClick={() => setIsChatSettingsOpen(true)} aria-label="Open chat settings" title="Chat settings" className="grid h-10 w-10 place-items-center rounded-full border border-[#d987a7]/35 bg-white/55 text-[#705064] transition hover:scale-105 hover:bg-white/80"><SlidersHorizontal className="h-5 w-5" /></button>
+            </div>
+            <span className="hidden flex-1 text-center text-[10px] text-[#654552]/60 sm:block">Type / for commands · @assistant for help</span>
+            <button type="submit" disabled={loading || !inputText.trim()} aria-label="Send message" title="Send message" className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-white/90 bg-[linear-gradient(135deg,#ffd6eb,#fff3fb)] text-[#654552] shadow-[0_4px_14px_rgba(150,80,120,.2)] transition hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50"><Send className="h-[18px] w-[18px]" /></button>
+          </div>
         </form>
       </div>
 
@@ -1676,6 +1669,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
             </div>
             <div className="max-h-[54dvh] space-y-2 overflow-y-auto border-b border-[#ff3399]/25 p-3">
               <button type="button" onClick={() => { setIsLeftDrawerOpen(false); onOpenWallet('dashboard'); }} className="flex w-full items-center gap-3 rounded-xl border border-emerald-300/25 bg-emerald-500/10 p-3 text-left text-white hover:bg-emerald-500/20"><Wallet className="h-5 w-5 text-emerald-200" /><span><strong className="block text-xs">Money system · Story Wallet</strong><small className="text-[10px] text-white/55">Balances and story transfers for this chat</small></span></button>
+              <button type="button" onClick={() => { setIsLeftDrawerOpen(false); onOpenPhone(); }} className="flex w-full items-center gap-3 rounded-xl border border-[#ff66b2]/35 bg-gradient-to-r from-[#ff007f]/15 via-[#a84eb0]/15 to-[#53d3dd]/15 p-3 text-left text-white shadow-[0_0_18px_rgba(255,0,128,.12)] hover:brightness-125"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/20 bg-white/10 text-pink-100"><PhoneCall className="h-5 w-5" /></span><span><strong className="block text-xs">Interactive iPhone</strong><small className="text-[10px] text-white/60">Calls, texts, photos, Cash App &amp; Instagram</small></span></button>
               <section className="rounded-xl border border-[#ff66b2]/30 bg-white/5 p-3">
                 <h3 className="mb-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#ff99cc]"><Shirt className="h-3.5 w-3.5" />Wardrobe</h3>
                 <form onSubmit={(event) => { event.preventDefault(); const outfit = wardrobeDraft.trim(); if (!outfit || loading) return; const personaName = activePersona?.display_name || activePersona?.name || 'my persona'; setInputText(`Outfit for ${personaName}: ${outfit}. Please use this as the outfit detail in the current scene.`); setWardrobeDraft(''); setIsLeftDrawerOpen(false); window.setTimeout(() => inputRef.current?.form?.requestSubmit(), 0); }}>
@@ -1683,8 +1677,6 @@ export const ChatView: React.FC<ChatViewProps> = ({
                   <button type="submit" disabled={!wardrobeDraft.trim() || loading} className="mt-2 w-full rounded-lg bg-[#ff007f]/25 p-2 text-xs font-semibold text-white hover:bg-[#ff007f]/40 disabled:opacity-40">Send outfit into chat</button>
                 </form>
               </section>
-              <button type="button" onClick={() => { setIsLeftDrawerOpen(false); onOpenPhone(); }} className="flex w-full items-center gap-3 rounded-xl border border-cyan-300/25 bg-cyan-500/10 p-3 text-left text-white hover:bg-cyan-500/20"><PhoneCall className="h-5 w-5 text-cyan-200" /><span><strong className="block text-xs">Persona phone</strong><small className="text-[10px] text-white/55">Texts, calls, contacts, and photos</small></span></button>
-              <button type="button" onClick={openSocialMediaPhone} className="plf-social-phone-launch flex w-full items-center gap-3 rounded-xl border p-3 text-left"><span className="plf-social-phone-launch-icon grid h-11 w-11 shrink-0 place-items-center rounded-full"><PhoneCall className="h-5 w-5" /></span><span><strong className="block text-xs">Social Media iPhone</strong><small className="text-[10px] opacity-70">Open the story feed in its own phone</small></span></button>
               <WeatherClockCard />
             </div>
             <div className="min-h-0 flex-1 overflow-y-auto p-3">
