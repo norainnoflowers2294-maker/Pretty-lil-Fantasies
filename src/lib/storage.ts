@@ -245,7 +245,7 @@ export async function loadLocalDataAsync(): Promise<StorageData> {
     // app start from localStorage/defaults while that read is still outstanding.
     const snapshot = await Promise.race([
       readLocalSnapshot(),
-      new Promise<null>((resolve) => window.setTimeout(() => resolve(null), 5000)),
+      new Promise<null>((resolve) => setTimeout(() => resolve(null), 5000)),
     ]);
     if (snapshot) lastLocalSavedAt = Math.max(lastLocalSavedAt, snapshot.savedAt);
     if (snapshot && snapshot.savedAt > localSavedAt) return normalizeStoredData(snapshot.data);
@@ -269,13 +269,31 @@ export function saveLocalData(data: StorageData): Promise<void> {
 
   const persist = localWriteQueue.catch(() => undefined).then(() => writeLocalSnapshot({ savedAt, data }));
   localWriteQueue = persist.catch(() => undefined);
-  return persist.catch((err) => {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  const boundedPersist = Promise.race([
+    persist,
+    new Promise<void>((resolve, reject) => {
+      timeoutId = setTimeout(() => {
+        if (localSaved) {
+          console.warn('IndexedDB save is taking too long; localStorage contains the saved app data.');
+          resolve();
+        } else {
+          reject(new Error('Local database save timed out before a browser copy was confirmed.'));
+        }
+      }, 10000);
+    }),
+  ]);
+  try {
+    await boundedPersist;
+  } catch (err) {
     if (localSaved) {
       console.warn('IndexedDB save failed; localStorage contains the saved app data:', err);
       return;
     }
     throw err;
-  });
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
+  }
 }
 
 const embeddedImageUrlCache = new Map<string, { source: string; url: string }>();
