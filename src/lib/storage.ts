@@ -4,7 +4,7 @@ import { Character, Lorebook, Persona, Plugin, Chat, OpenRouterConfig, SupabaseC
 import { ADDITIONAL_CHARACTER_PLACEHOLDER_AVATARS, INITIAL_CHARACTERS, INITIAL_LOREBOOKS, INITIAL_PERSONAS, INITIAL_PLUGINS, INITIAL_CHATS, mergeDefaultPlugins } from './defaultData';
 import { db, auth, storage } from './firebase';
 import { DEFAULT_WALLETS, type StoryWallet } from './wallet';
-import { doc, getDocFromServer, setDoc } from 'firebase/firestore';
+import { deleteField, doc, getDocFromServer, setDoc } from 'firebase/firestore';
 import { getDownloadURL, ref as storageRef, uploadString } from 'firebase/storage';
 import { DEFAULT_SOCIAL_WORLD, type SocialMediaWorld } from './socialMedia';
 import { DEFAULT_PHONE_SYSTEM, type PhoneSystemState } from './phoneSystem';
@@ -241,7 +241,12 @@ export async function loadLocalDataAsync(): Promise<StorageData> {
   }
 
   try {
-    const snapshot = await readLocalSnapshot();
+    // Some browsers leave IndexedDB open requests pending indefinitely. Let the
+    // app start from localStorage/defaults while that read is still outstanding.
+    const snapshot = await Promise.race([
+      readLocalSnapshot(),
+      new Promise<null>((resolve) => window.setTimeout(() => resolve(null), 5000)),
+    ]);
     if (snapshot) lastLocalSavedAt = Math.max(lastLocalSavedAt, snapshot.savedAt);
     if (snapshot && snapshot.savedAt > localSavedAt) return normalizeStoredData(snapshot.data);
   } catch (err) {
@@ -353,13 +358,36 @@ export async function syncToFirebase(data: StorageData): Promise<void> {
       updatedAt: new Date().toISOString(),
     }, user.uid)) as Record<string, unknown>;
 
+    // Keep the Firestore user document tiny. Long chats and character cards can
+    // exceed Firestore's 1 MiB document limit, so store the sanitized snapshot in
+    // Firebase Storage and leave a versioned pointer in Firestore.
+    const snapshotPath = `users/${user.uid}/app-data/snapshot.json`;
+    const snapshotRef = storageRef(storage, snapshotPath);
+    const snapshotJson = JSON.stringify(cloudData);
+    await uploadString(snapshotRef, snapshotJson, 'raw', {
+      contentType: 'application/json',
+      cacheControl: 'no-store',
+    });
+
+    const legacyFields = [
+      'appPreferences', 'deletedCharacterIds', 'characters', 'lorebooks', 'personas',
+      'plugins', 'chats', 'activeChatId', 'storyMemories', 'savedMessages', 'wallets',
+      'socialWorld', 'phoneSystem', 'journalPages', 'openRouterConfig', 'supabaseConfig',
+    ];
+    const pointerData: Record<string, unknown> = {
+      _snapshotVersion: 1,
+      _snapshotPath: snapshotPath,
+      updatedAt: (cloudData as Record<string, unknown>).updatedAt,
+    };
+    for (const field of legacyFields) pointerData[field] = deleteField();
+
     // Retry temporary connection failures without discarding the local snapshot.
     // Permission and validation errors require intervention and must not loop.
     const retryableCodes = new Set(['unavailable', 'deadline-exceeded', 'aborted', 'resource-exhausted']);
     for (let attempt = 0; attempt < 4; attempt += 1) {
       if (auth.currentUser?.uid !== user.uid) throw new Error('Account changed during cloud save.');
       try {
-        await setDoc(doc(db, 'users', user.uid), cloudData, { merge: true });
+        await setDoc(doc(db, 'users', user.uid), pointerData, { merge: true });
         break;
       } catch (error) {
         const code = String((error as { code?: string })?.code || '').replace(/^firestore\//, '');
@@ -379,9 +407,28 @@ export async function loadFromFirebase(): Promise<Partial<StorageData> | null> {
 
   try {
     const userDocRef = doc(db, 'users', user.uid);
-    const snap = await getDocFromServer(userDocRef);
+    const snap = await Promise.race([
+      getDocFromServer(userDocRef),
+      new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error('Firebase restore timed out. Your local data is still available.')), 12000)),
+    ]);
     if (snap.exists()) {
-      return snap.data() as Partial<StorageData>;
+      const pointer = snap.data() as Record<string, unknown>;
+      if (pointer._snapshotVersion === 1 && typeof pointer._snapshotPath === 'string') {
+        const snapshotRef = storageRef(storage, pointer._snapshotPath);
+        const url = await getDownloadURL(snapshotRef);
+        const controller = new AbortController();
+        const timeout = window.setTimeout(() => controller.abort(), 12000);
+        try {
+          const response = await fetch(url, { cache: 'no-store', signal: controller.signal });
+          if (!response.ok) throw new Error(`Firebase snapshot download failed (${response.status}).`);
+          const snapshotData = await response.json() as Partial<StorageData>;
+          return { ...snapshotData, updatedAt: pointer.updatedAt };
+        } finally {
+          window.clearTimeout(timeout);
+        }
+      }
+      // Continue to read existing user documents while migrating older accounts.
+      return pointer as Partial<StorageData>;
     }
   } catch (err) {
     console.warn('Could not load from Firebase Firestore:', err);
