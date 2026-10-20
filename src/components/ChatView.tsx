@@ -238,6 +238,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
   const [quickActionsCollapsed, setQuickActionsCollapsed] = useState(() => {
     try { const saved = localStorage.getItem('plf_chat_quick_actions_collapsed'); return saved === null ? true : saved === 'true'; } catch { return true; }
   });
+  const [composerExpanded, setComposerExpanded] = useState(false);
   useEffect(() => {
     try { localStorage.setItem('plf_chat_quick_actions_collapsed', String(quickActionsCollapsed)); } catch {}
   }, [quickActionsCollapsed]);
@@ -662,6 +663,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
     const oneShotOoc = command?.type === 'ooc-message' ? command.content : '';
     if (command && !oneShotOoc) {
       setInputText('');
+      setComposerExpanded(false);
       await executeSlashCommand(command);
       return;
     }
@@ -695,6 +697,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
     onUpdateChat(updatedChat);
     if (textMode) savePhoneThreadMessage(activeCharacters[0] || { id: 'roleplay', name: 'Roleplay' }, 'user', userDisplayName, userText, 'outgoing', messageTimestamp);
     setInputText('');
+    setComposerExpanded(false);
     beginChatRequest(chat.id);
 
     try {
@@ -1562,7 +1565,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
       </div>
 
       {/* Chat Input Bar */}
-      <div data-quick-actions-collapsed={quickActionsCollapsed} className={`cp-chat-composer relative z-40 shrink-0 border-t backdrop-blur-md ${quickActionsCollapsed ? 'p-2 sm:p-2.5' : 'p-2.5 sm:p-3'}`} style={{ paddingBottom: `calc(${quickActionsCollapsed ? '.35rem' : '.55rem'} + env(safe-area-inset-bottom, 0px))` }}>
+      <div data-quick-actions-collapsed={quickActionsCollapsed} data-composer-expanded={composerExpanded} className={`cp-chat-composer relative z-40 shrink-0 border-t backdrop-blur-md ${quickActionsCollapsed ? 'p-2 sm:p-2.5' : 'p-2.5 sm:p-3'}`} style={{ paddingBottom: `calc(${quickActionsCollapsed ? '.35rem' : '.55rem'} + env(safe-area-inset-bottom, 0px))` }}>
         {lastModelUsed && <><style>{'@keyframes plf-model-name-scroll { to { transform: translateX(var(--plf-model-name-end)); } }'}</style><div ref={modelLineViewportRef} className="mx-auto mb-2 max-w-4xl overflow-hidden whitespace-nowrap text-[10px] text-[#ffd6eb]/55" aria-label={'Last reply routed through OpenRouter · ' + lastModelUsed.model + (lastModelUsed.provider ? ' · ' + lastModelUsed.provider : '')}><span ref={modelLineTextRef} className="block w-max whitespace-nowrap" style={modelLineScroll > 2 ? ({ '--plf-model-name-end': '-' + modelLineScroll + 'px', animation: 'plf-model-name-scroll 44s ease-in-out infinite alternate' } as React.CSSProperties) : undefined}>Last reply routed through OpenRouter · {lastModelUsed.model}{lastModelUsed.provider ? ` · ${lastModelUsed.provider}` : ''}</span></div></>}
       <div className="mx-auto mb-1 w-full max-w-6xl">
         <div className="flex justify-end">
@@ -1660,7 +1663,9 @@ export const ChatView: React.FC<ChatViewProps> = ({
                 activePersona?.name || 'yourself'
               }... Type / for commands, @assistant to summon help`}
               value={inputText}
-              onChange={(e) => { setInputText(e.target.value); setCommandSuggestionIndex(0); }}
+              onFocus={() => setComposerExpanded(true)}
+              onBlur={() => { if (!inputText.trim()) setComposerExpanded(false); }}
+              onChange={(e) => { setInputText(e.target.value); setComposerExpanded(true); setCommandSuggestionIndex(0); }}
               onKeyDown={(e) => {
                 if (slashSuggestions.length > 0 && e.key === 'ArrowDown') {
                   e.preventDefault();
@@ -1678,7 +1683,9 @@ export const ChatView: React.FC<ChatViewProps> = ({
           </div>
 
           <div className="flex w-full items-center justify-between gap-2 border-t border-[#d987a7]/25 px-1 pt-2">
-            <div className="flex-1" />
+            <button type="button" aria-expanded={composerExpanded} aria-label={composerExpanded ? 'Make message box smaller' : 'Make message box larger'} title={composerExpanded ? 'Make message box smaller' : 'Make message box larger'} onMouseDown={(event) => event.preventDefault()} onClick={() => setComposerExpanded((expanded) => !expanded)} className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-[#d987a7]/35 bg-white/65 text-[#705064] shadow-sm transition hover:bg-white">
+              {composerExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+            </button>
             <span className="hidden flex-1 text-center text-[10px] text-[#654552]/60 sm:block">Type / for commands · @assistant for help</span>
             <button type="submit" disabled={loading || !inputText.trim()} aria-label="Send message" title="Send message" className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-white/90 bg-[linear-gradient(135deg,#ffd6eb,#fff3fb)] text-[#654552] shadow-[0_4px_14px_rgba(150,80,120,.2)] transition hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50"><Send className="h-[18px] w-[18px]" /></button>
           </div>
