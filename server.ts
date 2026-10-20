@@ -722,7 +722,7 @@ app.post('/api/openrouter/chat', async (req: Request, res: Response) => {
     return;
   }
 
-  const chosenModel = model || 'gryphe/mythomax-l2-13b';
+  const chosenModel = model || 'gryphe/mythomax-l2-13b:free';
 
   try {
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
