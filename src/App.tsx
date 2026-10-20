@@ -314,15 +314,24 @@ export default function App() {
     };
 
     const intervalId = window.setInterval(flushPendingCloudBackup, 30_000);
+    const retryPendingCloudBackup = () => {
+      if (typeof navigator !== 'undefined' && !navigator.onLine) return;
+      if (document.visibilityState !== 'visible') return;
+      flushPendingCloudBackup();
+    };
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'hidden') flushPendingCloudBackup();
+      if (document.visibilityState === 'visible') retryPendingCloudBackup();
     };
     window.addEventListener('pagehide', flushPendingCloudBackup);
+    window.addEventListener('online', retryPendingCloudBackup);
+    window.addEventListener('focus', retryPendingCloudBackup);
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
       window.clearInterval(intervalId);
       window.removeEventListener('pagehide', flushPendingCloudBackup);
+      window.removeEventListener('online', retryPendingCloudBackup);
+      window.removeEventListener('focus', retryPendingCloudBackup);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [storageHydrated, firebaseUser?.uid]);
