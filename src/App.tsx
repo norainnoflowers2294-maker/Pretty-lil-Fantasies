@@ -1081,7 +1081,7 @@ export default function App() {
     );
   }
 
-  if (!storageHydrated || !firebaseCloudHydrated) {
+  if (!storageHydrated) {
     return (
       <main className="cp-loading-screen min-h-screen grid place-items-center bg-[#0d020b] text-[#ffd6eb]" role="status">
         Loading your saved chats…
