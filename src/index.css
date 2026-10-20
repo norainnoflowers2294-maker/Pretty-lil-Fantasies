@@ -5603,3 +5603,35 @@ body {
     opacity: 1 !important;
   }
 }
+
+
+/* Idle composer docks low and stays compact; its footer toggle expands it on demand. */
+#root .cp-chat .cp-chat-composer[data-composer-expanded="false"] {
+  position: sticky !important;
+  bottom: 0 !important;
+  margin-top: auto !important;
+  padding-top: .42rem !important;
+}
+#root .cp-chat .cp-chat-composer[data-composer-expanded="false"] .plf-composer-textarea {
+  box-sizing: border-box !important;
+  height: 4.35rem !important;
+  min-height: 4.35rem !important;
+  max-height: 4.35rem !important;
+  padding: .72rem .95rem !important;
+  resize: none !important;
+}
+#root .cp-chat .cp-chat-composer[data-composer-expanded="false"] .plf-chat-floral-decal {
+  top: -1.45rem !important;
+  height: 2.5rem !important;
+}
+#root .cp-chat .cp-chat-composer[data-composer-expanded="false"] .plf-chat-floral-decal img {
+  height: 3.7rem !important;
+  width: min(72vw, 320px) !important;
+}
+@media (max-width: 640px) {
+  #root .cp-chat .cp-chat-composer[data-composer-expanded="false"] .plf-composer-textarea {
+    height: 3.9rem !important;
+    min-height: 3.9rem !important;
+    max-height: 3.9rem !important;
+  }
+}
