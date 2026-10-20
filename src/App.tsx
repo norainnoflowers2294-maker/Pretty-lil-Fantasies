@@ -465,6 +465,24 @@ export default function App() {
     };
   }, []);
 
+  // Never leave the app behind the loading screen if IndexedDB or Firebase
+  // restore stalls. The synchronous local snapshot remains usable while cloud
+  // restore retries in the background.
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      if (!storageHydrated) {
+        setStorageHydrated(true);
+        setFirebaseSyncMessage('Opening your available on-device data. A full local restore is taking longer than expected.');
+      }
+      if (!firebaseCloudHydrated) {
+        firebaseCloudReadyRef.current = false;
+        setFirebaseCloudHydrated(true);
+        setFirebaseSyncMessage('Firebase is taking longer than expected. Your local data is available; cloud restore will finish if the connection returns.');
+      }
+    }, 15000);
+    return () => window.clearTimeout(timer);
+  }, [storageHydrated, firebaseCloudHydrated]);
+
   // Handlers for updates
   const handleUpdateChat = (updatedChat: Chat) => {
     // Always merge against the latest persisted state. A reply may finish after
