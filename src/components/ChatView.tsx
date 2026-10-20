@@ -1568,11 +1568,6 @@ export const ChatView: React.FC<ChatViewProps> = ({
       <div data-quick-actions-collapsed={quickActionsCollapsed} data-composer-expanded={composerExpanded} className={`cp-chat-composer relative z-40 shrink-0 border-t backdrop-blur-md ${quickActionsCollapsed ? 'p-2 sm:p-2.5' : 'p-2.5 sm:p-3'}`} style={{ paddingBottom: `calc(${quickActionsCollapsed ? '.35rem' : '.55rem'} + env(safe-area-inset-bottom, 0px))` }}>
         {lastModelUsed && <><style>{'@keyframes plf-model-name-scroll { to { transform: translateX(var(--plf-model-name-end)); } }'}</style><div ref={modelLineViewportRef} className="mx-auto mb-2 max-w-4xl overflow-hidden whitespace-nowrap text-[10px] text-[#ffd6eb]/55" aria-label={'Last reply routed through OpenRouter · ' + lastModelUsed.model + (lastModelUsed.provider ? ' · ' + lastModelUsed.provider : '')}><span ref={modelLineTextRef} className="block w-max whitespace-nowrap" style={modelLineScroll > 2 ? ({ '--plf-model-name-end': '-' + modelLineScroll + 'px', animation: 'plf-model-name-scroll 44s ease-in-out infinite alternate' } as React.CSSProperties) : undefined}>Last reply routed through OpenRouter · {lastModelUsed.model}{lastModelUsed.provider ? ` · ${lastModelUsed.provider}` : ''}</span></div></>}
       <div className="mx-auto mb-1 w-full max-w-6xl">
-        <div className="flex justify-end">
-          <button type="button" aria-expanded={!quickActionsCollapsed} aria-label={quickActionsCollapsed ? 'Show chat buttons' : 'Hide chat buttons'} title={quickActionsCollapsed ? 'Show chat buttons' : 'Hide chat buttons'} aria-controls="chat-quick-actions" onClick={() => setQuickActionsCollapsed((collapsed) => !collapsed)} className="grid h-7 w-7 min-h-7 place-items-center rounded-full border border-[#c46891]/35 bg-white/65 p-0 text-[#211019] shadow-sm hover:bg-white">
-            {quickActionsCollapsed ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-          </button>
-        </div>
         {!quickActionsCollapsed && <div id="chat-quick-actions" className="mt-1 flex items-center gap-1.5 overflow-x-auto whitespace-nowrap [scrollbar-width:none]">
           <span className="shrink-0 text-[9px] font-bold uppercase tracking-wider text-[#ffd6eb]/50">Quick</span>
           <button type="button" onClick={toggleVoiceInput} aria-label={isListening ? 'Stop voice input' : 'Start voice input'} aria-pressed={isListening} title={isListening ? 'Stop voice input' : 'Voice input'} className={`grid h-9 w-9 shrink-0 place-items-center rounded-full border transition ${isListening ? 'border-[#c94783] bg-[#f5a8ce] text-[#4b1732]' : 'border-[#d987a7]/40 bg-white/75 text-[#70435b] hover:bg-white'}`}>
@@ -1668,7 +1663,16 @@ export const ChatView: React.FC<ChatViewProps> = ({
               onKeyDown={(e) => {
                 if (slashSuggestions.length > 0 && e.key === 'ArrowDown') {
                   e.preventDefault();
-                  setCommandSuggestionIndex((index) => (index + 1) % slashSuggestions.length);
+                  setComma            <button type="button" aria-expanded={!quickActionsCollapsed} aria-label={quickActionsCollapsed ? 'Show chat buttons' : 'Hide chat buttons'} title={quickActionsCollapsed ? 'Show chat buttons' : 'Hide chat buttons'} aria-controls="chat-quick-actions" onClick={() => setQuickActionsCollapsed((collapsed) => !collapsed)} className="plf-composer-quick-toggle absolute right-2 top-2 z-20 grid h-8 w-8 place-items-center rounded-full border">
+              {quickActionsCollapsed ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+            </button>
+            <button type="button" aria-expanded={composerExpanded} aria-label={composerExpanded ? 'Make message box smaller' : 'Make message box larger'} title={composerExpanded ? 'Make message box smaller' : 'Make message box larger'} onMouseDown={(event) => event.preventDefault()} onClick={() => setComposerExpanded((expanded) => !expanded)} className="plf-composer-resize absolute bottom-2 left-2 z-20 grid h-10 w-10 place-items-center rounded-full border">
+              {composerExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+            </button>
+            <button type="submit" disabled={loading || !inputText.trim()} aria-label="Send message" title="Send message" className="plf-composer-send absolute bottom-2 right-2 z-20 grid h-11 w-11 place-items-center rounded-full border disabled:cursor-not-allowed disabled:opacity-50">
+              <Send className="h-[18px] w-[18px]" />
+            </button>
+ndSuggestionIndex((index) => (index + 1) % slashSuggestions.length);
                   return;
                 }
                 if (slashSuggestions.length > 0 && e.key === 'ArrowUp') {
@@ -1681,13 +1685,6 @@ export const ChatView: React.FC<ChatViewProps> = ({
             />
           </div>
 
-          <div className="flex w-full items-center justify-between gap-2 border-t border-[#d987a7]/25 px-1 pt-2">
-            <button type="button" aria-expanded={composerExpanded} aria-label={composerExpanded ? 'Make message box smaller' : 'Make message box larger'} title={composerExpanded ? 'Make message box smaller' : 'Make message box larger'} onMouseDown={(event) => event.preventDefault()} onClick={() => setComposerExpanded((expanded) => !expanded)} className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-[#d987a7]/35 bg-white/65 text-[#705064] shadow-sm transition hover:bg-white">
-              {composerExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
-            </button>
-            <span className="hidden flex-1 text-center text-[10px] text-[#654552]/60 sm:block">Type / for commands · @assistant for help</span>
-            <button type="submit" disabled={loading || !inputText.trim()} aria-label="Send message" title="Send message" className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-white/90 bg-[linear-gradient(135deg,#ffd6eb,#fff3fb)] text-[#654552] shadow-[0_4px_14px_rgba(150,80,120,.2)] transition hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50"><Send className="h-[18px] w-[18px]" /></button>
-          </div>
         </form>
       </div>
 
