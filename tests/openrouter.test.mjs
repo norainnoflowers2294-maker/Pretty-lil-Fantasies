@@ -26,6 +26,26 @@ test('unsupported penalty values are omitted from provider requests', async () =
   };
   await sendOpenRouterChat({ ...config, supportedParameters: ['temperature', 'top_p'] }, messages);
 });
+test('retries once when a provider rejects optional sampling parameters', async () => {
+  let calls = 0;
+  globalThis.fetch = async (_url, init) => {
+    calls += 1;
+    const body = JSON.parse(init.body);
+    if (calls === 1) {
+      assert.equal(body.temperature, 0.8);
+      return Response.json({ error: { message: 'temperature is not supported by this provider' } }, { status: 400 });
+    }
+    assert.ok(!('temperature' in body));
+    assert.equal(body.model, 'provider/model');
+    return Response.json({ choices: [{ message: { content: 'Reply after retry' } }] });
+  };
+  assert.equal(await sendOpenRouterChat(config, messages), 'Reply after retry');
+  assert.equal(calls, 2);
+});
+test('reads text parts from array-form model responses', async () => {
+  globalThis.fetch = async () => Response.json({ choices: [{ message: { content: [{ type: 'text', text: 'Hello ' }, { type: 'text', text: 'back' }] } }] });
+  assert.equal(await sendOpenRouterChat(config, messages), 'Hello back');
+});
 test('detailed response reports the model and provider returned by OpenRouter', async () => {
   globalThis.fetch = async () => Response.json({ model: 'provider/actual-model', provider: 'Actual Provider', choices: [{ message: { content: 'ok' } }] });
   const result = await sendOpenRouterChatDetailed(config, messages);
