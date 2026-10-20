@@ -1572,6 +1572,18 @@ export const ChatView: React.FC<ChatViewProps> = ({
         </div>
         {!quickActionsCollapsed && <div id="chat-quick-actions" className="mt-1 flex items-center gap-1.5 overflow-x-auto whitespace-nowrap [scrollbar-width:none]">
           <span className="shrink-0 text-[9px] font-bold uppercase tracking-wider text-[#ffd6eb]/50">Quick</span>
+          <button type="button" onClick={toggleVoiceInput} aria-label={isListening ? 'Stop voice input' : 'Start voice input'} aria-pressed={isListening} title={isListening ? 'Stop voice input' : 'Voice input'} className={`grid h-9 w-9 shrink-0 place-items-center rounded-full border transition ${isListening ? 'border-[#c94783] bg-[#f5a8ce] text-[#4b1732]' : 'border-[#d987a7]/40 bg-white/75 text-[#70435b] hover:bg-white'}`}>
+            <Mic className="h-[18px] w-[18px]" />
+          </button>
+          <button type="button" onClick={handleReadLatestAloud} aria-label={speakingMessageId ? 'Stop Read Aloud' : 'Read latest reply aloud'} title={speakingMessageId ? 'Stop Read Aloud' : 'Read Aloud'} className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[#d987a7]/40 bg-white/75 text-[#70435b] transition hover:bg-white">
+            {speakingMessageId ? <VolumeX className="h-[18px] w-[18px]" /> : <Volume2 className="h-[18px] w-[18px]" />}
+          </button>
+          <button type="button" onClick={handleQuickDiceRoll} aria-label="Roll d20 action check" title="Roll d20" className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[#d987a7]/35 bg-white/75 text-[#a95c90] transition hover:bg-white">
+            <Dices className="h-[18px] w-[18px]" />
+          </button>
+          <button type="button" onClick={() => setIsChatSettingsOpen(true)} aria-label="Open chat settings" title="Chat settings" className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[#d987a7]/35 bg-white/75 text-[#705064] transition hover:bg-white">
+            <SlidersHorizontal className="h-[18px] w-[18px]" />
+          </button>
           <label className="flex min-h-10 shrink-0 items-center gap-1.5 rounded-full border border-[#d987a7] bg-[#ffe0ed] px-3 text-[11px] font-bold text-[#211019] shadow-sm">
             <User className="h-3.5 w-3.5" aria-hidden="true" />
             <select
@@ -1620,7 +1632,6 @@ export const ChatView: React.FC<ChatViewProps> = ({
             ['Narrator Mode', '/nar', 'bg-[#B12FA7] border-[#B879C2] hover:bg-[#B40061]'],
             ['Wallet', '/cash', 'bg-[#00877E] border-[#37B6A5] hover:bg-[#0B168C]'],
             ['Cash App', '/cashapp', 'bg-[#FE0088] border-[#FC76AA] hover:bg-[#B40061]'],
-            ['Read Aloud', '/tts', 'bg-[#DE0A60] border-[#FC76AA] hover:bg-[#B12FA7]'],
           ].map(([label, command, colorClass]) => (
             <button key={command} type="button" disabled={loading} onClick={() => command.startsWith('/') ? runQuickCommand(command) : void handleChatQuickAction(command)} className={`min-h-10 shrink-0 rounded-full border px-2.5 py-2 text-[11px] font-bold text-white shadow-sm transition-colors ${colorClass} disabled:opacity-40`}>
               {command === '/cash' && <Wallet className="mr-1 inline h-3.5 w-3.5" aria-hidden="true" />}
@@ -1642,15 +1653,6 @@ export const ChatView: React.FC<ChatViewProps> = ({
                 </button>
               ))}
             </div>}
-            <div className="plf-composer-top-controls relative z-10 flex w-full items-center gap-2 px-1 pb-2">
-              <button type="button" onClick={toggleVoiceInput} aria-label={isListening ? 'Stop voice input' : 'Start voice input'} aria-pressed={isListening} title={isListening ? 'Stop voice input' : 'Voice input'} className={`grid h-9 w-9 place-items-center rounded-full border transition ${isListening ? 'border-[#c94783] bg-[#f5a8ce] text-[#4b1732] shadow-[0_0_0_4px_rgba(217,90,152,.16)]' : 'border-[#d987a7]/40 bg-white/75 text-[#70435b] hover:bg-white'}`}>
-                <Mic className="h-[18px] w-[18px]" />
-              </button>
-              <button type="button" onClick={handleReadLatestAloud} aria-label={speakingMessageId ? 'Stop Read Aloud' : 'Read latest reply aloud'} title={speakingMessageId ? 'Stop Read Aloud' : 'Read Aloud'} className="grid h-9 w-9 place-items-center rounded-full border border-[#d987a7]/40 bg-white/75 text-[#70435b] transition hover:bg-white">
-                {speakingMessageId ? <VolumeX className="h-[18px] w-[18px]" /> : <Volume2 className="h-[18px] w-[18px]" />}
-              </button>
-              <span className="plf-composer-control-label text-[11px] font-medium tracking-wide">VOICE &amp; READ ALOUD</span>
-            </div>
             <textarea
               ref={inputRef}
               rows={3}
@@ -1676,10 +1678,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
           </div>
 
           <div className="flex w-full items-center justify-between gap-2 border-t border-[#d987a7]/25 px-1 pt-2">
-            <div className="flex items-center gap-2">
-              <button type="button" onClick={handleQuickDiceRoll} aria-label="Roll d20 action check" title="Roll d20" className="grid h-10 w-10 place-items-center rounded-full border border-[#d987a7]/35 bg-white/55 text-[#705064] transition hover:scale-105 hover:bg-white/80"><Dices className="h-5 w-5 text-[#a95c90]" /></button>
-              <button type="button" onClick={() => setIsChatSettingsOpen(true)} aria-label="Open chat settings" title="Chat settings" className="grid h-10 w-10 place-items-center rounded-full border border-[#d987a7]/35 bg-white/55 text-[#705064] transition hover:scale-105 hover:bg-white/80"><SlidersHorizontal className="h-5 w-5" /></button>
-            </div>
+            <div className="flex-1" />
             <span className="hidden flex-1 text-center text-[10px] text-[#654552]/60 sm:block">Type / for commands · @assistant for help</span>
             <button type="submit" disabled={loading || !inputText.trim()} aria-label="Send message" title="Send message" className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-white/90 bg-[linear-gradient(135deg,#ffd6eb,#fff3fb)] text-[#654552] shadow-[0_4px_14px_rgba(150,80,120,.2)] transition hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50"><Send className="h-[18px] w-[18px]" /></button>
           </div>
