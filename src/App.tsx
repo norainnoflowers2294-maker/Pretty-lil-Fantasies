@@ -1141,6 +1141,7 @@ export default function App() {
           wallet={activeWallet || undefined}
           onSaveWallet={handleSaveWallet}
           socialWorld={data.socialWorld || DEFAULT_SOCIAL_WORLD}
+          onUpdateSocialWorld={(socialWorld) => updateData({ ...dataRef.current, socialWorld })}
           openRouterConfig={data.openRouterConfig}
           preferences={preferences}
           persona={activeWalletPersona || null}
