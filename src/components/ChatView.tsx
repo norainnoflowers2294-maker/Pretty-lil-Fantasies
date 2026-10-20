@@ -1663,9 +1663,8 @@ export const ChatView: React.FC<ChatViewProps> = ({
                 activePersona?.name || 'yourself'
               }... Type / for commands, @assistant to summon help`}
               value={inputText}
-              onFocus={() => setComposerExpanded(true)}
               onBlur={() => { if (!inputText.trim()) setComposerExpanded(false); }}
-              onChange={(e) => { setInputText(e.target.value); setComposerExpanded(true); setCommandSuggestionIndex(0); }}
+              onChange={(e) => { setInputText(e.target.value); setCommandSuggestionIndex(0); }}
               onKeyDown={(e) => {
                 if (slashSuggestions.length > 0 && e.key === 'ArrowDown') {
                   e.preventDefault();
