@@ -5614,11 +5614,12 @@ body {
 }
 #root .cp-chat .cp-chat-composer[data-composer-expanded="false"] .plf-composer-textarea {
   box-sizing: border-box !important;
-  height: 4.35rem !important;
-  min-height: 4.35rem !important;
-  max-height: 4.35rem !important;
-  padding: .72rem .95rem !important;
+  height: 2.9rem !important;
+  min-height: 2.9rem !important;
+  max-height: 2.9rem !important;
+  padding: .45rem .95rem !important;
   resize: none !important;
+  transition: height 160ms ease, min-height 160ms ease, max-height 160ms ease;
 }
 #root .cp-chat .cp-chat-composer[data-composer-expanded="false"] .plf-chat-floral-decal {
   top: -1.45rem !important;
@@ -5630,8 +5631,8 @@ body {
 }
 @media (max-width: 640px) {
   #root .cp-chat .cp-chat-composer[data-composer-expanded="false"] .plf-composer-textarea {
-    height: 3.9rem !important;
-    min-height: 3.9rem !important;
-    max-height: 3.9rem !important;
+    height: 2.6rem !important;
+    min-height: 2.6rem !important;
+    max-height: 2.6rem !important;
   }
 }
