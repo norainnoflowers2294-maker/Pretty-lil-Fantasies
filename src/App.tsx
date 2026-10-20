@@ -35,6 +35,7 @@ import { StoryNotesModal } from './components/StoryNotesModal';
 import { SavedMessagesModal } from './components/SavedMessagesModal';
 import { SceneGeneratorModal } from './components/SceneGeneratorModal';
 import { FileKeeperView } from './components/FileKeeperView';
+import CreativeStudioView from './components/CreativeStudioView';
 import { JournalView } from './components/JournalView';
 import { GitHubSyncModal } from './components/GitHubSyncModal';
 import { DualTrackOverlay } from './components/DualTrackOverlay';
@@ -1314,7 +1315,9 @@ export default function App() {
 
       {/* Main Dashboard Body */}
       <main key={activeTab} className="cp-page-transition flex-1 max-w-7xl w-full mx-auto pb-12 space-y-4">
-        {activeTab === 'journal' ? (
+        {activeTab === 'creative' ? (
+          <CreativeStudioView />
+        ) : activeTab === 'journal' ? (
           <JournalView pages={data.journalPages || []} onChangePages={handleChangeJournalPages} />
         ) : activeTab === 'social' ? (
           <SocialMediaView
