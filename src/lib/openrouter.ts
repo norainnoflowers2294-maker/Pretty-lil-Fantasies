@@ -36,7 +36,7 @@ async function request(path: string, apiKey: string, body?: object) {
     // User-provided keys go only to OpenRouter, never into the build or a Pages API route.
     const response = await fetch(`${API}${path}`, {
       method: body ? 'POST' : 'GET',
-      headers: { Authorization: `Bearer ${key}`, ...(body ? { 'Content-Type': 'application/json' } : {}) },
+      headers: { Accept: 'application/json', Authorization: `Bearer ${key}`, ...(body ? { 'Content-Type': 'application/json' } : {}) },
       ...(body ? { body: JSON.stringify(body) } : {}),
       signal: controller.signal,
     });
@@ -112,10 +112,44 @@ export async function sendOpenRouterChatDetailed(
   if (supported?.has('frequency_penalty')) body.frequency_penalty = config.frequencyPenalty ?? 0;
   if (supported?.has('presence_penalty')) body.presence_penalty = config.presencePenalty ?? 0;
 
-  const data = await request('/chat/completions', config.apiKey, body);
-  const content = data.choices?.[0]?.message?.content;
-  if (typeof content !== 'string' || !content.trim()) {
-    throw new OpenRouterError('The model returned no text. Try again or choose another model.');
+  let data: any;
+  try {
+    data = await request('/chat/completions', config.apiKey, body);
+  } catch (error) {
+    // Model capability metadata can be stale, and some providers reject optional
+    // sampling controls or web-search tools that OpenRouter accepts in general.
+    // A validation error has not generated a reply, so retry once with only the
+    // incompatible optional field removed.
+    if (!(error instanceof OpenRouterError) || ![400, 422].includes(error.status)) throw error;
+    const message = error.message.toLowerCase();
+    const retryBody = { ...body };
+    let canRetry = false;
+    if (/temperature|top_p|frequency_penalty|presence_penalty|sampling/.test(message)) {
+      for (const parameter of ['temperature', 'top_p', 'frequency_penalty', 'presence_penalty']) {
+        if (parameter in retryBody) {
+          delete retryBody[parameter];
+          canRetry = true;
+        }
+      }
+    } else if (config.webSearch && /tool|web.?search/.test(message)) {
+      delete retryBody.tools;
+      canRetry = true;
+    }
+    if (!canRetry) throw error;
+    data = await request('/chat/completions', config.apiKey, retryBody);
+  }
+
+  const rawContent = data.choices?.[0]?.message?.content;
+  const content = typeof rawContent === 'string'
+    ? rawContent
+    : Array.isArray(rawContent)
+      ? rawContent.map((part: any) => typeof part === 'string' ? part : typeof part?.text === 'string' ? part.text : '').join('')
+      : '';
+  if (!content.trim()) {
+    const reason = data.choices?.[0]?.finish_reason;
+    throw new OpenRouterError(reason === 'content_filter'
+      ? 'OpenRouter returned a response blocked by the model’s content filter. Try rephrasing the message.'
+      : 'The model returned no text. Try again or choose another model.');
   }
   return {
     content,
