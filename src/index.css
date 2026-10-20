@@ -5507,3 +5507,26 @@ body {
   background: linear-gradient(135deg, #fffafd, #ffddeb 58%, #e4dff5) !important;
   border: 1px solid rgba(190,91,137,.4) !important;
 }
+
+
+/* Social phone: keep every card light enough for readable dark text. */
+#root .cp-chat .plf-social-phone-device .plf-social-phone-screen .plf-social-media-phone-mode > header,
+#root .cp-chat .plf-social-phone-device .plf-social-phone-screen .plf-social-media-phone-mode > div.rounded-3xl,
+#root .cp-chat .plf-social-phone-device .plf-social-phone-screen .plf-social-media-phone-mode > div.space-y-3 > article {
+  color: #39283a !important;
+  background: linear-gradient(135deg,rgba(255,250,253,.97),rgba(246,226,249,.95) 54%,rgba(219,243,244,.94)) !important;
+  border-color: rgba(255,255,255,.96) !important;
+  box-shadow: 0 5px 14px rgba(119,73,119,.12),inset 0 1px 0 #fff !important;
+}
+#root .cp-chat .plf-social-phone-device .plf-social-phone-screen .plf-social-media-phone-mode > header :is(h1,p,button),
+#root .cp-chat .plf-social-phone-device .plf-social-phone-screen .plf-social-media-phone-mode > div.rounded-3xl :is(h2,span,button),
+#root .cp-chat .plf-social-phone-device .plf-social-phone-screen .plf-social-media-phone-mode > div.space-y-3 > article :is(h3,p,span,button) {
+  color: #493349 !important;
+}
+#root .cp-chat .plf-social-phone-device .plf-social-phone-screen .plf-social-media-phone-mode > header > div > div.rounded-2xl {
+  background: rgba(255,255,255,.58) !important;
+  border-color: rgba(180,119,158,.32) !important;
+}
+#root .cp-chat .plf-social-phone-device .plf-social-phone-screen .plf-social-media-phone-mode > div.space-y-3 > article > div:last-child {
+  border-color: rgba(137,95,133,.22) !important;
+}
