@@ -5756,3 +5756,18 @@ body {
     max-height: min(42dvh, 14rem) !important;
   }
 }
+
+/* Override the quick-actions-collapsed rule that was keeping the phone input oversized. */
+#root .cp-chat .cp-chat-composer[data-composer-expanded="false"] textarea.plf-composer-textarea[placeholder^="Reply to"][class*="rounded-"][class*="border"] {
+  box-sizing: border-box !important;
+  height: 8.25rem !important;
+  min-height: 8.25rem !important;
+  max-height: 8.25rem !important;
+  resize: none !important;
+}
+#root .cp-chat .cp-chat-composer[data-composer-expanded="true"] textarea.plf-composer-textarea[placeholder^="Reply to"][class*="rounded-"][class*="border"] {
+  box-sizing: border-box !important;
+  height: 10.5rem !important;
+  min-height: 10.5rem !important;
+  max-height: min(42dvh, 14rem) !important;
+}
