@@ -337,6 +337,24 @@ export const ChatView: React.FC<ChatViewProps> = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const messagesViewportRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    const chatRoot = document.querySelector<HTMLElement>('.cp-chat');
+    if (!chatRoot) return;
+    const syncVisibleHeight = () => {
+      chatRoot.style.setProperty('--plf-visual-viewport-height', (viewport?.height || window.innerHeight) + 'px');
+      chatRoot.style.setProperty('--plf-visual-viewport-top', (viewport?.offsetTop || 0) + 'px');
+    };
+    syncVisibleHeight();
+    viewport?.addEventListener('resize', syncVisibleHeight);
+    viewport?.addEventListener('scroll', syncVisibleHeight);
+    window.addEventListener('resize', syncVisibleHeight);
+    return () => {
+      viewport?.removeEventListener('resize', syncVisibleHeight);
+      viewport?.removeEventListener('scroll', syncVisibleHeight);
+      window.removeEventListener('resize', syncVisibleHeight);
+    };
+  }, []);
   const shouldAutoScrollRef = useRef(true);
   const openingGenerationStartedRef = useRef(new Set<string>());
   const chatResetGenerationRef = useRef<Record<string, number>>({});
@@ -1624,7 +1642,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
                 </button>
               ))}
             </div>}
-            <div className="plf-composer-top-controls absolute left-3 top-2 z-10 flex items-center gap-2">
+            <div className="plf-composer-top-controls relative z-10 flex w-full items-center gap-2 px-1 pb-2">
               <button type="button" onClick={toggleVoiceInput} aria-label={isListening ? 'Stop voice input' : 'Start voice input'} aria-pressed={isListening} title={isListening ? 'Stop voice input' : 'Voice input'} className={`grid h-9 w-9 place-items-center rounded-full border transition ${isListening ? 'border-[#c94783] bg-[#f5a8ce] text-[#4b1732] shadow-[0_0_0_4px_rgba(217,90,152,.16)]' : 'border-[#d987a7]/40 bg-white/75 text-[#70435b] hover:bg-white'}`}>
                 <Mic className="h-[18px] w-[18px]" />
               </button>
@@ -1653,7 +1671,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
                   return;
                 }
               }}
-              className="plf-composer-textarea min-h-[154px] max-h-[300px] w-full resize-y rounded-[20px] border border-transparent bg-transparent px-4 pb-4 pt-14 text-sm leading-relaxed text-[#211019] placeholder:text-[#654552]/75 focus:border-[#d987a7]/35 focus:bg-white/25 focus:outline-none sm:min-h-[176px] sm:text-base" style={{ color: "#211019", WebkitTextFillColor: "#211019", caretColor: "#211019" }}
+              className="plf-composer-textarea min-h-[96px] max-h-[200px] w-full resize-y rounded-[20px] border border-transparent bg-transparent px-4 py-3 text-sm leading-relaxed text-[#211019] placeholder:text-[#654552]/75 focus:border-[#d987a7]/35 focus:bg-white/25 focus:outline-none sm:min-h-[112px] sm:text-base" style={{ color: "#211019", WebkitTextFillColor: "#211019", caretColor: "#211019" }}
             />
           </div>
 
