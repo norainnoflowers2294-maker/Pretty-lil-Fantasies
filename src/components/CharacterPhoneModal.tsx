@@ -3,6 +3,29 @@ import { X, Smartphone, MessageCircle, PhoneCall, Image as ImageIcon, Users, Bel
 import { addPhoneItem, ensureFictionalPhone, formatPhoneStoryContext, recordPhoneDiscovery, type PhoneSystemState, type FictionalPhone, type FictionalPhoneItem, type FictionalPhoneItemKind } from '../lib/phoneSystem';
 import { recordIncomingTransfer, type StoryWallet } from '../lib/wallet';
 import type { SocialMediaWorld } from '../lib/socialMedia';
+const preparePhoneSocialImage = (file: File): Promise<string> => new Promise((resolve, reject) => {
+  if (!file.type.startsWith('image/')) { reject(new Error('Choose an image file.')); return; }
+  if (file.size > 12 * 1024 * 1024) { reject(new Error('Choose an image under 12 MB.')); return; }
+  const reader = new FileReader();
+  reader.onerror = () => reject(new Error('This image could not be opened.'));
+  reader.onload = () => {
+    const image = new Image();
+    image.onerror = () => reject(new Error('This image could not be opened.'));
+    image.onload = () => {
+      const scale = Math.min(1, 1080 / Math.max(image.naturalWidth, image.naturalHeight));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+      canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+      const context = canvas.getContext('2d');
+      if (!context) { reject(new Error('Image editing is unavailable on this device.')); return; }
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL('image/jpeg', 0.72));
+    };
+    image.src = String(reader.result || '');
+  };
+  reader.readAsDataURL(file);
+});
+
 import type { Chat, Character, OpenRouterConfig, Persona, Lorebook, Plugin, StoryMemory } from '../types/roleplay';
 import type { AppPreferences } from '../lib/preferences';
 import { sendOpenRouterChat } from '../lib/openrouter';
@@ -37,6 +60,7 @@ export interface CharacterPhoneModalProps {
   wallet?: StoryWallet;
   onSaveWallet?: (wallet: StoryWallet) => void;
   socialWorld?: SocialMediaWorld;
+  onUpdateSocialWorld?: (world: SocialMediaWorld) => void;
   openRouterConfig: OpenRouterConfig;
   preferences: AppPreferences;
   persona: Persona | null;
@@ -46,7 +70,7 @@ export interface CharacterPhoneModalProps {
   socialMediaContext: string;
 }
 export const CharacterPhoneModal: React.FC<CharacterPhoneModalProps> = ({
-  isOpen, onClose, chat, characters, activeCharacters, personaName, phoneSystem, onChange, wallet, onSaveWallet, socialWorld,
+  isOpen, onClose, chat, characters, activeCharacters, personaName, phoneSystem, onChange, wallet, onSaveWallet, socialWorld, onUpdateSocialWorld,
   openRouterConfig, preferences, persona, lorebooks, plugins, storyMemories, socialMediaContext,
 }) => {
   const people = useMemo(() => {
@@ -76,6 +100,10 @@ export const CharacterPhoneModal: React.FC<CharacterPhoneModalProps> = ({
   const [transferAmount, setTransferAmount] = useState('');
   const [transferTo, setTransferTo] = useState(personaName || 'Emmy');
   const [transferMemo, setTransferMemo] = useState('');
+  const [socialDraftText, setSocialDraftText] = useState('');
+  const [socialDraftImage, setSocialDraftImage] = useState('');
+  const [socialImageError, setSocialImageError] = useState('');
+  const [socialPostingAs, setSocialPostingAs] = useState(socialWorld?.profiles.find((profile) => profile.id === 'emmy')?.id || socialWorld?.profiles[0]?.id || '');
 
   const currentState = phoneSystem || { phones: [], scratchpad: [] };
   const owner = people.find((person) => person.id === ownerId) || people[0];
@@ -262,12 +290,25 @@ export const CharacterPhoneModal: React.FC<CharacterPhoneModalProps> = ({
                   <button onClick={saveTransfer} style={{ ...buttonStyle, background: '#008577' }}><Plus size={16}/> Fictional transfer</button>
                 </div>
               </section>}
-              {activeTab === 'social' && <section>
-                <p style={{ opacity: .72, fontSize: 13 }}>Fictional social feed. Tap “Seen by {peopleName(viewerId)}” to record what this character knows.</p>
+              {activeTab === 'social' && <section style={{ display: 'grid', gap: 10 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                  <div><strong style={{ fontSize: 17 }}>Instagram</strong><p style={{ margin: '3px 0 0', opacity: .7, fontSize: 12 }}>Post a caption or a photo to the story feed.</p></div>
+                  <span style={{ borderRadius: 99, padding: '5px 9px', background: '#FF008022', color: '#ff90c5', fontSize: 11 }}>● Live story world</span>
+                </div>
+                <form onSubmit={(event) => { event.preventDefault(); const text = socialDraftText.trim(); if ((!text && !socialDraftImage) || !socialWorld || !onUpdateSocialWorld) return; const nextPost = { id: 'social_post_' + Date.now(), profileId: socialPostingAs || socialWorld.profiles[0]?.id || 'emmy', text, imageUrl: socialDraftImage || undefined, createdAt: new Date().toISOString(), likes: 0 }; onUpdateSocialWorld({ ...socialWorld, posts: [nextPost, ...socialWorld.posts] }); setSocialDraftText(''); setSocialDraftImage(''); setSocialImageError(''); }} style={{ display: 'grid', gap: 8, padding: 12, borderRadius: 16, background: '#ffffff0b', border: '1px solid #FF008055' }}>
+                  <select aria-label="Post as" value={socialPostingAs} onChange={(event) => setSocialPostingAs(event.target.value)} style={controlStyle}>{(socialWorld?.profiles || []).map((profile) => <option key={profile.id} value={profile.id}>{profile.name}</option>)}</select>
+                  <textarea aria-label="Instagram caption" value={socialDraftText} onChange={(event) => setSocialDraftText(event.target.value)} rows={2} maxLength={1200} placeholder="Write a caption…" style={{ ...controlStyle, width: '100%', resize: 'vertical' }} />
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap' }}>
+                    <label style={{ ...buttonStyle, background: '#ff008022', fontSize: 12, display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}><ImageIcon size={15}/> Add photo<input aria-label="Choose photo for Instagram post" type="file" accept="image/*" style={{ position: 'absolute', width: 1, height: 1, opacity: 0 }} onChange={async (event) => { const file = event.currentTarget.files?.[0]; event.currentTarget.value = ''; if (!file) return; try { setSocialImageError(''); setSocialDraftImage(await preparePhoneSocialImage(file)); } catch (error) { setSocialImageError(error instanceof Error ? error.message : 'Could not use this photo.'); } }} /></label>
+                    <button type="submit" disabled={!socialDraftText.trim() && !socialDraftImage} style={{ ...buttonStyle, background: '#FF0080', opacity: !socialDraftText.trim() && !socialDraftImage ? .5 : 1 }}>Share post</button>
+                  </div>
+                  {socialImageError && <p role="alert" style={{ margin: 0, color: '#ff8daa', fontSize: 12 }}>{socialImageError}</p>}
+                  {socialDraftImage && <div style={{ position: 'relative', width: 'fit-content' }}><img src={socialDraftImage} alt="Instagram post preview" style={{ maxWidth: '100%', maxHeight: 130, borderRadius: 12, objectFit: 'cover' }}/><button type="button" aria-label="Remove photo" onClick={() => setSocialDraftImage('')} style={{ ...buttonStyle, position: 'absolute', top: 4, right: 4, padding: '4px 7px', background: '#130812cc' }}>×</button></div>}
+                </form>
                 {(socialWorld?.posts || []).slice().sort((a,b) => Date.parse(b.createdAt)-Date.parse(a.createdAt)).slice(0,15).map((post) => {
                   const profile = socialWorld?.profiles.find((entry) => entry.id === post.profileId);
                   const read = currentState.scratchpad.some((entry) => entry.chatId === chat.id && entry.discoveredBy.includes(viewerId) && entry.text.endsWith(post.text));
-                  return <article key={post.id} style={{ padding: 12, borderRadius: 14, marginBottom: 8, background: '#FF008016', border: '1px solid #FF008055' }}><b>{profile?.name || post.profileId}</b><p style={{ margin: '6px 0' }}>{post.text}</p><button onClick={() => addSocialDiscovery(post)} style={{ ...buttonStyle, padding: '6px 9px', fontSize: 12, background: read ? '#008577' : '#FF0080' }}>{read ? 'Saved as seen' : 'Seen by ' + peopleName(viewerId)}</button></article>;
+                  return <article key={post.id} style={{ padding: 12, borderRadius: 14, marginBottom: 2, background: '#FF008016', border: '1px solid #FF008055' }}><b>{profile?.name || post.profileId}</b>{post.text && <p style={{ margin: '6px 0' }}>{post.text}</p>}{post.imageUrl && <img src={post.imageUrl} alt={'Photo shared by ' + (profile?.name || post.profileId)} style={{ width: '100%', maxHeight: 280, objectFit: 'cover', borderRadius: 12, marginBottom: 8 }}/>}<div style={{ display: 'flex', gap: 8, alignItems: 'center' }}><button type="button" onClick={() => onUpdateSocialWorld?.({ ...socialWorld!, posts: socialWorld!.posts.map((item) => item.id === post.id ? { ...item, likedByUser: !item.likedByUser, likes: Math.max(0, item.likes + (item.likedByUser ? -1 : 1)) } : item) })} style={{ ...buttonStyle, padding: '6px 9px', fontSize: 12, background: post.likedByUser ? '#e43b84' : '#ffffff16' }}>♥ {post.likes}</button><button onClick={() => addSocialDiscovery(post)} style={{ ...buttonStyle, padding: '6px 9px', fontSize: 12, background: read ? '#008577' : '#FF0080' }}>{read ? 'Saved as seen' : 'Seen by ' + peopleName(viewerId)}</button></div></article>;
                 })}
               </section>}
               {activeTab === 'scratchpad' && <section>
