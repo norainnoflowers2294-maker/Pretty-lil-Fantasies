@@ -5370,3 +5370,45 @@ body {
     height: 5rem !important;
   }
 }
+
+/* Keep the dashboard filter icons visible and make each pearl noticeably iridescent. */
+#root .cp-app-shell main .plf-category-pill .plf-category-icon-ring {
+  padding: .22rem !important;
+  background: linear-gradient(145deg, rgba(255,255,255,.96) 0%, rgba(255,191,225,.92) 35%, rgba(211,201,255,.92) 66%, rgba(169,242,235,.9) 100%) !important;
+  border: 1px solid rgba(255,255,255,.98) !important;
+  box-shadow: 0 5px 13px rgba(126,69,116,.17), inset 0 1px 0 #fff !important;
+}
+#root .cp-app-shell main .plf-category-pill .plf-category-icon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 3.1rem !important;
+  height: 3.1rem !important;
+  color: #211019 !important;
+  background:
+    radial-gradient(circle at 28% 20%, rgba(255,255,255,.96), transparent 38%),
+    linear-gradient(145deg, #fff7fc 0%, #ffd5ea 36%, #e4d7fb 68%, #c9f1ee 100%) !important;
+  border: 1px solid rgba(255,255,255,.98) !important;
+  box-shadow: inset 0 1px 2px rgba(255,255,255,.95), 0 3px 8px rgba(105,61,102,.12) !important;
+}
+#root .cp-app-shell main .plf-category-glyph {
+  display: block !important;
+  position: relative !important;
+  z-index: 2 !important;
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  font-family: Arial, sans-serif !important;
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  text-shadow: 0 1px 1px rgba(255,255,255,.75) !important;
+}
+@media (max-width: 520px) {
+  #root .cp-app-shell main .plf-category-pill .plf-category-icon {
+    width: 3.35rem !important;
+    height: 3.35rem !important;
+  }
+  #root .cp-app-shell main .plf-category-glyph { font-size: 26px !important; }
+}
