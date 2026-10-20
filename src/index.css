@@ -5689,17 +5689,17 @@ body {
 }
 
 
-/* Reduce only the expanded reply input box; preserve its existing text styling. */
+/* Keep the expanded reply input compact while preserving its text styling. */
 #root .cp-chat .cp-chat-composer[data-composer-expanded="true"] .plf-composer-textarea {
   box-sizing: border-box !important;
-  height: 10rem !important;
-  min-height: 10rem !important;
-  max-height: min(36dvh, 18rem) !important;
+  height: 6.5rem !important;
+  min-height: 6.5rem !important;
+  max-height: min(30dvh, 12rem) !important;
 }
 @media (max-width: 640px) {
   #root .cp-chat .cp-chat-composer[data-composer-expanded="true"] .plf-composer-textarea {
-    height: 11rem !important;
-    min-height: 11rem !important;
-    max-height: min(40dvh, 19rem) !important;
+    height: 7rem !important;
+    min-height: 7rem !important;
+    max-height: min(32dvh, 13rem) !important;
   }
 }
