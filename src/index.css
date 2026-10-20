@@ -5530,3 +5530,49 @@ body {
 #root .cp-chat .plf-social-phone-device .plf-social-phone-screen .plf-social-media-phone-mode > div.space-y-3 > article > div:last-child {
   border-color: rgba(137,95,133,.22) !important;
 }
+
+
+/* Spacious PLF composer: keep the reply field large and match the pearl-rainbow glass palette. */
+#root .cp-chat .cp-chat-composer {
+  background:
+    radial-gradient(ellipse at 12% 0%, rgba(255,255,255,.98), transparent 48%),
+    linear-gradient(120deg, rgba(255,224,240,.96) 0%, rgba(239,224,255,.95) 48%, rgba(208,246,246,.94) 100%) !important;
+  border: 1px solid rgba(255,255,255,.98) !important;
+  box-shadow: 0 -8px 28px rgba(125,70,122,.18), inset 0 1px 0 #fff !important;
+}
+#root .cp-chat .plf-chat-composer-form {
+  border: 1px solid rgba(255,255,255,.98) !important;
+  background: linear-gradient(120deg, rgba(255,248,252,.98), rgba(248,232,251,.96) 48%, rgba(224,248,248,.95)) !important;
+  box-shadow: 0 8px 24px rgba(122,70,117,.16), inset 0 1px 0 #fff !important;
+}
+#root .cp-chat .plf-composer-textarea {
+  box-sizing: border-box !important;
+  min-height: 15rem !important;
+  max-height: min(52dvh, 26rem) !important;
+  color: #241323 !important;
+  -webkit-text-fill-color: #241323 !important;
+  caret-color: #8c356b !important;
+  background:
+    radial-gradient(ellipse at 10% 0%, rgba(255,255,255,.98), transparent 48%),
+    linear-gradient(120deg, #fff7fb 0%, #f5def3 38%, #e7e0ff 68%, #dcf7f6 100%) !important;
+  border: 1px solid rgba(180,112,170,.52) !important;
+  box-shadow: inset 0 2px 5px rgba(104,61,103,.08), 0 4px 14px rgba(190,126,174,.14) !important;
+}
+#root .cp-chat .plf-composer-textarea::placeholder {
+  color: #65445f !important;
+  -webkit-text-fill-color: #65445f !important;
+  opacity: 1 !important;
+}
+#root .cp-chat .plf-chat-composer-form button[aria-label="Send message"] {
+  color: #291629 !important;
+  background: linear-gradient(135deg, #fff8fd, #f3d7f0 46%, #d8f3f3) !important;
+  border: 1px solid rgba(255,255,255,.98) !important;
+  box-shadow: 0 5px 16px rgba(164,84,147,.22), inset 0 1px 0 #fff !important;
+}
+@media (max-width: 640px) {
+  #root .cp-chat .plf-composer-textarea {
+    min-height: 16.5rem !important;
+    max-height: min(56dvh, 28rem) !important;
+    resize: vertical !important;
+  }
+}
