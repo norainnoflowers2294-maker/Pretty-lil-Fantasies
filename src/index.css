@@ -3980,3 +3980,50 @@ body {
   padding-bottom: .5rem !important;
 }
 #root .cp-chat-composer[data-quick-actions-collapsed="true"] form > button[aria-label="Send message"] { height: 2.5rem !important; width: 2.5rem !important; }
+
+
+/* Reference-matched floating soap bubbles: translucent, rounded, iridescent spheres. */
+#root .cp-app-shell .plf-floating-bubble {
+  position: absolute;
+  display: block;
+  overflow: hidden;
+  border-radius: 50%;
+  opacity: .82 !important;
+  border: 1.5px solid rgba(255,255,255,.88) !important;
+  background:
+    radial-gradient(ellipse at 32% 18%, rgba(255,255,255,.98) 0 2.5%, rgba(255,255,255,.62) 4%, rgba(255,255,255,.08) 14%, transparent 25%),
+    radial-gradient(ellipse at 72% 72%, rgba(100,239,255,.32), transparent 32%),
+    radial-gradient(ellipse at 24% 70%, rgba(255,104,211,.34), transparent 38%),
+    radial-gradient(ellipse at 77% 29%, rgba(190,147,255,.32), transparent 37%),
+    radial-gradient(ellipse at 52% 48%, rgba(255,255,255,.24), rgba(227,222,255,.12) 54%, rgba(255,255,255,.02) 76%),
+    conic-gradient(from 212deg at 50% 50%, rgba(255,150,218,.30), rgba(128,228,255,.27), rgba(225,195,255,.3), rgba(255,225,157,.19), rgba(130,239,218,.24), rgba(255,150,218,.3)) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.46),
+    inset -5px -7px 13px rgba(131,91,174,.16),
+    inset 4px 4px 12px rgba(255,255,255,.48),
+    0 5px 20px rgba(205,176,255,.24),
+    0 0 14px rgba(255,255,255,.22) !important;
+  isolation: isolate;
+}
+#root .cp-app-shell .plf-floating-bubble::before,
+#root .cp-app-shell .plf-floating-bubble::after {
+  content: "";
+  position: absolute;
+  display: block;
+  pointer-events: none;
+  border-radius: 50%;
+}
+#root .cp-app-shell .plf-floating-bubble::before {
+  width: 39%;
+  height: 13%;
+  top: 9%;
+  left: 16%;
+  transform: rotate(-28deg);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.72), rgba(255,255,255,.2), transparent);
+  filter: blur(1px);
+}
+#root .cp-app-shell .plf-floating-bubble::after {
+  inset: 4%;
+  border: 1px solid rgba(255,255,255,.32);
+  box-shadow: inset 2px 2px 5px rgba(255,255,255,.32);
+}
