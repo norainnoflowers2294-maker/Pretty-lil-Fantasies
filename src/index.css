@@ -4217,3 +4217,56 @@ body {
     transition: none !important;
   }
 }
+
+
+/* Faster, broad drifting paths keep bubbles moving throughout the full screen. */
+@media (prefers-reduced-motion: no-preference) {
+  #root .cp-app-shell .plf-floating-bubble,
+  #root .cp-app-shell .plf-floating-pearl {
+    animation-duration: 7s !important;
+    animation-timing-function: ease-in-out !important;
+    animation-iteration-count: infinite !important;
+    animation-direction: alternate !important;
+  }
+  #root .cp-app-shell .plf-floating-bubble:nth-child(4n + 1),
+  #root .cp-app-shell .plf-floating-pearl:nth-child(4n + 1) { animation-duration: 6s !important; }
+  #root .cp-app-shell .plf-floating-bubble:nth-child(4n + 2),
+  #root .cp-app-shell .plf-floating-pearl:nth-child(4n + 2) { animation-duration: 8s !important; }
+  #root .cp-app-shell .plf-floating-bubble:nth-child(4n + 3),
+  #root .cp-app-shell .plf-floating-pearl:nth-child(4n + 3) { animation-duration: 6.8s !important; }
+  #root .cp-app-shell .plf-floating-bubble:nth-child(4n),
+  #root .cp-app-shell .plf-floating-pearl:nth-child(4n) { animation-duration: 8.6s !important; }
+
+  #root .cp-app-shell .plf-drift-a { animation-name: plf-roam-a !important; }
+  #root .cp-app-shell .plf-drift-b { animation-name: plf-roam-b !important; }
+  #root .cp-app-shell .plf-drift-c { animation-name: plf-roam-c !important; }
+  #root .cp-app-shell .plf-drift-d { animation-name: plf-roam-d !important; }
+}
+@keyframes plf-roam-a {
+  0% { transform: translate3d(-9vw, 10vh, 0) scale(.9); }
+  24% { transform: translate3d(8vw, -16vh, 0) scale(1.08); }
+  52% { transform: translate3d(28vw, 8vh, 0) scale(.96); }
+  78% { transform: translate3d(4vw, 24vh, 0) scale(1.12); }
+  100% { transform: translate3d(-25vw, -12vh, 0) scale(.94); }
+}
+@keyframes plf-roam-b {
+  0% { transform: translate3d(12vw, -12vh, 0) scale(1.04); }
+  25% { transform: translate3d(-8vw, 13vh, 0) scale(.92); }
+  50% { transform: translate3d(-30vw, 2vh, 0) scale(1.1); }
+  76% { transform: translate3d(-7vw, -24vh, 0) scale(.96); }
+  100% { transform: translate3d(24vw, 18vh, 0) scale(1.06); }
+}
+@keyframes plf-roam-c {
+  0% { transform: translate3d(0, 15vh, 0) scale(.94); }
+  23% { transform: translate3d(-20vw, -9vh, 0) scale(1.1); }
+  51% { transform: translate3d(10vw, -25vh, 0) scale(.96); }
+  77% { transform: translate3d(31vw, 4vh, 0) scale(1.08); }
+  100% { transform: translate3d(2vw, 22vh, 0) scale(.92); }
+}
+@keyframes plf-roam-d {
+  0% { transform: translate3d(7vw, -8vh, 0) scale(1.08); }
+  26% { transform: translate3d(26vw, 16vh, 0) scale(.93); }
+  52% { transform: translate3d(1vw, 28vh, 0) scale(1.12); }
+  78% { transform: translate3d(-24vw, -1vh, 0) scale(.95); }
+  100% { transform: translate3d(-5vw, -21vh, 0) scale(1.04); }
+}
