@@ -1177,12 +1177,12 @@ export const ChatView: React.FC<ChatViewProps> = ({
 
   return (
     <div data-compact={preferences.compactMode} data-bubble-motion={preferences.messageAnimations && !preferences.reducedMotion} className="cp-chat cp-page-transition relative w-full h-[100svh] max-h-[100svh] flex flex-col bg-[#0d020b] text-[#ffd6eb] overflow-hidden select-none">
-      {/* Background Ambience with chat.bgImage */}
+      {/* Soft iridescent wallpaper; a selected chat background still takes priority. */}
       <div
-        className="absolute inset-0 bg-cover bg-center opacity-75 pointer-events-none transition-all duration-700"
-        style={{ backgroundImage: `url(${resolveImageUrl(chat.bgImage || `${import.meta.env.BASE_URL}backgrounds/pastel-blur.webp`)})` }}
+        className="cp-chat-wallpaper absolute inset-0 bg-cover bg-center pointer-events-none transition-all duration-700"
+        style={chat.bgImage ? { backgroundImage: `url(${resolveImageUrl(chat.bgImage)})` } : undefined}
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0d020b]/95 via-[#0d020b]/80 to-[#0d020b]/95 pointer-events-none" />
+      <div className="cp-chat-wallpaper-wash absolute inset-0 pointer-events-none" />
 
       {/* Compact chat header: character identity at left, small drawer controls at right */}
       <header className="cp-chat-header cp-chat-topbar relative z-30 flex h-12 min-h-12 shrink-0 items-center justify-between gap-3 border-b px-3 py-1.5 shadow-sm">
