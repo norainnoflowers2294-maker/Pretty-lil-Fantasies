@@ -5412,3 +5412,98 @@ body {
   }
   #root .cp-app-shell main .plf-category-glyph { font-size: 26px !important; }
 }
+
+/* Highbright is the supplied lettering for chat text and chat settings. */
+@font-face {
+  font-family: "Highbright";
+  src: url("/Pretty-lil-Fantasies/fonts/Highbright.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+#root .cp-chat :is(.cp-message-bubble, .plf-composer-textarea, .cp-chat-scenario),
+#root .cp-chat .cp-message-bubble *,
+#root .plf-chat-settings-panel {
+  font-family: "Highbright", cursive !important;
+}
+#root .cp-chat .cp-message-bubble {
+  font-size: 1rem !important;
+  line-height: 1.8 !important;
+}
+#root .cp-chat .plf-composer-textarea {
+  font-size: 1rem !important;
+  line-height: 1.55 !important;
+}
+
+/* Keep the story bar and scroll area in separate rows; resize the chat when iOS opens its keyboard. */
+#root .cp-chat {
+  position: fixed !important;
+  inset-inline: 0 !important;
+  top: var(--plf-visual-viewport-top, 0px) !important;
+  height: var(--plf-visual-viewport-height, 100dvh) !important;
+  min-height: 0 !important;
+  max-height: var(--plf-visual-viewport-height, 100dvh) !important;
+  width: 100% !important;
+}
+#root .cp-chat .cp-chat-header,
+#root .cp-chat .cp-chat-scenario { flex: 0 0 auto !important; position: relative !important; }
+#root .cp-chat .cp-messages {
+  position: relative !important;
+  min-height: 0 !important;
+  flex: 1 1 0% !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+}
+#root .cp-chat .cp-chat-composer {
+  position: sticky !important;
+  bottom: 0 !important;
+  margin-top: auto !important;
+  flex: 0 0 auto !important;
+}
+#root .cp-chat .plf-composer-top-controls {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  width: 100% !important;
+  min-height: 2.6rem !important;
+  padding: 0 .15rem .45rem !important;
+}
+#root .cp-chat .plf-composer-textarea {
+  min-height: 6rem !important;
+  max-height: min(22dvh, 12rem) !important;
+  padding: .85rem 1rem !important;
+  resize: vertical;
+}
+@media (max-width: 640px) {
+  #root .cp-chat .plf-composer-textarea {
+    min-height: 5.5rem !important;
+    max-height: min(20dvh, 9rem) !important;
+    resize: none !important;
+  }
+  #root .cp-chat .cp-chat-composer {
+    padding-bottom: max(.4rem, env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+/* Chat Settings uses a light, glassy panel with strong contrast on every field. */
+#root .plf-chat-settings-panel {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  background: linear-gradient(145deg, rgba(255,251,253,.99), rgba(255,223,238,.98) 56%, rgba(225,241,247,.97)) !important;
+}
+#root .plf-chat-settings-panel :is(h1,h2,h3,h4,p,label,legend,span,small,strong,button) {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  text-shadow: none !important;
+}
+#root .plf-chat-settings-panel :is(input:not([type="checkbox"]),select,textarea) {
+  color: #211019 !important;
+  -webkit-text-fill-color: #211019 !important;
+  background: rgba(255,255,255,.88) !important;
+  border-color: rgba(180,92,138,.52) !important;
+}
+#root .plf-chat-settings-panel input[type="checkbox"] { accent-color: #d94c89 !important; }
+#root .plf-chat-settings-panel button {
+  background: linear-gradient(135deg, #fffafd, #ffddeb 58%, #e4dff5) !important;
+  border: 1px solid rgba(190,91,137,.4) !important;
+}
