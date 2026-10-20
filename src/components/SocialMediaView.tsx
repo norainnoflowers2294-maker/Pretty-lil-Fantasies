@@ -2,29 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Heart, MessageCircle, Plus, UsersRound, X } from 'lucide-react';
 import type { Character, Chat, Persona } from '../types/roleplay';
 import type { SocialMediaWorld, SocialPost, SocialProfile } from '../lib/socialMedia';
-
-const prepareSocialImage = (file: File): Promise<string> => new Promise((resolve, reject) => {
-  if (!file.type.startsWith('image/')) { reject(new Error('Choose an image file.')); return; }
-  if (file.size > 12 * 1024 * 1024) { reject(new Error('Choose an image under 12 MB.')); return; }
-  const reader = new FileReader();
-  reader.onerror = () => reject(new Error('This image could not be opened.'));
-  reader.onload = () => {
-    const image = new Image();
-    image.onerror = () => reject(new Error('This image could not be opened.'));
-    image.onload = () => {
-      const scale = Math.min(1, 1080 / Math.max(image.naturalWidth, image.naturalHeight));
-      const canvas = document.createElement('canvas');
-      canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
-      canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
-      const context = canvas.getContext('2d');
-      if (!context) { reject(new Error('Image editing is unavailable on this device.')); return; }
-      context.drawImage(image, 0, 0, canvas.width, canvas.height);
-      resolve(canvas.toDataURL('image/jpeg', 0.72));
-    };
-    image.src = String(reader.result || '');
-  };
-  reader.readAsDataURL(file);
-});
+import { storeSocialPostImage } from '../lib/socialMediaImages';
 
 interface SocialMediaViewProps {
   world: SocialMediaWorld;
@@ -166,7 +144,7 @@ export const SocialMediaView: React.FC<SocialMediaViewProps> = ({
           <label className="block text-xs font-semibold">What's happening?</label>
           <textarea autoFocus maxLength={1200} rows={4} value={postText} onChange={(event) => setPostText(event.target.value)} placeholder="Write a post..." className={`w-full resize-y rounded-xl border border-white/15 p-3 text-sm \${phoneMode ? 'bg-white/75 text-[#211019] placeholder:text-[#654552]/65' : 'bg-[#1e0818] text-white'}`} />
           <div className={`flex flex-wrap items-center justify-between gap-3 rounded-xl border p-3 \${phoneMode ? 'border-[#d987a7]/40 bg-white/55' : 'border-white/10 bg-white/5'}`}>
-            <label className={`inline-flex cursor-pointer items-center gap-2 rounded-full px-3 py-2 text-xs font-bold \${phoneMode ? 'bg-[#ff007f]/10 text-[#7a3155]' : 'bg-white/10 text-white'}`}><span>＋ Add photo</span><input aria-label="Add a photo to your post" type="file" accept="image/*" className="sr-only" disabled={imageBusy} onChange={async (event) => { const file = event.currentTarget.files?.[0]; event.currentTarget.value = ''; if (!file) return; setImageBusy(true); setImageError(''); try { setPostImageUrl(await prepareSocialImage(file)); } catch (error) { setImageError(error instanceof Error ? error.message : 'Could not use this photo.'); } finally { setImageBusy(false); } }} /></label>
+            <label className={`inline-flex cursor-pointer items-center gap-2 rounded-full px-3 py-2 text-xs font-bold \${phoneMode ? 'bg-[#ff007f]/10 text-[#7a3155]' : 'bg-white/10 text-white'}`}><span>＋ Add photo</span><input aria-label="Add a photo to your post" type="file" accept="image/*" className="sr-only" disabled={imageBusy} onChange={async (event) => { const file = event.currentTarget.files?.[0]; event.currentTarget.value = ''; if (!file) return; setImageBusy(true); setImageError(''); try { setPostImageUrl(await storeSocialPostImage(file)); } catch (error) { setImageError(error instanceof Error ? error.message : 'Could not use this photo.'); } finally { setImageBusy(false); } }} /></label>
             <span className={`text-[10px] \${phoneMode ? 'text-[#654552]/70' : 'text-white/45'}`}>{imageBusy ? 'Preparing photo…' : 'Photo is resized to fit your story feed'}</span>
           </div>
           {imageError && <p role="alert" className="text-xs text-rose-300">{imageError}</p>}
