@@ -5687,3 +5687,19 @@ body {
   -webkit-text-fill-color: #fff !important;
   background: linear-gradient(120deg, #c82778, #e84c98) !important;
 }
+
+
+/* Reduce only the expanded reply input box; preserve its existing text styling. */
+#root .cp-chat .cp-chat-composer[data-composer-expanded="true"] .plf-composer-textarea {
+  box-sizing: border-box !important;
+  height: 10rem !important;
+  min-height: 10rem !important;
+  max-height: min(36dvh, 18rem) !important;
+}
+@media (max-width: 640px) {
+  #root .cp-chat .cp-chat-composer[data-composer-expanded="true"] .plf-composer-textarea {
+    height: 11rem !important;
+    min-height: 11rem !important;
+    max-height: min(40dvh, 19rem) !important;
+  }
+}
