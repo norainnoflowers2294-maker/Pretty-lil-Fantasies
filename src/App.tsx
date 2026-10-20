@@ -77,14 +77,22 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 
 const FloatingBubbles: React.FC = () => {
   const particles = [
-    { kind: 'bubble', path: 'a', size: 54, left: '8%', top: '18%', delay: '-3s', duration: '23s' },
-    { kind: 'pearl', path: 'b', size: 25, left: '21%', top: '76%', delay: '-11s', duration: '29s' },
-    { kind: 'bubble', path: 'c', size: 43, left: '89%', top: '27%', delay: '-12s', duration: '26s' },
-    { kind: 'pearl', path: 'd', size: 30, left: '78%', top: '62%', delay: '-6s', duration: '31s' },
-    { kind: 'bubble', path: 'b', size: 49, left: '14%', top: '57%', delay: '-8s', duration: '25s' },
-    { kind: 'pearl', path: 'a', size: 23, left: '93%', top: '83%', delay: '-15s', duration: '28s' },
-    { kind: 'bubble', path: 'd', size: 40, left: '72%', top: '88%', delay: '-5s', duration: '24s' },
-    { kind: 'pearl', path: 'c', size: 27, left: '4%', top: '38%', delay: '-17s', duration: '32s' },
+    { kind: 'bubble', path: 'a', size: 82, left: '8%', top: '18%', delay: '-3s', duration: '19s' },
+    { kind: 'pearl', path: 'b', size: 46, left: '21%', top: '76%', delay: '-11s', duration: '23s' },
+    { kind: 'bubble', path: 'c', size: 68, left: '89%', top: '27%', delay: '-12s', duration: '21s' },
+    { kind: 'pearl', path: 'd', size: 54, left: '78%', top: '62%', delay: '-6s', duration: '25s' },
+    { kind: 'bubble', path: 'b', size: 76, left: '14%', top: '57%', delay: '-8s', duration: '20s' },
+    { kind: 'pearl', path: 'a', size: 42, left: '93%', top: '83%', delay: '-15s', duration: '22s' },
+    { kind: 'bubble', path: 'd', size: 64, left: '72%', top: '88%', delay: '-5s', duration: '18s' },
+    { kind: 'pearl', path: 'c', size: 50, left: '4%', top: '38%', delay: '-17s', duration: '24s' },
+    { kind: 'bubble', path: 'c', size: 88, left: '48%', top: '12%', delay: '-9s', duration: '22s' },
+    { kind: 'pearl', path: 'a', size: 48, left: '56%', top: '35%', delay: '-13s', duration: '26s' },
+    { kind: 'bubble', path: 'a', size: 72, left: '34%', top: '68%', delay: '-7s', duration: '18s' },
+    { kind: 'pearl', path: 'd', size: 56, left: '63%', top: '84%', delay: '-2s', duration: '23s' },
+    { kind: 'bubble', path: 'b', size: 60, left: '95%', top: '48%', delay: '-16s', duration: '21s' },
+    { kind: 'pearl', path: 'c', size: 40, left: '2%', top: '91%', delay: '-5s', duration: '25s' },
+    { kind: 'bubble', path: 'd', size: 78, left: '27%', top: '30%', delay: '-10s', duration: '19s' },
+    { kind: 'pearl', path: 'b', size: 44, left: '84%', top: '8%', delay: '-19s', duration: '24s' },
   ];
 
   return (
