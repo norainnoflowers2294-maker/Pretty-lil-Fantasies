@@ -5576,3 +5576,30 @@ body {
     resize: vertical !important;
   }
 }
+
+
+/* Keep the larger field and iridescent fill above older collapsed-dock overrides. */
+#root .cp-chat textarea.plf-composer-textarea[placeholder^="Reply to"][class*="rounded-"][class*="border"] {
+  min-height: 15rem !important;
+  max-height: min(52dvh, 26rem) !important;
+  color: #241323 !important;
+  -webkit-text-fill-color: #241323 !important;
+  caret-color: #8c356b !important;
+  background-color: #f6e5f7 !important;
+  background-image: radial-gradient(ellipse at 10% 0%, rgba(255,255,255,.98), transparent 48%), linear-gradient(120deg, #fff7fb 0%, #f5def3 38%, #e7e0ff 68%, #dcf7f6 100%) !important;
+  border: 1px solid rgba(180,112,170,.58) !important;
+  box-shadow: inset 0 2px 5px rgba(104,61,103,.08), 0 4px 14px rgba(190,126,174,.14) !important;
+}
+@media (max-width: 640px) {
+  #root .cp-chat textarea.plf-composer-textarea[placeholder^="Reply to"][class*="rounded-"][class*="border"],
+  #root .cp-chat .cp-chat-composer[data-quick-actions-collapsed="true"] textarea.plf-composer-textarea[placeholder^="Reply to"] {
+    min-height: 16.5rem !important;
+    max-height: min(56dvh, 28rem) !important;
+    resize: vertical !important;
+  }
+  #root .cp-chat textarea.plf-composer-textarea[placeholder^="Reply to"][class*="rounded-"][class*="border"]::placeholder {
+    color: #65445f !important;
+    -webkit-text-fill-color: #65445f !important;
+    opacity: 1 !important;
+  }
+}
