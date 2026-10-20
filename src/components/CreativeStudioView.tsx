@@ -167,7 +167,15 @@ const CreativeStudioView: React.FC = () => {
     ...artDrops.map((item) => ({ ...item, kind: 'art' as const })),
   ], []);
   const visible = allItems.filter((item) => {
-    const matchesFilter = filter === 'All' || (filter === 'Fonts' && item.kind === 'font') || (filter !== 'Fonts' && filter !== 'All' && filter !== 'Favorites' && item.kind === 'art' && item.category === (filter === 'SVGs' ? 'SVG' : filter.slice(0, -1))) || (filter === 'Favorites' && favorites.includes(item.id));
+    const matchesFilter =
+      filter === 'All' ||
+      (filter === 'Fonts' && item.kind === 'font') ||
+      (filter === 'Favorites' && favorites.includes(item.id)) ||
+      (item.kind === 'art' && (
+        (filter === 'SVGs' && item.category === 'SVG') ||
+        (filter === 'Patterns' && item.category === 'Pattern') ||
+        (filter === 'Stickers' && item.category === 'Sticker')
+      ));
     const matchesSearch = (item.name + ' ' + item.mood + (item.kind === 'font' ? ' ' + item.family : '')).toLowerCase().includes(search.toLowerCase());
     return matchesFilter && matchesSearch;
   });
