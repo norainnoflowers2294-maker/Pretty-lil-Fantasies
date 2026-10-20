@@ -4157,3 +4157,63 @@ body {
     animation: plf-chat-rainbow-drift 34s ease-in-out infinite alternate;
   }
 }
+
+
+/* App-wide PLF finish: rounded silhouettes and a soft iridescent wash on every screen. */
+#root .cp-app-shell {
+  background-color: #f8f0f8 !important;
+  background-image:
+    radial-gradient(ellipse at 8% 18%,rgba(133,228,255,.12),transparent 44%),
+    radial-gradient(ellipse at 87% 14%,rgba(208,167,255,.14),transparent 43%),
+    radial-gradient(ellipse at 48% 88%,rgba(255,145,203,.12),transparent 47%),
+    linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,226,241,.08),rgba(221,221,255,.08),rgba(206,247,244,.08)) !important;
+}
+#root .cp-app-shell::before {
+  background-image:
+    radial-gradient(ellipse at 12% 22%,rgba(151,235,255,.18),transparent 48%),
+    radial-gradient(ellipse at 84% 20%,rgba(210,179,255,.18),transparent 46%),
+    radial-gradient(ellipse at 48% 82%,rgba(255,164,209,.14),transparent 50%),
+    var(--plf-screen-background,linear-gradient(135deg,#f7eefa,#eaf8fc)) !important;
+  background-position: center,center,center,center !important;
+  background-size: 150% 150%,145% 145%,150% 150%,cover !important;
+  background-blend-mode: screen,screen,screen,normal !important;
+}
+#root .cp-app-shell :is(button,[role="button"],[role="tab"],input:not([type="checkbox"]):not([type="radio"]),textarea,select) {
+  border-radius: 18px !important;
+  border-color: rgba(255,255,255,.82) !important;
+  background-image: linear-gradient(130deg,rgba(255,255,255,.38),rgba(255,189,222,.17) 35%,rgba(207,190,255,.19) 68%,rgba(164,235,240,.16)) !important;
+  box-shadow: 0 4px 16px rgba(146,92,139,.1),inset 0 1px 0 rgba(255,255,255,.68) !important;
+}
+#root .cp-app-shell :is(button,[role="button"],[role="tab"]) {
+  color: #211019 !important;
+  transition: border-radius .2s ease, box-shadow .2s ease, filter .2s ease !important;
+}
+#root .cp-app-shell :is(button,[role="button"],[role="tab"]):hover {
+  filter: saturate(1.12) brightness(1.03);
+  box-shadow: 0 5px 19px rgba(206,113,174,.18),inset 0 1px 0 rgba(255,255,255,.82) !important;
+}
+#root .cp-app-shell :is([role="dialog"],aside,article,section,[class*="rounded-"][class*="border"]) {
+  border-radius: 22px !important;
+  border-color: rgba(255,255,255,.72) !important;
+  box-shadow: 0 7px 22px rgba(133,91,139,.1),inset 0 1px 0 rgba(255,255,255,.46) !important;
+}
+#root .cp-app-shell :is(img,video) {
+  border-radius: 20px;
+}
+#root .cp-app-shell :is(img,video)[class*="rounded-full"],
+#root .cp-app-shell [class*="rounded-full"] {
+  border-radius: 9999px !important;
+}
+#root .cp-app-shell :is(input,textarea,select)::placeholder {
+  color: rgba(50,29,45,.62) !important;
+}
+#root .cp-app-shell :is(input,textarea,select):focus-visible,
+#root .cp-app-shell :is(button,[role="button"],[role="tab"]):focus-visible {
+  outline: 2px solid rgba(225,95,174,.58) !important;
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  #root .cp-app-shell :is(button,[role="button"],[role="tab"]) {
+    transition: none !important;
+  }
+}
