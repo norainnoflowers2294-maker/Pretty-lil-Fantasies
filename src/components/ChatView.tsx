@@ -191,6 +191,7 @@ interface ChatViewProps {
   onOpenSocialMedia: () => void;
   onOpenWallet: (view: 'dashboard' | 'activity') => void;
   onOpenYouTubePlayer: () => void;
+  socialMediaPhone: React.ReactNode;
   onStartNewChat?: () => void;
   onUpdatePreferences: (value: AppPreferences) => void;
   onTogglePlugin: (pluginId: string) => void;
@@ -225,6 +226,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
   onOpenSocialMedia,
   onOpenWallet,
   onOpenYouTubePlayer,
+  socialMediaPhone,
   onStartNewChat,
   onUpdatePreferences,
   onTogglePlugin,
@@ -311,6 +313,13 @@ export const ChatView: React.FC<ChatViewProps> = ({
   // Chat navigation drawers and dual-track overlay
   const [isLeftDrawerOpen, setIsLeftDrawerOpen] = useState(false);
   const [isRightDrawerOpen, setIsRightDrawerOpen] = useState(false);
+  const [isSocialMediaPhoneOpen, setIsSocialMediaPhoneOpen] = useState(false);
+  const openSocialMediaPhone = () => {
+    setIsDualTrackOpen(false);
+    setIsLeftDrawerOpen(false);
+    setIsRightDrawerOpen(false);
+    setIsSocialMediaPhoneOpen(true);
+  };
   const [isDualTrackOpen, setIsDualTrackOpen] = useState(false);
 
   useEffect(() => {
@@ -1675,6 +1684,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
                 </form>
               </section>
               <button type="button" onClick={() => { setIsLeftDrawerOpen(false); onOpenPhone(); }} className="flex w-full items-center gap-3 rounded-xl border border-cyan-300/25 bg-cyan-500/10 p-3 text-left text-white hover:bg-cyan-500/20"><PhoneCall className="h-5 w-5 text-cyan-200" /><span><strong className="block text-xs">Persona phone</strong><small className="text-[10px] text-white/55">Texts, calls, contacts, and photos</small></span></button>
+              <button type="button" onClick={openSocialMediaPhone} className="plf-social-phone-launch flex w-full items-center gap-3 rounded-xl border p-3 text-left"><span className="plf-social-phone-launch-icon grid h-11 w-11 shrink-0 place-items-center rounded-full"><PhoneCall className="h-5 w-5" /></span><span><strong className="block text-xs">Social Media iPhone</strong><small className="text-[10px] opacity-70">Open the story feed in its own phone</small></span></button>
               <WeatherClockCard />
             </div>
             <div className="min-h-0 flex-1 overflow-y-auto p-3">
@@ -1729,7 +1739,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
                 <h3 className="mb-2 text-[10px] font-bold uppercase tracking-widest text-[#ff99cc]">Social Media world</h3>
                 <p className="mb-2 text-[11px] leading-relaxed text-[#ffd6eb]/65">This world stays separate unless you turn it on for this chat.</p>
                 <button type="button" aria-pressed={Boolean(chat.socialMediaEnabled)} onClick={() => onUpdateChat({ ...chat, socialMediaEnabled: !chat.socialMediaEnabled, updatedAt: new Date().toISOString() })} className={`w-full rounded-lg p-2 text-xs font-semibold ${chat.socialMediaEnabled ? 'bg-emerald-500/20 text-emerald-200' : 'bg-white/10 text-white hover:bg-white/15'}`}>{chat.socialMediaEnabled ? 'Social context on for this chat' : 'Turn on for this chat'}</button>
-                <button type="button" onClick={() => { setIsRightDrawerOpen(false); onOpenSocialMedia(); }} className="mt-2 w-full rounded-lg bg-[#ff007f]/20 p-2 text-left text-xs font-semibold text-white hover:bg-[#ff007f]/35">Open Social Media world</button>
+                <button type="button" onClick={openSocialMediaPhone} className="mt-2 w-full rounded-lg bg-[#ff007f]/20 p-2 text-left text-xs font-semibold text-white hover:bg-[#ff007f]/35">Open Social Media iPhone</button>
               </section>
               <section className="rounded-xl border border-[#ff66b2]/30 bg-white/5 p-3">
                 <h3 className="mb-2 text-[10px] font-bold uppercase tracking-widest text-[#ff99cc]">Text-to-speech voice</h3>
@@ -1767,6 +1777,24 @@ export const ChatView: React.FC<ChatViewProps> = ({
               <button type="button" onClick={() => { setIsRightDrawerOpen(false); onOpenGitHubSyncModal(); }} className="w-full rounded-xl bg-white/5 p-3 text-left text-sm text-white hover:bg-white/10">GitHub Sync</button>
             </div>
           </aside>
+        </div>
+      )}
+
+
+      {isSocialMediaPhoneOpen && (
+        <div className="plf-social-phone-overlay fixed inset-0 z-[85] flex items-center justify-start p-2 sm:p-4">
+          <button type="button" aria-label="Close Social Media phone" className="absolute inset-0" onClick={() => setIsSocialMediaPhoneOpen(false)} />
+          <section role="dialog" aria-modal="true" aria-label="Social Media on character iPhone" className="plf-social-phone-device relative z-[1] flex h-[min(91dvh,860px)] w-[min(94vw,390px)] flex-col overflow-hidden">
+            <div className="plf-social-phone-hardware-top"><span className="plf-social-phone-camera" /><span className="plf-social-phone-speaker" /><span className="plf-social-phone-camera" /></div>
+            <div className="plf-social-phone-status"><span>9:41</span><span aria-hidden="true">●●●  Wi-Fi  ▰</span></div>
+            <div className="plf-social-phone-appbar">
+              <span className="plf-social-phone-app-icon"><Sparkles className="h-4 w-4" /></span>
+              <div className="min-w-0 flex-1"><strong>Social Media</strong><small>Story world</small></div>
+              <button type="button" aria-label="Close Social Media phone" onClick={() => setIsSocialMediaPhoneOpen(false)}><X className="h-4 w-4" /></button>
+            </div>
+            <div className="plf-social-phone-screen min-h-0 flex-1 overflow-y-auto">{socialMediaPhone}</div>
+            <div className="plf-social-phone-home-indicator" aria-hidden="true"><span /></div>
+          </section>
         </div>
       )}
 
