@@ -440,7 +440,7 @@ export async function loadFromFirebase(): Promise<(Partial<StorageData> & { upda
           const response = await fetch(url, { cache: 'no-store', signal: controller.signal });
           if (!response.ok) throw new Error(`Firebase snapshot download failed (${response.status}).`);
           const snapshotData = await response.json() as Partial<StorageData>;
-          return { ...snapshotData, updatedAt: pointer.updatedAt };
+          return { ...snapshotData, updatedAt: typeof pointer.updatedAt === 'string' ? pointer.updatedAt : undefined };
         } finally {
           window.clearTimeout(timeout);
         }
