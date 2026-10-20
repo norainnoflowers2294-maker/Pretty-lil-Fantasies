@@ -5287,3 +5287,86 @@ body {
   background: linear-gradient(135deg, #ffd0e2, #efa0c1) !important;
   border-color: rgba(170,70,115,.5) !important;
 }
+
+/* Chat composer: pin the larger glass input to the bottom with a fine floral crown. */
+#root .cp-chat .cp-chat-composer {
+  position: relative !important;
+  z-index: 40 !important;
+  flex: 0 0 auto !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 1.05rem .72rem calc(.6rem + env(safe-area-inset-bottom, 0px)) !important;
+  border-radius: 1.5rem 1.5rem 0 0 !important;
+  border-bottom: 0 !important;
+  overflow: visible !important;
+}
+#root .cp-chat .plf-chat-composer-form {
+  position: relative;
+  z-index: 1;
+  padding: .72rem !important;
+  gap: .55rem !important;
+  border-radius: 1.35rem !important;
+  box-shadow: 0 8px 22px rgba(96,45,72,.13), inset 0 1px 0 rgba(255,255,255,.96) !important;
+}
+#root .cp-chat .plf-chat-floral-decal {
+  position: absolute !important;
+  z-index: 2 !important;
+  top: -2.55rem !important;
+  left: 50% !important;
+  width: min(96vw, 560px) !important;
+  height: 4.4rem !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  transform: translateX(-50%) !important;
+}
+#root .cp-chat .plf-chat-floral-decal img {
+  width: min(90vw, 440px) !important;
+  height: 5.6rem !important;
+  max-width: none !important;
+  opacity: .82 !important;
+  filter: drop-shadow(0 1px 2px rgba(255,255,255,.8));
+}
+#root .cp-chat .plf-composer-textarea {
+  min-height: 10.25rem !important;
+  max-height: min(42vh, 21rem) !important;
+  padding-top: 3.15rem !important;
+  border-radius: 1.05rem !important;
+  line-height: 1.55 !important;
+}
+#root .cp-chat .plf-composer-top-controls {
+  top: .55rem !important;
+  left: .7rem !important;
+}
+#root .cp-chat .plf-composer-top-controls button {
+  width: 2.45rem !important;
+  height: 2.45rem !important;
+  min-height: 2.45rem !important;
+  border-radius: 999px !important;
+}
+#root .cp-chat .plf-composer-control-label {
+  color: #70435b !important;
+  -webkit-text-fill-color: #70435b !important;
+  font-size: .62rem !important;
+  letter-spacing: .12em !important;
+}
+@media (max-width: 520px) {
+  #root .cp-chat .cp-chat-composer {
+    padding: .9rem .48rem calc(.55rem + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  #root .cp-chat .plf-chat-composer-form {
+    padding: .55rem !important;
+    border-radius: 1.2rem !important;
+  }
+  #root .cp-chat .plf-composer-textarea {
+    min-height: 9.5rem !important;
+    max-height: min(40dvh, 19rem) !important;
+  }
+  #root .cp-chat .plf-chat-floral-decal {
+    top: -2.2rem !important;
+    height: 3.9rem !important;
+  }
+  #root .cp-chat .plf-chat-floral-decal img {
+    width: min(94vw, 390px) !important;
+    height: 5rem !important;
+  }
+}
