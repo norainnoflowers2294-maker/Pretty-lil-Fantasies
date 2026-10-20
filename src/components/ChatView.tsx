@@ -233,7 +233,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
   const [inputText, setInputText] = useState('');
   const [wardrobeDraft, setWardrobeDraft] = useState('');
   const [quickActionsCollapsed, setQuickActionsCollapsed] = useState(() => {
-    try { return localStorage.getItem('plf_chat_quick_actions_collapsed') === 'true'; } catch { return false; }
+    try { const saved = localStorage.getItem('plf_chat_quick_actions_collapsed'); return saved === null ? true : saved === 'true'; } catch { return true; }
   });
   useEffect(() => {
     try { localStorage.setItem('plf_chat_quick_actions_collapsed', String(quickActionsCollapsed)); } catch {}
@@ -1184,173 +1184,28 @@ export const ChatView: React.FC<ChatViewProps> = ({
       />
       <div className="absolute inset-0 bg-gradient-to-b from-[#0d020b]/95 via-[#0d020b]/80 to-[#0d020b]/95 pointer-events-none" />
 
-      {/* Top Chat Bar */}
-      <header
-        className="cp-chat-header cp-chat-topbar relative px-2 sm:px-5 pb-2.5 bg-[#140410]/95 backdrop-blur-md border-b border-[#ff3399]/40 flex flex-wrap items-center justify-between gap-y-2 z-30 shadow-[0_0_25px_rgba(255,0,128,0.3)]"
-      >
-        <div className="flex min-w-0 flex-1 items-center space-x-1.5 sm:space-x-3">
-          <button
-            type="button"
-            aria-label="Open chat navigation drawer"
-            aria-expanded={isLeftDrawerOpen}
-            onClick={() => { setIsDualTrackOpen(false); setIsRightDrawerOpen(false); setIsLeftDrawerOpen(true); }}
-            className="p-2 rounded-xl bg-white/10 hover:bg-[#ff007f] text-white transition-all"
-            title="Open chats and navigation"
-          >
-            <PanelLeft className="w-4 h-4" />
-          </button>
-          <button
-            type="button"
-            aria-label="Open chat tools drawer"
-            aria-expanded={isRightDrawerOpen}
-            onClick={() => { setIsDualTrackOpen(false); setIsLeftDrawerOpen(false); setIsRightDrawerOpen(true); }}
-            className="p-2 rounded-xl bg-white/10 hover:bg-[#ff007f] text-white transition-all"
-            title="Open character and chat tools"
-          >
-            <PanelRight className="w-4 h-4" />
-          </button>
-
-          {/* Dedicated Home button */}
-          <button
-            type="button"
-            onClick={onBackToDashboard}
-            aria-label="Go to Home"
-            className="flex shrink-0 items-center gap-1.5 rounded-xl border border-[#ff66b2]/50 bg-[#ff007f]/25 px-2.5 py-2 text-white shadow-[0_0_12px_rgba(255,0,128,.2)] transition-all hover:bg-[#ff007f]/50"
-            title="Go to Home"
-          >
-            <Home className="h-4 w-4" />
-            <span className="text-xs font-bold">Home</span>
-          </button>
-
-          {/* DUAL TRACK SCREEN TOGGLE (Slide Over Both Sides) */}
-          <button
-            onClick={() => setIsDualTrackOpen((prev) => !prev)}
-            className={`px-3 py-1.5 rounded-xl border flex items-center space-x-2 text-xs font-bold transition-all shadow-md ${
-              isDualTrackOpen
-                ? 'bg-[#ff007f] border-[#ff66b2] text-white shadow-[0_0_15px_rgba(255,0,128,0.8)] scale-105'
-                : 'bg-[#ff007f]/20 border-[#ff3399]/60 hover:bg-[#ff007f]/40 text-[#ffd6eb]'
-            }`}
-            title="Toggle Dual Track Screen (Pops up Left & Right tracks)"
-          >
-            <Columns className="w-4 h-4 text-[#ff99cc]" />
-            <span className="hidden sm:inline">Dual Track Screen</span>
-          </button>
-
-          {/* Active Characters */}
-          <div className="flex items-center space-x-2 pl-1">
-            <div className="flex -space-x-2 overflow-hidden">
-              {activeCharacters.map((c) => (
-                <button
-                  key={c.id}
-                  type="button"
-                  onClick={() => onEditCharacter(c)}
-                  aria-label={`Edit ${c.name}`}
-                  title={`Edit ${c.name}`}
-                  className="shrink-0 rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#ff1493] transition-transform hover:scale-110 active:scale-95"
-                >
-                  <img
-                    src={resolveImageUrl(c.avatar)}
-                    alt={c.name}
-                    className="inline-block h-9 w-9 rounded-full ring-2 ring-[#ff007f] object-cover"
-                  />
-                </button>
-              ))}
-            </div>
-
-            <div className="hidden xs:block">
-              <div className="flex items-center space-x-2">
-                <h2 className="text-sm font-bold text-white tracking-wide truncate max-w-[120px] sm:max-w-xs">
-                  {chat.title}
-                </h2>
-                <span hidden={!preferences.showDiagnostics} className="text-[9px] font-mono px-1.5 py-0.2 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                  {openRouterConfig.model.split('/').pop()}
-                </span>
-              </div>
-              <p className="text-[10px] text-[#ffd6eb]/70 truncate max-w-xs">
-                Playing as <select aria-label="Choose persona for this chat" value={chat.personaId || activePersona?.id || ''} onChange={(e) => handlePersonaChange(e.target.value)} className="max-w-[130px] bg-[#1e0818] border border-[#ff66b2]/50 rounded-md px-1 py-0.5 text-white focus:outline-none focus:border-[#ff007f]">{personas.map((persona) => <option key={persona.id} value={persona.id}>{persona.display_name || persona.name}</option>)}</select> &bull; {activeLorebooks.length} Lorebooks &bull; {activePlugins.length} Plugins
-              </p>
-            </div>
-          </div>
+      {/* Compact chat header: character identity at left, small drawer controls at right */}
+      <header className="cp-chat-header cp-chat-topbar relative z-30 flex h-12 min-h-12 shrink-0 items-center justify-between gap-3 border-b px-3 py-1.5 shadow-sm">
+        <div className="flex min-w-0 items-center gap-2">
+          {activeCharacters[0] && <button type="button" onClick={() => onEditCharacter(activeCharacters[0])} aria-label={`Edit ${activeCharacters[0].name}`} title={`Edit ${activeCharacters[0].name}`} className="shrink-0 rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#ff1493]">
+            <img src={resolveImageUrl(activeCharacters[0].avatar)} alt={activeCharacters[0].name} className="h-8 w-8 rounded-full border border-white object-cover shadow-sm" />
+          </button>}
+          <h2 className="truncate text-sm font-bold tracking-wide text-[#211019]">
+            {activeCharacters[0]?.name || chat.title}
+            {activeCharacters.length > 1 && <span className="ml-1 text-[10px] font-medium opacity-70">+{activeCharacters.length - 1}</span>}
+          </h2>
         </div>
-
-        {/* Right Action Icons: Affinity, Plugins, Scene, Story Notes, Settings */}
-        <div className="flex shrink-0 items-center space-x-1 sm:space-x-2">
-          <button
-            type="button"
-            onClick={() => onStartNewChat?.()}
-            aria-label="Start another chat with these characters"
-            title="Start another chat with these characters"
-            className="hidden sm:inline-flex p-2 rounded-xl bg-[#ff007f]/20 hover:bg-[#ff007f]/40 border border-[#ff66b2]/50 text-[#ffd6eb] transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-          </button>
-
-          {/* Affinity Heart Widget */}
-          <button
-            onClick={() => {
-              const updatedScore = Math.min(100, (chat.relationshipScore || 85) + 1);
-              onUpdateChat({ ...chat, relationshipScore: updatedScore });
-            }}
-            className="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-[#ff007f]/20 hover:bg-[#ff007f]/40 border border-[#ff66b2]/50 text-xs font-bold text-[#ffb3d9] shadow-[0_0_12px_rgba(255,0,128,0.4)] transition-all"
-            title="Relationship Affinity Score (Click to boost!)"
-          >
-            <Heart className="w-3.5 h-3.5 fill-[#ff007f] text-[#ff007f] animate-pulse" />
-            <span>{chat.relationshipScore ?? 92}%</span>
-          </button>
-
-          {/* Scene Background Button */}
-          <button
-            onClick={onOpenSceneGeneratorModal}
-            className="hidden sm:inline-flex p-2 rounded-xl bg-white/10 hover:bg-white/20 text-cyan-400 transition-colors"
-            title="Scene Backgrounds & Visualizer"
-          >
-            <ImageIcon className="w-4 h-4" />
-          </button>
-
-          {/* Story Notes Button */}
-          <button
-            onClick={onOpenStoryNotesModal}
-            className="hidden sm:inline-flex p-2 rounded-xl bg-white/10 hover:bg-white/20 text-indigo-400 transition-colors"
-            title="Story Notes & Memories"
-          >
-            <FileText className="w-4 h-4" />
-          </button>
-
-          {/* Plugin Button */}
-          <button
-            onClick={onOpenPlugins}
-            className="hidden sm:inline-flex p-2 rounded-xl bg-white/10 hover:bg-white/20 text-[#ffd6eb] transition-colors"
-            title="Manage 5 Active Plugins"
-          >
-            <Puzzle className="w-4 h-4 text-fuchsia-400" />
-          </button>
-
-          <button type="button" onClick={onOpenYouTubePlayer} className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-pink-200 transition-colors" title="Open YouTube scrolling playlist" aria-label="Open YouTube playlist">
-            <Music2 className="w-4 h-4" />
-          </button>
-          <button type="button" onClick={() => setIsStoryWorldOpen(true)} className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-pink-200 transition-colors" title="Weather, day and night, story branches" aria-label="Story world controls">
-            <CloudMoon className="w-4 h-4" />
-          </button>
-          <button type="button" onClick={() => setIsChatSettingsOpen(true)} className="hidden sm:inline-flex p-2 rounded-xl bg-white/10 hover:bg-white/20 text-pink-200 transition-colors" title="Chat reply settings" aria-label="Chat reply settings">
-            <SlidersHorizontal className="w-4 h-4" />
-          </button>
-
-          {/* Settings / Diagnostic Button */}
-          <button
-            onClick={onOpenSettings}
-            className="shrink-0 p-2 rounded-xl bg-white/10 hover:bg-white/20 text-[#ffd6eb] transition-colors"
-            title="OpenRouter & Diagnostics"
-            aria-label="Open settings and diagnostics"
-          >
-            <Settings className="w-4 h-4 text-[#ff3399]" />
-          </button>
-          <img
-            key={activePersona?.id || 'persona-default'}
-            src={resolveImageUrl(activePersona?.avatar || '/colorpop_hero.jpg')}
-            alt={activePersona?.display_name || activePersona?.name || 'Selected persona'}
-            title={`Playing as ${activePersona?.display_name || activePersona?.name || 'your persona'}`}
-            className="ml-1 hidden sm:block h-8 w-8 shrink-0 rounded-full border-2 border-[#ff66b2] object-cover shadow-[0_0_12px_rgba(255,0,128,0.4)]"
-          />
+        <div className="flex shrink-0 items-center gap-1.5">
+          <button type="button" aria-label="Open chat navigation drawer" aria-expanded={isLeftDrawerOpen}
+            onClick={() => { setIsDualTrackOpen(false); setIsRightDrawerOpen(false); setIsLeftDrawerOpen(true); }}
+            className="grid h-8 w-8 place-items-center rounded-full border border-white/90 bg-white/65 text-[#211019] shadow-sm transition hover:bg-white"
+            title="Open chats and navigation"><PanelLeft className="h-4 w-4" /></button>
+          <button type="button" onClick={onBackToDashboard} aria-label="Go to home" title="Home"
+            className="grid h-8 w-8 place-items-center rounded-full border border-white/90 bg-white/65 text-[#211019] shadow-sm transition hover:bg-white"><Home className="h-4 w-4" /></button>
+          <button type="button" aria-label="Open app drawer" aria-expanded={isRightDrawerOpen}
+            onClick={() => { setIsDualTrackOpen(false); setIsLeftDrawerOpen(false); setIsRightDrawerOpen(true); }}
+            className="grid h-8 w-8 place-items-center rounded-full border border-white/90 bg-white/75 text-[#211019] shadow-sm transition hover:bg-white"
+            title="Open app drawer"><PanelRight className="h-4 w-4" /></button>
         </div>
       </header>
 
@@ -1479,7 +1334,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
           return (
             <div
               key={msg.id}
-              className={`cp-message-row flex items-start space-x-3 max-w-3xl ${
+              className={`cp-message-row flex w-full max-w-none items-start space-x-3 ${
                 isUser ? 'ml-auto flex-row-reverse space-x-reverse' : 'mr-auto'
               }`}
             >
@@ -1492,7 +1347,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
 
               {/* Message Bubble */}
               <div
-                className={`cp-message-bubble relative rounded-2xl p-4 shadow-xl text-xs sm:text-sm leading-relaxed group ${
+                className={`cp-message-bubble relative flex-1 rounded-2xl p-4 shadow-xl text-xs sm:text-sm leading-relaxed group ${
                   isUser
                     ? 'cp-bubble-user bg-gradient-to-br from-[#ff007f] to-[#ff3399] text-white rounded-tr-none shadow-[0_0_20px_rgba(255,0,128,0.4)]'
                     : 'bg-[#1b0516]/95 border border-[#ff3399]/40 text-[#ffd6eb] rounded-tl-none shadow-[0_0_20px_rgba(255,51,153,0.25)] backdrop-blur-sm'
@@ -1618,15 +1473,15 @@ export const ChatView: React.FC<ChatViewProps> = ({
       </div>
 
       {/* Chat Input Bar */}
-      <div className="cp-chat-composer relative z-40 shrink-0 p-3 sm:p-4 bg-[#140410]/95 backdrop-blur-md border-t border-[#ff3399]/40" style={{ paddingBottom: "calc(.75rem + env(safe-area-inset-bottom, 0px))" }}>
+      <div data-quick-actions-collapsed={quickActionsCollapsed} className={`cp-chat-composer relative z-40 shrink-0 border-t backdrop-blur-md ${quickActionsCollapsed ? 'p-2 sm:p-2.5' : 'p-2.5 sm:p-3'}`} style={{ paddingBottom: `calc(${quickActionsCollapsed ? '.35rem' : '.55rem'} + env(safe-area-inset-bottom, 0px))` }}>
         {lastModelUsed && <><style>{'@keyframes plf-model-name-scroll { to { transform: translateX(var(--plf-model-name-end)); } }'}</style><div ref={modelLineViewportRef} className="mx-auto mb-2 max-w-4xl overflow-hidden whitespace-nowrap text-[10px] text-[#ffd6eb]/55" aria-label={'Last reply routed through OpenRouter · ' + lastModelUsed.model + (lastModelUsed.provider ? ' · ' + lastModelUsed.provider : '')}><span ref={modelLineTextRef} className="block w-max whitespace-nowrap" style={modelLineScroll > 2 ? ({ '--plf-model-name-end': '-' + modelLineScroll + 'px', animation: 'plf-model-name-scroll 44s ease-in-out infinite alternate' } as React.CSSProperties) : undefined}>Last reply routed through OpenRouter · {lastModelUsed.model}{lastModelUsed.provider ? ` · ${lastModelUsed.provider}` : ''}</span></div></>}
-      <div className="max-w-4xl mx-auto mb-2">
+      <div className="mx-auto mb-1 w-full max-w-6xl">
         <div className="flex justify-end">
-          <button type="button" aria-expanded={!quickActionsCollapsed} aria-controls="chat-quick-actions" onClick={() => setQuickActionsCollapsed((collapsed) => !collapsed)} className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-[#ff66b2]/35 bg-white/5 px-3 text-[11px] font-semibold text-[#ffd6eb]/80 hover:bg-[#ff007f]/20 hover:text-white">
-            {quickActionsCollapsed ? <><ChevronUp className="h-3.5 w-3.5" /> Show buttons</> : <><ChevronDown className="h-3.5 w-3.5" /> Hide buttons</>}
+          <button type="button" aria-expanded={!quickActionsCollapsed} aria-label={quickActionsCollapsed ? 'Show chat buttons' : 'Hide chat buttons'} title={quickActionsCollapsed ? 'Show chat buttons' : 'Hide chat buttons'} aria-controls="chat-quick-actions" onClick={() => setQuickActionsCollapsed((collapsed) => !collapsed)} className="grid h-7 w-7 min-h-7 place-items-center rounded-full border border-[#c46891]/35 bg-white/65 p-0 text-[#211019] shadow-sm hover:bg-white">
+            {quickActionsCollapsed ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
           </button>
         </div>
-        {!quickActionsCollapsed && <div id="chat-quick-actions" className="mt-2 flex items-center gap-1.5 overflow-x-auto whitespace-nowrap [scrollbar-width:none]">
+        {!quickActionsCollapsed && <div id="chat-quick-actions" className="mt-1 flex items-center gap-1.5 overflow-x-auto whitespace-nowrap [scrollbar-width:none]">
           <span className="shrink-0 text-[9px] font-bold uppercase tracking-wider text-[#ffd6eb]/50">Quick</span>
           <label className="flex min-h-10 shrink-0 items-center gap-1.5 rounded-full border border-[#d987a7] bg-[#ffe0ed] px-3 text-[11px] font-bold text-[#211019] shadow-sm">
             <User className="h-3.5 w-3.5" aria-hidden="true" />
@@ -1686,7 +1541,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
           ))}
         </div>}
       </div>
-        <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto flex items-center space-x-2">
+        <form onSubmit={handleSendMessage} className="mx-auto flex w-full max-w-6xl items-center gap-2">
           {/* Quick Dice Roll Action */}
           <button
             type="button"
@@ -1709,7 +1564,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
             </div>}
             <textarea
               ref={inputRef}
-              rows={quickActionsCollapsed ? 3 : 1}
+              rows={quickActionsCollapsed ? 1 : 2}
               placeholder={`Reply to ${activeCharacters.map((c) => c.name).join(' & ')} as ${
                 activePersona?.name || 'yourself'
               }... Type / for commands, @assistant to summon help`}
@@ -1727,7 +1582,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
                   return;
                 }
               }}
-              className="w-full bg-[#ffe5ef] border border-[#d987a7]/50 focus:border-[#c85d88] rounded-2xl px-4 py-3 text-xs sm:text-sm text-black placeholder:text-[#654552] caret-black focus:outline-none resize-none shadow-inner" style={{ color: "#111111", WebkitTextFillColor: "#111111", caretColor: "#111111" }}
+              className={`w-full rounded-2xl border border-[#d987a7]/50 bg-[#ffe5ef] px-4 ${quickActionsCollapsed ? 'min-h-10 py-2' : 'min-h-14 py-3'} text-xs text-black placeholder:text-[#654552] caret-black shadow-inner focus:border-[#c85d88] focus:outline-none resize-none sm:text-sm`} style={{ color: "#111111", WebkitTextFillColor: "#111111", caretColor: "#111111" }}
             />
           </div>
 
@@ -1737,9 +1592,9 @@ export const ChatView: React.FC<ChatViewProps> = ({
             disabled={loading || !inputText.trim()}
             aria-label="Send message"
             title="Send message"
-            className="p-3.5 bg-gradient-to-r from-[#ff007f] to-[#ff3399] hover:from-[#ff1a8c] hover:to-[#ff4da6] text-white rounded-2xl shadow-[0_0_20px_rgba(255,0,128,0.7)] transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105"
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/80 bg-[#f7ddeb] text-[#654552] shadow-sm transition hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <Send className="w-5 h-5" />
+            <Send className="h-4 w-4" />
           </button>
         </form>
       </div>
