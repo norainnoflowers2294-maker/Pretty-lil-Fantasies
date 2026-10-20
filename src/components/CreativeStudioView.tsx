@@ -1,5 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Copy, Download, ExternalLink, Heart, Search, Shuffle, Sparkles, Type, WandSparkles } from 'lucide-react';
+import { Copy, Download, ExternalLink, Heart, Search, Shuffle, Sparkles, Type, WandSparkles, Palette, Images, Library } from 'lucide-react';
+import { AssetGallery, PaletteCreator } from './CreativeTools';
+
+export type CreativeSection = 'browse' | 'palette' | 'assets';
+type CreativeStudioViewProps = { initialSection?: CreativeSection };
 
 type CreativeItem = {
   id: string;
@@ -68,7 +72,8 @@ function dailyOffset(key: string, salt: number, length: number) {
   return Math.abs(value) % length;
 }
 
-const CreativeStudioView: React.FC = () => {
+const CreativeStudioView: React.FC<CreativeStudioViewProps> = ({ initialSection = 'browse' }) => {
+  const [section, setSection] = useState<CreativeSection>(initialSection);
   const [today] = useState(dayKey);
   const [shuffle, setShuffle] = useState(0);
   const [filter, setFilter] = useState<'All' | 'Fonts' | 'SVGs' | 'Patterns' | 'Stickers' | 'Favorites'>('All');
@@ -86,6 +91,8 @@ const CreativeStudioView: React.FC = () => {
     link.href = fontUrl;
     document.head.appendChild(link);
   }, []);
+
+  useEffect(() => { setSection(initialSection); }, [initialSection]);
 
   const dailyFonts = useMemo(() => {
     const offset = dailyOffset(today, shuffle * 19 + 5, fontDrops.length);
@@ -181,7 +188,15 @@ const CreativeStudioView: React.FC = () => {
   });
 
   return (
-    <section className="plf-creative-studio mx-auto w-full max-w-6xl space-y-6 px-4 py-5 sm:px-6">
+    <section className="plf-creative-studio mx-auto w-full max-w-6xl space-y-5 px-4 py-5 sm:px-6">
+      <nav aria-label="Creative tools" className="flex gap-2 overflow-x-auto rounded-[24px] border border-white/80 bg-white/55 p-2 shadow-md backdrop-blur-xl">
+        {([
+          ['palette', 'Palette Creator', <Palette className="h-4 w-4" />],
+          ['assets', 'SVG + Wallpaper Gallery', <Images className="h-4 w-4" />],
+          ['browse', 'Creative Picks', <Library className="h-4 w-4" />],
+        ] as const).map(([id, label, icon]) => <button key={id} type="button" onClick={() => setSection(id)} aria-current={section === id ? 'page' : undefined} className={`inline-flex shrink-0 items-center gap-2 rounded-full border px-4 py-2.5 text-sm font-bold ${section === id ? 'border-[#cf8fb0] bg-[#ffe7f1] text-[#48263a] shadow-sm' : 'border-white/80 bg-white/65 text-[#76576a]'}`}>{icon}{label}</button>)}
+      </nav>
+      {section === 'palette' ? <PaletteCreator /> : section === 'assets' ? <AssetGallery /> : <div className="space-y-6">
       <header className="rounded-[28px] border border-white/80 bg-gradient-to-br from-white/75 via-pink-100/55 to-violet-100/55 p-5 shadow-xl backdrop-blur-xl sm:p-7">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -221,6 +236,7 @@ const CreativeStudioView: React.FC = () => {
       <footer className="rounded-[24px] border border-white/75 bg-white/50 p-4 text-xs leading-relaxed text-[#654552] backdrop-blur-lg">
         <span className="inline-flex items-center gap-2 font-semibold text-[#654552]"><Type className="h-4 w-4" />Font previews load from Google Fonts. SVG artwork is generated inside PLF and can be edited in vector software.</span>
       </footer>
+      </div>}
     </section>
   );
 };

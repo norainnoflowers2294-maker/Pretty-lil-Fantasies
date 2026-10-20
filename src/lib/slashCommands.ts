@@ -20,7 +20,7 @@ export const SLASH_COMMAND_SUGGESTIONS: SlashCommandSuggestion[] = [
   { name: 'continue', usage: '/continue', description: 'Continue the scene without adding a user message' },
   { name: 'rewind', usage: '/rewind', description: 'Remove the latest character reply' },
   { name: 'nar', usage: '/nar', description: 'Toggle the narrator' },
-  { name: 'ooc', usage: '/ooc', description: 'Toggle out-of-character mode' },
+  { name: 'ooc', usage: '/ooc [on|off|message]', description: 'Toggle OOC mode or ask a direct out-of-character question' },
   { name: 'ic', usage: '/ic', description: 'Return to in-character mode' },
   { name: 'cash', usage: '/cash', description: 'Open the story wallet' },
   { name: 'cashapp', usage: '/cashapp', description: 'Open wallet activity' },

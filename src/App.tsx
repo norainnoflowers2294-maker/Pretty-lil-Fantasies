@@ -35,7 +35,7 @@ import { StoryNotesModal } from './components/StoryNotesModal';
 import { SavedMessagesModal } from './components/SavedMessagesModal';
 import { SceneGeneratorModal } from './components/SceneGeneratorModal';
 import { FileKeeperView } from './components/FileKeeperView';
-import CreativeStudioView from './components/CreativeStudioView';
+import CreativeStudioView, { type CreativeSection } from './components/CreativeStudioView';
 import { JournalView } from './components/JournalView';
 import { GitHubSyncModal } from './components/GitHubSyncModal';
 import { DualTrackOverlay } from './components/DualTrackOverlay';
@@ -164,6 +164,7 @@ export default function App() {
     root.style.setProperty('--cp-heading-font', preferences.headerFont === 'cooper' ? "'Cooper Black', 'Cooper Std Black', 'Arial Rounded MT Bold', Georgia, serif" : preferences.headerFont === 'serif' ? 'Georgia, serif' : preferences.headerFont === 'mono' ? 'ui-monospace, monospace' : 'system-ui, sans-serif');
   }, [preferences.theme, preferences.accent, preferences.fontSize, preferences.headerFont, preferences.reducedMotion]);
   const [activeTab, setActiveTab] = useState<NavTab>('home');
+  const [creativeSection, setCreativeSection] = useState<CreativeSection>('browse');
   const [homeImage, setHomeImage] = useState<string>(() => {
     if (data.appPreferences.homeImage) return data.appPreferences.homeImage;
     try { return localStorage.getItem('colorpop_home_picture_v1') || '/colorpop_hero.jpg'; } catch { return '/colorpop_hero.jpg'; }
@@ -1064,7 +1065,7 @@ export default function App() {
 
   if (!storageHydrated || !firebaseCloudHydrated) {
     return (
-      <main className="min-h-screen grid place-items-center bg-[#0d020b] text-[#ffd6eb]" role="status">
+      <main className="cp-loading-screen min-h-screen grid place-items-center bg-[#0d020b] text-[#ffd6eb]" role="status">
         Loading your saved chats…
       </main>
     );
@@ -1328,7 +1329,7 @@ export default function App() {
       {/* Main Dashboard Body */}
       <main key={activeTab} className="cp-page-transition flex-1 max-w-7xl w-full mx-auto pb-12 space-y-4">
         {activeTab === 'creative' ? (
-          <CreativeStudioView />
+          <CreativeStudioView initialSection={creativeSection} />
         ) : activeTab === 'journal' ? (
           <JournalView pages={data.journalPages || []} onChangePages={handleChangeJournalPages} />
         ) : activeTab === 'social' ? (
@@ -1448,6 +1449,8 @@ export default function App() {
                 setActiveTab('chats');
                 setInChatMode(false);
               }}
+              onOpenPaletteCreator={() => { setCreativeSection('palette'); setActiveTab('creative'); }}
+              onOpenAssetGallery={() => { setCreativeSection('assets'); setActiveTab('creative'); }}
             />
 
             {/* 5. 10 Circular Category Pills */}

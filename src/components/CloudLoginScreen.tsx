@@ -28,8 +28,8 @@ export function CloudLoginScreen({ onContinueLocal }: { onContinueLocal: () => v
   };
 
   return (
-    <main style={{ minHeight: '100dvh', display: 'grid', placeItems: 'center', padding: 24, background: 'radial-gradient(circle at top, #ff1493, #39001f 62%, #090006)', color: '#fff' }}>
-      <section style={{ width: 'min(100%, 410px)', padding: 28, borderRadius: 32, border: '1px solid #ffffff77', background: '#ffffff20', backdropFilter: 'blur(24px)', boxShadow: 'inset 0 2px 2px #ffffff80, 0 20px 60px #0008', textAlign: 'center' }}>
+    <main className="cp-login-screen" style={{ minHeight: '100dvh', display: 'grid', placeItems: 'center', padding: 24, background: 'radial-gradient(circle at top, #ff1493, #39001f 62%, #090006)', color: '#fff' }}>
+      <section className="cp-login-card" style={{ width: 'min(100%, 410px)', padding: 28, borderRadius: 32, border: '1px solid #ffffff77', background: '#ffffff20', backdropFilter: 'blur(24px)', boxShadow: 'inset 0 2px 2px #ffffff80, 0 20px 60px #0008', textAlign: 'center' }}>
         <h1 style={{ fontSize: 32, fontWeight: 800, marginBottom: 8 }}>Pretty Little Fantasies</h1>
         <p style={{ marginBottom: 24 }}>Where Fiction Gets Personal</p>
         <p style={{ marginBottom: 20 }}>Sign in with your Google account to restore your Firebase stories across devices.</p>

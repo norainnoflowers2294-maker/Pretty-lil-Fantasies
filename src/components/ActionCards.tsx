@@ -6,13 +6,20 @@ import {
   MessageSquare,
   ArrowRight,
   Sparkles,
+  Palette,
+  Images,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
+import { useRef, useState } from 'react';
 
 interface ActionCardsProps {
   onCreateCharacter: () => void;
   onCreateLorebook: () => void;
   onCreatePersona: () => void;
   onOpenMyChats: () => void;
+  onOpenPaletteCreator: () => void;
+  onOpenAssetGallery: () => void;
 }
 
 export const ActionCards: React.FC<ActionCardsProps> = ({
@@ -20,7 +27,11 @@ export const ActionCards: React.FC<ActionCardsProps> = ({
   onCreateLorebook,
   onCreatePersona,
   onOpenMyChats,
+  onOpenPaletteCreator,
+  onOpenAssetGallery,
 }) => {
+  const railRef = useRef<HTMLDivElement>(null);
+  const [activeCard, setActiveCard] = useState(0);
   const cards = [
     {
       id: 'char',
@@ -62,16 +73,72 @@ export const ActionCards: React.FC<ActionCardsProps> = ({
       icon: <MessageSquare className="w-8 h-8 text-white drop-shadow-[0_0_12px_rgba(255,255,255,0.9)]" />,
       onClick: onOpenMyChats,
     },
+    {
+      id: 'palette',
+      title: 'Palette Creator',
+      subtitle: 'BUILD A COLOR STORY',
+      gradient: 'from-[#f384ae] via-[#bd8ce8] to-[#82d7d8]',
+      glow: 'shadow-[0_0_30px_rgba(185,121,200,0.38)] hover:shadow-[0_0_40px_rgba(185,121,200,0.6)]',
+      border: 'border-[#efc4e8]',
+      icon: <Palette className="w-8 h-8 text-white drop-shadow-[0_0_12px_rgba(255,255,255,0.9)]" />,
+      onClick: onOpenPaletteCreator,
+    },
+    {
+      id: 'assets',
+      title: 'Digital Asset Gallery',
+      subtitle: 'KEEP YOUR CREATIVE FILES',
+      gradient: 'from-[#8a9ce8] via-[#b99ae8] to-[#ed9fc6]',
+      glow: 'shadow-[0_0_30px_rgba(152,142,225,0.38)] hover:shadow-[0_0_40px_rgba(152,142,225,0.6)]',
+      border: 'border-[#d9c6f4]',
+      icon: <Images className="w-8 h-8 text-white drop-shadow-[0_0_12px_rgba(255,255,255,0.9)]" />,
+      onClick: onOpenAssetGallery,
+    },
   ];
+
+  const scrollByCard = (direction: -1 | 1) => {
+    const rail = railRef.current;
+    if (!rail) return;
+    const card = rail.querySelector<HTMLElement>('[data-action-card]');
+    rail.scrollBy({ left: direction * ((card?.getBoundingClientRect().width || rail.clientWidth) + 16), behavior: 'smooth' });
+  };
 
   return (
     <div className="w-full px-4 sm:px-6 py-2">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {cards.map((card) => (
+      <div className="mb-3 flex items-center justify-between gap-3 px-1">
+        <div>
+          <h2 className="text-lg font-bold text-[#32182a]">Create & collect</h2>
+          <p className="text-xs text-[#76576a]">Swipe to explore your creative tools</p>
+        </div>
+        <div className="flex gap-2">
+          <button type="button" aria-label="Previous cards" onClick={() => scrollByCard(-1)} className="grid h-9 w-9 place-items-center rounded-full border border-white/90 bg-white/70 text-[#48263a] shadow-sm"><ChevronLeft className="h-4 w-4" /></button>
+          <button type="button" aria-label="Next cards" onClick={() => scrollByCard(1)} className="grid h-9 w-9 place-items-center rounded-full border border-white/90 bg-white/70 text-[#48263a] shadow-sm"><ChevronRight className="h-4 w-4" /></button>
+        </div>
+      </div>
+      <div
+        ref={railRef}
+        role="region"
+        aria-label="Swipeable creative tools"
+        aria-roledescription="carousel"
+        tabIndex={0}
+        onKeyDown={(event) => {
+          if (event.key === 'ArrowRight') { event.preventDefault(); scrollByCard(1); }
+          if (event.key === 'ArrowLeft') { event.preventDefault(); scrollByCard(-1); }
+        }}
+        onScroll={(event) => {
+          const rail = event.currentTarget;
+          const card = rail.querySelector<HTMLElement>('[data-action-card]');
+          if (card) setActiveCard(Math.max(0, Math.min(cards.length - 1, Math.round(rail.scrollLeft / (card.offsetWidth + 16)))));
+        }}
+        className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {cards.map((card, index) => (
           <button
             key={card.id}
+            data-action-card
+            aria-roledescription="slide"
+            aria-label={`${card.title}, ${index + 1} of ${cards.length}`}
             onClick={card.onClick}
-            className={`cp-action-card group relative rounded-3xl p-6 bg-gradient-to-br ${card.gradient} border-2 ${card.border} ${card.glow} flex flex-col items-center text-center justify-between min-h-[220px] transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] cursor-pointer overflow-hidden`}
+            className={`cp-action-card group relative min-h-[220px] w-[83vw] shrink-0 snap-center overflow-hidden rounded-3xl border-2 p-6 text-center transition-all duration-300 hover:scale-[1.015] active:scale-[0.985] cursor-pointer flex flex-col items-center justify-between bg-gradient-to-br ${card.gradient} ${card.border} ${card.glow} sm:w-[calc((100%-1rem)/2)] lg:w-[calc((100%-2rem)/3)]`}
           >
             <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-black/20 pointer-events-none" />
 
@@ -97,6 +164,9 @@ export const ActionCards: React.FC<ActionCardsProps> = ({
             </div>
           </button>
         ))}
+      </div>
+      <div className="mt-1 flex justify-center gap-1.5" role="status" aria-live="polite" aria-label={`Card ${activeCard + 1} of ${cards.length}`}>
+        {cards.map((card, index) => <span key={card.id} aria-hidden="true" className={`h-1.5 rounded-full transition-all ${index === activeCard ? 'w-5 bg-[#b55a85]' : 'w-1.5 bg-[#b55a85]/30'}`} />)}
       </div>
     </div>
   );

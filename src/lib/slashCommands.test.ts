@@ -11,6 +11,12 @@ describe('parseSlashCommand', () => {
     expect(parseSlashCommand('/nar off')).toEqual({ type: 'narrator', enabled: false });
     expect(parseSlashCommand('/nar active')).toEqual({ type: 'narrator', enabled: true, frequency: 'active' });
   });
+  it('supports OOC mode toggles and one-shot OOC prompts', () => {
+    expect(parseSlashCommand('/ooc')).toEqual({ type: 'ooc' });
+    expect(parseSlashCommand('/ooc on')).toEqual({ type: 'ooc', enabled: true });
+    expect(parseSlashCommand('/ic')).toEqual({ type: 'ooc', enabled: false });
+    expect(parseSlashCommand('/ooc What does this setting mean?')).toEqual({ type: 'ooc-message', content: 'What does this setting mean?' });
+  });
   it('supports scene, rewind, speech and help commands', () => {
     expect(parseSlashCommand('/continue')).toEqual({ type: 'continue' });
     expect(parseSlashCommand('/rewind')).toEqual({ type: 'rewind' });
