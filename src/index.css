@@ -4745,3 +4745,246 @@ body {
 #root .cp-chat .cp-chat-composer > div[aria-label^="Last reply routed"] {
   color: rgba(73,49,67,.68) !important;
 }
+
+
+/* The Social Media world opens as a working mini-app inside a pearly iPhone on chat's left edge. */
+#root .cp-chat .plf-social-phone-overlay {
+  background: rgba(76,43,70,.2);
+  -webkit-backdrop-filter: blur(3px) saturate(115%);
+  backdrop-filter: blur(3px) saturate(115%);
+}
+#root .cp-chat .plf-social-phone-device {
+  padding: 7px;
+  border: 1px solid rgba(255,255,255,.96);
+  border-radius: 2.7rem;
+  background:
+    radial-gradient(ellipse at 18% 4%,rgba(255,255,255,.98),transparent 28%),
+    conic-gradient(from 210deg at 50% 50%,#f6cbe2,#b6e8f2,#d7c3f4,#d5f1e4,#f3bdd9,#f6cbe2);
+  box-shadow:
+    0 20px 55px rgba(63,28,57,.34),
+    inset 0 0 0 2px rgba(255,255,255,.78),
+    inset 0 -8px 18px rgba(131,78,122,.17);
+}
+#root .cp-chat .plf-social-phone-hardware-top {
+  position: absolute;
+  z-index: 4;
+  top: 11px;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 88px;
+  height: 19px;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 999px;
+  background: linear-gradient(135deg,#281923,#120b12);
+  box-shadow: inset 0 1px 2px rgba(255,255,255,.12),0 2px 5px rgba(59,28,51,.2);
+  transform: translateX(-50%);
+}
+#root .cp-chat .plf-social-phone-camera {
+  display: block;
+  width: 6px;
+  height: 6px;
+  border: 1px solid rgba(182,225,245,.44);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%,#c5e7f3,#26394a 65%,#111 70%);
+}
+#root .cp-chat .plf-social-phone-speaker {
+  display: block;
+  width: 31px;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(180deg,#100a10,#493542);
+}
+#root .cp-chat .plf-social-phone-status {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 30px;
+  padding: 0 14px 0 17px;
+  color: #332032;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+#root .cp-chat .plf-social-phone-appbar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 48px;
+  margin: 0 5px 6px;
+  padding: 5px 8px;
+  border: 1px solid rgba(255,255,255,.86);
+  border-radius: 17px;
+  color: #30202f;
+  background: linear-gradient(120deg,rgba(255,255,255,.83),rgba(255,225,241,.68),rgba(222,220,249,.68));
+  box-shadow: 0 4px 13px rgba(115,64,107,.1),inset 0 1px 0 #fff;
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+}
+#root .cp-chat .plf-social-phone-appbar strong,
+#root .cp-chat .plf-social-phone-appbar small { display: block; color: #30202f; line-height: 1.1; }
+#root .cp-chat .plf-social-phone-appbar strong { font-size: 12px; }
+#root .cp-chat .plf-social-phone-appbar small { margin-top: 3px; font-size: 9px; opacity: .67; }
+#root .cp-chat .plf-social-phone-app-icon {
+  display: grid;
+  width: 31px;
+  height: 31px;
+  place-items: center;
+  flex: 0 0 31px;
+  border: 1px solid rgba(255,255,255,.95);
+  border-radius: 11px;
+  color: #67304e;
+  background: linear-gradient(145deg,#ffc8e2,#ddcbf4 58%,#c8f0ea);
+  box-shadow: inset 0 1px 0 #fff,0 3px 8px rgba(146,79,126,.15);
+}
+#root .cp-chat .plf-social-phone-appbar > button {
+  display: grid;
+  width: 31px;
+  height: 31px;
+  place-items: center;
+  flex: 0 0 31px;
+  border: 1px solid rgba(255,255,255,.92);
+  border-radius: 50%;
+  color: #44293c;
+  background: rgba(255,255,255,.66);
+}
+#root .cp-chat .plf-social-phone-screen {
+  position: relative;
+  margin: 0 3px;
+  border: 1px solid rgba(255,255,255,.86);
+  border-radius: 1.8rem;
+  background:
+    radial-gradient(ellipse at 10% 0%,rgba(255,255,255,.84),transparent 38%),
+    linear-gradient(145deg,rgba(255,246,251,.95),rgba(242,230,250,.93) 56%,rgba(222,244,243,.91));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.96),inset 0 -8px 18px rgba(168,127,166,.08);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(174,111,157,.36) transparent;
+}
+#root .cp-chat .plf-social-phone-home-indicator {
+  position: relative;
+  display: grid;
+  height: 17px;
+  place-items: center;
+  flex: 0 0 17px;
+}
+#root .cp-chat .plf-social-phone-home-indicator span {
+  display: block;
+  width: 78px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(61,42,58,.68);
+}
+#root .cp-chat .plf-social-phone-launch {
+  border-color: rgba(255,255,255,.9) !important;
+  border-radius: 1.2rem !important;
+  color: #38253a !important;
+  background: linear-gradient(130deg,rgba(255,255,255,.8),rgba(255,219,238,.72),rgba(217,228,249,.72)) !important;
+  box-shadow: 0 5px 15px rgba(121,70,115,.12),inset 0 1px 0 #fff !important;
+}
+#root .cp-chat .plf-social-phone-launch-icon {
+  border: 1px solid rgba(255,255,255,.96);
+  color: #713958;
+  background: linear-gradient(145deg,#ffd0e6,#e1d0f7 56%,#c7eee9);
+  box-shadow: inset 0 1px 0 #fff,0 4px 10px rgba(163,83,134,.16);
+}
+#root .cp-chat .plf-social-media-phone-mode {
+  box-sizing: border-box;
+  position: relative;
+  min-height: 100%;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: .45rem !important;
+  color: #302231 !important;
+  font-size: 11px;
+}
+#root .cp-chat .plf-social-media-phone-mode > :not([hidden]) ~ :not([hidden]) { margin-top: .62rem !important; }
+#root .cp-chat .plf-social-media-phone-mode > header,
+#root .cp-chat .plf-social-media-phone-mode > div.rounded-3xl,
+#root .cp-chat .plf-social-media-phone-mode > div.space-y-3 > article {
+  border: 1px solid rgba(255,255,255,.93) !important;
+  border-radius: 1.35rem !important;
+  color: #39283a !important;
+  background:
+    radial-gradient(ellipse at 15% 0%,rgba(255,255,255,.96),transparent 46%),
+    linear-gradient(135deg,rgba(255,250,253,.9),rgba(246,226,249,.82) 54%,rgba(219,243,244,.79)) !important;
+  box-shadow: 0 5px 14px rgba(119,73,119,.1),inset 0 1px 0 #fff !important;
+}
+#root .cp-chat .plf-social-media-phone-mode > header { padding: .72rem !important; }
+#root .cp-chat .plf-social-media-phone-mode > header h1 { font-size: 1.2rem !important; line-height: 1.15 !important; color: #382238 !important; }
+#root .cp-chat .plf-social-media-phone-mode > header p { color: #59445a !important; font-size: .66rem !important; line-height: 1.42 !important; }
+#root .cp-chat .plf-social-media-phone-mode > header > div > div > span {
+  border: 1px solid rgba(255,255,255,.9) !important;
+  border-radius: 14px !important;
+  color: #714163 !important;
+  background: linear-gradient(145deg,#ffd2e8,#e4d6f6,#ccefe9) !important;
+}
+#root .cp-chat .plf-social-media-phone-mode > header button {
+  min-height: 2rem !important;
+  padding: .38rem .58rem !important;
+  border: 1px solid rgba(255,255,255,.96) !important;
+  border-radius: 999px !important;
+  color: #42253d !important;
+  background: linear-gradient(130deg,#fff9fc,#ffdcec,#e2e1fa) !important;
+  font-size: .66rem !important;
+}
+#root .cp-chat .plf-social-media-phone-mode > header > div > div.rounded-2xl {
+  margin-top: .6rem !important;
+  padding: .52rem !important;
+  border-color: rgba(255,255,255,.8) !important;
+  border-radius: 1rem !important;
+  color: #452d42 !important;
+  background: rgba(255,255,255,.48) !important;
+}
+#root .cp-chat .plf-social-media-phone-mode > header > div > div.rounded-2xl :is(p,div) { color: #59445a !important; font-size: .63rem !important; }
+#root .cp-chat .plf-social-media-phone-mode > header > div > div.rounded-2xl button { padding: .38rem .52rem !important; }
+#root .cp-chat .plf-social-media-phone-mode > div.rounded-3xl {
+  padding: .64rem !important;
+}
+#root .cp-chat .plf-social-media-phone-mode > div.rounded-3xl :is(h2,span) {
+  color: #3c2a3d !important;
+  font-size: .68rem !important;
+}
+#root .cp-chat .plf-social-media-phone-mode > div.rounded-3xl > div > span { font-size: .58rem !important; }
+#root .cp-chat .plf-social-media-phone-mode > div.rounded-3xl button { color: #4a3149 !important; }
+#root .cp-chat .plf-social-media-phone-mode > div.rounded-3xl button img,
+#root .cp-chat .plf-social-media-phone-mode > div.rounded-3xl button span:first-child {
+  width: 2.35rem !important;
+  height: 2.35rem !important;
+}
+#root .cp-chat .plf-social-media-phone-mode > div.space-y-3 { display: grid; gap: .6rem; }
+#root .cp-chat .plf-social-media-phone-mode > div.space-y-3 > article { padding: .68rem !important; }
+#root .cp-chat .plf-social-media-phone-mode > div.space-y-3 > article :is(h3,p,span) { color: #3e2b40 !important; }
+#root .cp-chat .plf-social-media-phone-mode > div.space-y-3 > article > p.whitespace-pre-wrap {
+  padding: .55rem 0 !important;
+  color: #38263b !important;
+  font-size: .72rem !important;
+  line-height: 1.45 !important;
+}
+#root .cp-chat .plf-social-media-phone-mode > div.space-y-3 > article > div:last-child {
+  border-color: rgba(137,95,133,.16) !important;
+  padding-top: .48rem !important;
+}
+#root .cp-chat .plf-social-media-phone-mode > div.space-y-3 > article button { color: #8d426c !important; }
+#root .cp-chat .plf-social-media-phone-mode > div.space-y-3 > article span { color: #715d73 !important; }
+#root .cp-chat .plf-social-phone-screen .plf-social-media-phone-mode > div[role="dialog"] {
+  border-radius: 1.25rem !important;
+  background: linear-gradient(145deg,rgba(255,250,253,.98),rgba(240,228,249,.98)) !important;
+}
+@media (max-width: 520px) {
+  #root .cp-chat .plf-social-phone-overlay { padding: .4rem !important; }
+  #root .cp-chat .plf-social-phone-device {
+    height: min(92dvh,860px) !important;
+    width: min(96vw,390px) !important;
+  }
+  #root .cp-chat .plf-social-phone-status { height: 28px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #root .cp-chat .plf-social-phone-device,
+  #root .cp-chat .plf-social-phone-screen { scroll-behavior: auto !important; }
+}
