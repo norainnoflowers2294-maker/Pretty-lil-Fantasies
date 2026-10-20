@@ -1092,6 +1092,17 @@ export default function App() {
           socialMediaContext={formatSocialWorldContext(data.socialWorld || DEFAULT_SOCIAL_WORLD)}
           phoneContext={formatPhoneStoryContext(data.phoneSystem, activeChat.id, activeChat.characterIds)}
           phoneSystem={data.phoneSystem}
+          socialMediaPhone={
+            <SocialMediaView
+              phoneMode
+              world={data.socialWorld || DEFAULT_SOCIAL_WORLD}
+              characters={data.characters}
+              personas={data.personas}
+              activeChat={activeChat}
+              onUpdateWorld={(socialWorld) => updateData({ ...dataRef.current, socialWorld })}
+              onToggleChat={(enabled) => handleUpdateChat({ ...activeChat, socialMediaEnabled: enabled, updatedAt: new Date().toISOString() })}
+            />
+          }
           onUpdatePhoneSystem={(phoneSystem) => updateData({ ...dataRef.current, phoneSystem })}
           onOpenPhone={() => setIsPhoneOpen(true)}
           onOpenYouTubePlayer={() => setIsYouTubePlayerOpen(true)}
