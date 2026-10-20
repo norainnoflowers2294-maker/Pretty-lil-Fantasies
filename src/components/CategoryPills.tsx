@@ -1,16 +1,5 @@
 import React from 'react';
-import {
-  Grid,
-  Heart,
-  Flame,
-  Users,
-  User,
-  BookOpen,
-  MapPin,
-  Image as ImageIcon,
-  Shirt,
-  Puzzle,
-} from 'lucide-react';
+
 
 export type CategoryFilter =
   | 'all'
@@ -33,17 +22,17 @@ export const CategoryPills: React.FC<CategoryPillsProps> = ({
   activeCategory,
   onSelectCategory,
 }) => {
-  const categories: Array<{ id: CategoryFilter; label: string; icon: React.ReactNode; glow: string }> = [
-    { id: 'all', label: 'All', icon: <Grid className="w-4 h-4" />, glow: 'from-pink-100 to-rose-200' },
-    { id: 'favorites', label: 'Favorites', icon: <Heart className="w-4 h-4 fill-current" />, glow: 'from-pink-100 to-rose-200' },
-    { id: 'recent', label: 'Recent', icon: <Flame className="w-4 h-4" />, glow: 'from-pink-100 to-rose-200' },
-    { id: 'characters', label: 'Characters', icon: <Users className="w-4 h-4" />, glow: 'from-pink-100 to-rose-200' },
-    { id: 'personas', label: 'Personas', icon: <User className="w-4 h-4" />, glow: 'from-pink-100 to-rose-200' },
-    { id: 'lorebooks', label: 'Lorebooks', icon: <BookOpen className="w-4 h-4" />, glow: 'from-pink-100 to-rose-200' },
-    { id: 'locations', label: 'Locations', icon: <MapPin className="w-4 h-4" />, glow: 'from-pink-100 to-rose-200' },
-    { id: 'images', label: 'Images', icon: <ImageIcon className="w-4 h-4" />, glow: 'from-pink-100 to-rose-200' },
-    { id: 'wardrobe', label: 'Wardrobe', icon: <Shirt className="w-4 h-4" />, glow: 'from-pink-100 to-rose-200' },
-    { id: 'plugins', label: 'Plugins', icon: <Puzzle className="w-4 h-4" />, glow: 'from-pink-100 to-rose-200' },
+  const categories: Array<{ id: CategoryFilter; label: string; glyph: string; glow: string }> = [
+    { id: 'all', label: 'All', glyph: '▦', glow: 'from-pink-100 to-rose-200' },
+    { id: 'favorites', label: 'Favorites', glyph: '♡', glow: 'from-pink-100 to-rose-200' },
+    { id: 'recent', label: 'Recent', glyph: '◷', glow: 'from-pink-100 to-rose-200' },
+    { id: 'characters', label: 'Characters', glyph: '♟', glow: 'from-pink-100 to-rose-200' },
+    { id: 'personas', label: 'Personas', glyph: '♙', glow: 'from-pink-100 to-rose-200' },
+    { id: 'lorebooks', label: 'Lorebooks', glyph: '▤', glow: 'from-pink-100 to-rose-200' },
+    { id: 'locations', label: 'Locations', glyph: '⌖', glow: 'from-pink-100 to-rose-200' },
+    { id: 'images', label: 'Images', glyph: '▧', glow: 'from-pink-100 to-rose-200' },
+    { id: 'wardrobe', label: 'Wardrobe', glyph: '♧', glow: 'from-pink-100 to-rose-200' },
+    { id: 'plugins', label: 'Plugins', glyph: '✣', glow: 'from-pink-100 to-rose-200' },
   ];
 
   return (
@@ -69,7 +58,7 @@ export const CategoryPills: React.FC<CategoryPillsProps> = ({
                   <div
                     className={`plf-category-icon w-11 h-11 rounded-full flex items-center justify-center text-[#211019] border border-white/90 shadow-inner`}
                   >
-                    {cat.icon}
+                    <span aria-hidden="true" className="plf-category-glyph" style={{ color: "#211019", WebkitTextFillColor: "#211019", fontFamily: "Arial, sans-serif", fontSize: "24px", fontWeight: 700, lineHeight: 1 }}>{cat.glyph}</span>
                   </div>
                   <div className="absolute inset-0 rounded-full border border-white/20 pointer-events-none" />
                 </div>
