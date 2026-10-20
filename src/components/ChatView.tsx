@@ -1561,7 +1561,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
         )}
 
         <div ref={messagesEndRef} />
-        {showScrollToBottom && <button type="button" aria-label="Scroll to latest message" title="Scroll to latest message" onClick={() => { shouldAutoScrollRef.current = true; setShowScrollToBottom(false); messagesEndRef.current?.scrollIntoView({ behavior: preferences.reducedMotion ? 'auto' : 'smooth', block: 'end' }); }} className="absolute bottom-4 left-1/2 z-30 grid h-11 w-11 -translate-x-1/2 place-items-center rounded-full border border-[#d987a7]/70 bg-white/90 text-[#6a3e50] shadow-[0_8px_24px_rgba(70,30,54,.2)] backdrop-blur-md transition hover:scale-105"><ChevronDown className="h-5 w-5" /></button>}
+        {showScrollToBottom && <button type="button" aria-label="Scroll to bottom" title="Scroll to bottom" onClick={() => { shouldAutoScrollRef.current = true; setShowScrollToBottom(false); const viewport = messagesViewportRef.current; if (viewport) viewport.scrollTo({ top: viewport.scrollHeight, behavior: preferences.reducedMotion ? 'auto' : 'smooth' }); else messagesEndRef.current?.scrollIntoView({ behavior: preferences.reducedMotion ? 'auto' : 'smooth', block: 'end' }); }} className="absolute bottom-4 left-1/2 z-30 grid h-12 w-12 -translate-x-1/2 place-items-center rounded-full border border-white bg-[linear-gradient(135deg,#fffafd,#ffd6eb,#e0e7ff)] text-[#392338] shadow-[0_8px_24px_rgba(70,30,54,.28)] backdrop-blur-md transition hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#d94691]"><ChevronDown className="h-6 w-6" /></button>}
       </div>
 
       {/* Chat Input Bar */}
